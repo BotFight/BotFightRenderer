@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Match, MatchState, processData} from "../replay/process_replay"
 
 const GridValues = {
     EMPTY: 0,
@@ -13,55 +12,28 @@ const GridValues = {
     SNAKE_B_BODY: 6,
 }
 
-export default function Game() {
-  var m = processData("./result.json");
+export default function Game({ currentMatchStateIndex, setCurrentMatchStateIndex, matchStates }) {
   const canvasRef = useRef(null);
-  const [grid, setGrid] = useState([
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-    [0,0,0,0,0,0,0,0,2,4,0,0,0,0,0,0,0],
-    [0,1,0,1,0,1,0,1,4,1,4,1,0,1,0,1,0],
-    [0,0,0,0,4,4,4,4,0,0,4,4,4,4,0,0,0],
-    [0,1,0,1,4,1,5,1,0,1,0,1,0,1,0,1,0],
-    [0,0,0,0,3,0,6,6,0,0,0,0,0,0,0,0,0],
-    [0,1,0,1,0,1,0,1,6,1,0,1,0,1,0,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-    [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-  ]);  
-
-  const gridSizeWidth = grid[0].length;
-  const gridSizeHeight = grid.length;
+  const [grid, setGrid] = useState([]);    
+  const [gridSizeWidth, setGridSizeWidth] = useState(0); 
+  const [gridSizeHeight, setGridSizeHeight] = useState(0);
   const cellSize = 30;
 
   useEffect(() => {
+    if (!matchStates) return;
+    console.log(matchStates.length);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+    
+    setGridSizeHeight(matchStates[0].map_state.length);
+    setGridSizeWidth(matchStates[0].map_state[0].length);
+    setGrid(matchStates[currentMatchStateIndex].map_state);
+
     const width = gridSizeWidth * cellSize;
     const height = gridSizeHeight * cellSize;
 
     canvas.width = width;
     canvas.height = height;
-
-    const drawGrid = () => {
-        ctx.strokeStyle = '#ddd';
-        ctx.beginPath();
-        for (let i = 0; i <= width; i += cellSize) {
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i, height);
-        }
-        for (let i = 0; i <= height; i += cellSize) {
-            ctx.moveTo(0, i);
-            ctx.lineTo(width, i);
-        }
-        ctx.stroke();
-    }
 
     const drawTile = (x, y, color) => {
         ctx.fillStyle = color;
@@ -99,7 +71,6 @@ export default function Game() {
        }
        
        const drawSnakeHead = (x, y, color, direction) => {
-        // Body circle
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(
@@ -113,9 +84,7 @@ export default function Game() {
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2;
         ctx.stroke();
-       
-        // Eyes based on direction
-        const eyeOffset = cellSize / 4;
+
         ctx.fillStyle = 'white';
         
         switch(direction) {
@@ -146,14 +115,12 @@ export default function Game() {
         }
        
         function drawEyes(x1, y1, x2, y2) {
-            // White of eyes
             ctx.fillStyle = 'white';
             ctx.beginPath();
             ctx.arc(x1 * cellSize, y1 * cellSize, 4, 0, Math.PI * 2);
             ctx.arc(x2 * cellSize, y2 * cellSize, 4, 0, Math.PI * 2);
             ctx.fill();
             
-            // Black pupils
             ctx.fillStyle = 'black';
             ctx.beginPath();
             ctx.arc(x1 * cellSize, y1 * cellSize, 2, 0, Math.PI * 2);
@@ -203,14 +170,10 @@ export default function Game() {
             drawCell(x, y);
         }
     }
-
-    // drawGrid();
-
-
-  }, []);
+  }, [grid, matchStates, gridSizeWidth, gridSizeHeight, cellSize, currentMatchStateIndex]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center bg-gray-100 min-w-screen">
       <canvas
         ref={canvasRef}
         width={800}
