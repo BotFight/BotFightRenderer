@@ -70,9 +70,9 @@ export async function processData(historyFile: string): Promise<Match> {
         }
     }
 
-    
+    let match:Match = new Match(match_states, history.bidA, history.bidB, history.reason);
 
-    return new Match(match_states, history.bidA, history.bidB, history.reason);
+    return match;
    
     
 

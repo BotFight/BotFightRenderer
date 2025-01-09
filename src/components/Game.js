@@ -14,8 +14,9 @@ const GridValues = {
 }
 
 export default function Game() {
-  var m = processData("./result.json");
-  const canvasRef = useRef(null);
+  
+  
+  var canvasRef = useRef(null);
   const [grid, setGrid] = useState([
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
@@ -41,8 +42,28 @@ export default function Game() {
   const cellSize = 30;
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const fetchData = async () => {
+      var m = await processData("./result.json");
+  
+      setGrid(m.match_states[0].map_state);
+      for (let x = 0; x < gridSizeHeight; x++) {
+        for (let y = 0; y < gridSizeWidth; y++) {
+            drawTile(x, y, '#B19E4E');
+        }
+      }
+
+      for (let x = 0; x < gridSizeHeight; x++) {
+          for (let y = 0; y < gridSizeWidth; y++) {
+              drawCell(x, y);
+          }
+      }
+
+      drawGrid();
+      console.log("h");
+    }
+    
+    var canvas = canvasRef.current;
+    const ctx = canvasRef.current.getContext('2d');
     const width = gridSizeWidth * cellSize;
     const height = gridSizeHeight * cellSize;
 
@@ -191,7 +212,7 @@ export default function Game() {
     }
 
 
-
+    
     for (let x = 0; x < gridSizeHeight; x++) {
         for (let y = 0; y < gridSizeWidth; y++) {
             drawTile(x, y, '#B19E4E');
@@ -204,7 +225,7 @@ export default function Game() {
         }
     }
 
-    // drawGrid();
+    fetchData();
 
 
   }, []);
