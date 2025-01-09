@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { match, matchState, processData} from "../replay/process_replay"
+import { Match, MatchState, processData} from "../replay/process_replay"
 
 const GridValues = {
     EMPTY: 0,
@@ -14,6 +14,7 @@ const GridValues = {
 }
 
 export default function Game() {
+  var m = processData("./result.json");
   const canvasRef = useRef(null);
   const [grid, setGrid] = useState([
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],

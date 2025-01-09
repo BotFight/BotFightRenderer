@@ -128,7 +128,7 @@ export class Board {
         this.turn_count = 0;
 
         this.snake_a = new Snake(map.start_a, map.start_size);
-        this.snake_b = new Snake(map.start_a, map.start_size);
+        this.snake_b = new Snake(map.start_b, map.start_size);
     }
 
     play_turn(turn: Direction[], cells_lost:number[][], time:number): void{

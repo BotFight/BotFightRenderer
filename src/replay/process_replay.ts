@@ -51,9 +51,10 @@ class MatchState{
     
 }
 
-export function processData(historyFile: string): Match {
-    const fileContent = fs.readFileSync(historyFile, 'utf-8');
-    const history = JSON.parse(fileContent) as BoardHistory;
+export async function processData(historyFile: string): Promise<Match> {
+    const response = await fetch(historyFile)
+    const fileContent = await response.json();
+    let history:BoardHistory = fileContent;
 
     let match_states: MatchState[] = new Array(history.turn_count+1).fill(null);
 
@@ -65,10 +66,15 @@ export function processData(historyFile: string): Match {
         for(let i:number = 1; i<= history.turn_count; i++){
             b.play_turn(history.moves[i-1], history.cells_lost[i-1], history.times[i-1]);
             match_states[i] = new MatchState(b, history.a_length[i], history.b_length[i]);
+            b.next_turn();
         }
     }
 
+    
+
     return new Match(match_states, history.bidA, history.bidB, history.reason);
+   
+    
 
 }
 
