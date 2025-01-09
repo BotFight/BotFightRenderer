@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Direction } from '../replay/game_engine';
 
 const GridValues = {
     EMPTY: 0,
@@ -21,13 +22,14 @@ export default function Game({ currentMatchStateIndex, setCurrentMatchStateIndex
 
   useEffect(() => {
     if (!matchStates) return;
-    console.log(matchStates.length);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
     setGridSizeHeight(matchStates[0].map_state.length);
     setGridSizeWidth(matchStates[0].map_state[0].length);
     setGrid(matchStates[currentMatchStateIndex].map_state);
+    // console.log(currentMatchStateIndex)
+    // console.log(matchStates[currentMatchStateIndex].map_state)
 
     const width = gridSizeWidth * cellSize;
     const height = gridSizeHeight * cellSize;
@@ -88,28 +90,28 @@ export default function Game({ currentMatchStateIndex, setCurrentMatchStateIndex
         ctx.fillStyle = 'white';
         
         switch(direction) {
-          case 'right':
+          case Direction.EAST:
             drawEyes(x + 3/4, y + 1/3, x + 3/4, y + 2/3);
             break;
-          case 'left':
+          case Direction.WEST:
             drawEyes(x + 1/4, y + 1/3, x + 1/4, y + 2/3);
             break;
-          case 'up':
+          case Direction.NORTH:
             drawEyes(x + 1/3, y + 1/4, x + 2/3, y + 1/4);
             break;
-          case 'down':
+          case Direction.SOUTH:
             drawEyes(x + 1/3, y + 3/4, x + 2/3, y + 3/4);
             break;
-          case 'upRight':
+          case Direction.NORTHEAST:
             drawEyes(x + 2/3, y + 1/3, x + 3/4, y + 1/4);
             break;
-          case 'upLeft':
+          case Direction.NORTHWEST:
             drawEyes(x + 1/3, y + 1/3, x + 1/4, y + 1/4);
             break;
-          case 'downRight':
+          case Direction.SOUTHEAST:
             drawEyes(x + 2/3, y + 2/3, x + 3/4, y + 3/4);
             break;
-          case 'downLeft':
+          case Direction.SOUTHWEST:
             drawEyes(x + 1/3, y + 2/3, x + 1/4, y + 3/4);
             break;
         }
@@ -143,13 +145,13 @@ export default function Game({ currentMatchStateIndex, setCurrentMatchStateIndex
                 drawFood(y, x);
                 break;
             case GridValues.SNAKE_A_HEAD:
-                drawSnakeHead(y, x, 'green', 'right');
+                drawSnakeHead(y, x, 'green', matchStates[currentMatchStateIndex].a_dir);
                 break;
             case GridValues.SNAKE_A_BODY:
                 drawSnake(y, x, 'green');
                 break;
             case GridValues.SNAKE_B_HEAD:
-                drawSnakeHead(y, x, 'blue', 'right');
+                drawSnakeHead(y, x, 'blue',  matchStates[currentMatchStateIndex].b_dir);
                 break;
             case GridValues.SNAKE_B_BODY:
                 drawSnake(y, x, 'blue');

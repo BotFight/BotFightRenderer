@@ -21,8 +21,8 @@ class MatchState{
     time_a: number;
     time_b: number;
     map_state: number[][];
-    dir_a: Direction;
-    dir_b: Direction;
+    a_dir: Direction;
+    b_dir: Direction;
     round_num: number;
     a_to_play: boolean;
     a_apples_eaten: number;
@@ -33,8 +33,8 @@ class MatchState{
     constructor(b:Board, a_length:number, b_length:number){
         this.time_a = b.a_time;
         this.time_b = b.b_time;
-        this.dir_a = b.snake_a.dir;
-        this.dir_b = b.snake_b.dir;
+        this.a_dir = b.snake_a.dir;
+        this.b_dir = b.snake_b.dir;
         this.round_num = b.get_round_num();
         this.a_to_play = b.is_as_turn;
 
@@ -60,7 +60,7 @@ export async function processData(historyFile: string): Promise<Match> {
 
     let m:Map = new Map(history.game_map);
     let b:Board = new Board(m, history.a_start, history.start_time,history.a_length[0], history.b_length[0])
-
+    
     if(history.turn_count>0){
         match_states[0] = new MatchState(b, history.a_length[0], history.b_length[0])
         for(let i:number = 1; i<= history.turn_count; i++){

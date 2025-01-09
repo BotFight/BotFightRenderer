@@ -127,11 +127,11 @@ export class Board {
         this.apple_counter = 0;
         this.turn_count = 0;
 
-        this.snake_a = new Snake(map.start_a, map.start_size);
-        this.snake_b = new Snake(map.start_b, map.start_size);
+        this.snake_a = new Snake([map.start_a[0], map.start_a[1]], map.start_size);
+        this.snake_b = new Snake([map.start_b[0], map.start_b[1]], map.start_size);
 
-        this.cells_a[this.map.start_a[1]][this.map.start_a[0]] = a_length
-        this.cells_b[this.map.start_b[1]][this.map.start_b[0]] = b_length
+        this.cells_a[this.map.start_a[1]][this.map.start_a[0]] = 1
+        this.cells_b[this.map.start_b[1]][this.map.start_b[0]] = 1
     }
 
     play_turn(turn: Direction[], cells_lost:number[][], time:number): void{
@@ -146,10 +146,12 @@ export class Board {
                     this.snake_a.apples_eaten+=this.cells_apples[y][x];
                     this.cells_apples[y][x] = 0;
                 }
+                this.cells_a[y][x]++;
                 
             })
 
             cells_lost.forEach((cell, index)=>{
+            
                 this.cells_a[cell[1]][cell[0]]-=1;
             })
 
@@ -166,11 +168,17 @@ export class Board {
                     this.snake_b.apples_eaten+=this.cells_apples[y][x];
                     this.cells_apples[y][x] = 0;
                 }
+                this.cells_b[y][x]++;
             })
 
+            console.log(cells_lost);
+
             cells_lost.forEach((cell, index)=>{
-                this.cells_b[cell[1]][cell[0]]-=1;
+                this.cells_b[cell[1]][cell[0]]=0;
             })
+
+            console.log(this.snake_b.head_loc);
+            console.log(this.map.start_b);
 
 
             this.b_time-=time;
