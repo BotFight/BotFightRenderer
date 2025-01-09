@@ -19,7 +19,7 @@ export default function Renderer() {
 
   const handleInputChange = (event) => {
     const value = parseInt(event.target.value, 10);
-    if (!isNaN(value)) {
+    if (!isNaN(value) && value >= 0 && value < matchStates.length) {
       setCurrentMatchStateIndex(value);
     }
   };
