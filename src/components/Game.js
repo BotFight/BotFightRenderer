@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Match, MatchState, processData} from "../replay/process_replay"
+import { Direction } from "../replay/game_engine"
 
 const GridValues = {
     EMPTY: 0,
@@ -16,8 +17,8 @@ const GridValues = {
 export default function Game() {
   
   
-  var canvasRef = useRef(null);
-  const [grid, setGrid] = useState([
+  const canvasRef = useRef(null);
+  var [grid, setGrid] = useState([
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -44,8 +45,9 @@ export default function Game() {
   useEffect(() => {
     const fetchData = async () => {
       var m = await processData("./result.json");
-  
-      setGrid(m.match_states[0].map_state);
+      
+      grid = m.match_states[0].map_state;
+      console.log(grid);
       for (let x = 0; x < gridSizeHeight; x++) {
         for (let y = 0; y < gridSizeWidth; y++) {
             drawTile(x, y, '#B19E4E');
@@ -57,10 +59,11 @@ export default function Game() {
               drawCell(x, y);
           }
       }
+      
+      
 
-      drawGrid();
-      console.log("h");
     }
+    fetchData();
     
     var canvas = canvasRef.current;
     const ctx = canvasRef.current.getContext('2d');
@@ -225,7 +228,6 @@ export default function Game() {
         }
     }
 
-    fetchData();
 
 
   }, []);

@@ -59,7 +59,7 @@ export async function processData(historyFile: string): Promise<Match> {
     let match_states: MatchState[] = new Array(history.turn_count+1).fill(null);
 
     let m:Map = new Map(history.game_map);
-    let b:Board = new Board(m, history.a_start, history.start_time)
+    let b:Board = new Board(m, history.a_start, history.start_time,history.a_length[0], history.b_length[0])
 
     if(history.turn_count>0){
         match_states[0] = new MatchState(b, history.a_length[0], history.b_length[0])
