@@ -158,7 +158,7 @@ export default function Game({ currentMatchStateIndex, setCurrentMatchStateIndex
     }
 
 
-
+    
     for (let x = 0; x < gridSizeHeight; x++) {
         for (let y = 0; y < gridSizeWidth; y++) {
             drawTile(x, y, '#B19E4E');

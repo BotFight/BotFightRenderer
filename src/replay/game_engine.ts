@@ -112,7 +112,7 @@ export class Board {
     snake_a:Snake;
     snake_b:Snake;
 
-    constructor(map: Map, a_start:boolean, start_time:number){
+    constructor(map: Map, a_start:boolean, start_time:number, a_length:number, b_length:number){
         this.map = map;
         this.cells_a = new Array(map.dim_y).fill(null).map(
             () => new Array(map.dim_x).fill(0));
@@ -129,6 +129,9 @@ export class Board {
 
         this.snake_a = new Snake(map.start_a, map.start_size);
         this.snake_b = new Snake(map.start_b, map.start_size);
+
+        this.cells_a[this.map.start_a[1]][this.map.start_a[0]] = a_length
+        this.cells_b[this.map.start_b[1]][this.map.start_b[0]] = b_length
     }
 
     play_turn(turn: Direction[], cells_lost:number[][], time:number): void{
