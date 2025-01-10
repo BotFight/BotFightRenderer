@@ -174,7 +174,7 @@ export class Board {
             console.log(cells_lost);
 
             cells_lost.forEach((cell, index)=>{
-                this.cells_b[cell[1]][cell[0]]=0;
+                this.cells_b[cell[1]][cell[0]]--;
             })
 
             console.log(this.snake_b.head_loc);
