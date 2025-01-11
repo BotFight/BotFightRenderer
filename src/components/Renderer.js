@@ -1,5 +1,6 @@
 import React, { useEffect ,useState } from 'react';
 import Game from './Game';
+import Selector from './Selector';
 import Navigation from './Navigation';
 import { processData} from "../replay/process_replay"
 
@@ -8,6 +9,7 @@ export default function Renderer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playSpeed, setPlaySpeed] = useState(1000); 
   const [matchStates, setMatchStates] = useState(null);
+  const [matchId, setMatchId] = useState(1);
 
   const handleBack = () => {
     setCurrentMatchStateIndex((prevIndex) => Math.max(prevIndex - 1, 0));
@@ -35,14 +37,33 @@ export default function Renderer() {
     }
   };
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const m = await processData("./result.json");
+  //     setMatchStates(m.match_states);
+  //   };
+
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
     const fetchData = async () => {
-      const m = await processData("./result.json");
-      setMatchStates(m.match_states);
-    };
-
-    fetchData();
-  }, []);
+      console.log("Fetching data for match id ", matchId);
+      try {
+        const response = await fetch('https://botfightwebserver.onrender.com/api/v1/game-match-log/id?id=' + matchId);
+        if (!response.ok) {
+          throw new Error('Failed to fetch match data ', response.status);
+        }
+        const data = await response.json();
+        const matchLog = await JSON.parse(data["matchLog"]);
+        const m = await processData(matchLog);
+        setMatchStates(m.match_states);
+      } catch (error) {
+        console.error("Error processing match data ", error);
+      }
+  }
+  fetchData();
+  }, [matchId]);
 
   useEffect(() => {
     let interval;
@@ -62,11 +83,14 @@ export default function Renderer() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800">
+      <div>
       <Game
         currentMatchStateIndex={currentMatchStateIndex}
         setCurrentMatchStateIndex={setCurrentMatchStateIndex}
         matchStates={matchStates}
       />
+      <Selector setMatchId={setMatchId}/>
+      </div>
       <Navigation
         onBack={handleBack}
         onForward={handleForward}

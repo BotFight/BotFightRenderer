@@ -51,11 +51,8 @@ class MatchState{
     
 }
 
-export async function processData(historyFile: string): Promise<Match> {
-    const response = await fetch(historyFile)
-    const fileContent = await response.json();
-    let history:BoardHistory = fileContent;
-
+export async function processData(history: BoardHistory): Promise<Match> {
+    console.log(history);
     let match_states: MatchState[] = new Array(history.turn_count+1).fill(null);
 
     let m:Map = new Map(history.game_map);
@@ -72,10 +69,7 @@ export async function processData(historyFile: string): Promise<Match> {
 
     let match:Match = new Match(match_states, history.bidA, history.bidB, history.reason);
 
-    return match;
-   
-    
-
+    return match;    
 }
 
 interface BoardHistory{

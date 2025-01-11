@@ -28,8 +28,6 @@ export default function Game({ currentMatchStateIndex, setCurrentMatchStateIndex
     setGridSizeHeight(matchStates[0].map_state.length);
     setGridSizeWidth(matchStates[0].map_state[0].length);
     setGrid(matchStates[currentMatchStateIndex].map_state);
-    // console.log(currentMatchStateIndex)
-    // console.log(matchStates[currentMatchStateIndex].map_state)
 
     const width = gridSizeWidth * cellSize;
     const height = gridSizeHeight * cellSize;

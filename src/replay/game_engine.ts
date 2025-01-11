@@ -171,15 +171,9 @@ export class Board {
                 this.cells_b[y][x]++;
             })
 
-            console.log(cells_lost);
-
             cells_lost.forEach((cell, index)=>{
                 this.cells_b[cell[1]][cell[0]]--;
             })
-
-            console.log(this.snake_b.head_loc);
-            console.log(this.map.start_b);
-
 
             this.b_time-=time;
 
