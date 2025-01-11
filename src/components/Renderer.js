@@ -37,15 +37,6 @@ export default function Renderer() {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const m = await processData("./result.json");
-  //     setMatchStates(m.match_states);
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   useEffect(() => {
     const fetchData = async () => {
       console.log("Fetching data for match id ", matchId);
@@ -63,6 +54,7 @@ export default function Renderer() {
       }
   }
   fetchData();
+  setCurrentMatchStateIndex(0);
   }, [matchId]);
 
   useEffect(() => {
