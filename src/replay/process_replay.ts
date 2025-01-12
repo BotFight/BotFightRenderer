@@ -61,6 +61,7 @@ export async function processData(history: BoardHistory): Promise<Match> {
     if(history.turn_count>0){
         match_states[0] = new MatchState(b, history.a_length[0], history.b_length[0])
         for(let i:number = 1; i<= history.turn_count; i++){
+            console.log(i);
             b.play_turn(history.moves[i-1], history.cells_lost[i-1], history.times[i-1]);
             match_states[i] = new MatchState(b, history.a_length[i], history.b_length[i]);
             b.next_turn();

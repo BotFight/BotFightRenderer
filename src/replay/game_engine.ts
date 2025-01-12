@@ -151,9 +151,11 @@ export class Board {
             })
 
             cells_lost.forEach((cell, index)=>{
-            
-                this.cells_a[cell[1]][cell[0]]-=1;
+                this.cells_a[cell[1]][cell[0]]--;
             })
+            if(cells_lost.length >1){
+                console.log(cells_lost);
+            }
 
             this.a_time-=time;
             
@@ -174,6 +176,12 @@ export class Board {
             cells_lost.forEach((cell, index)=>{
                 this.cells_b[cell[1]][cell[0]]--;
             })
+            if(cells_lost.length >1){
+                console.log(cells_lost);
+            }
+            
+            //console.log("b")
+            //console.log(JSON.parse(JSON.stringify(this.cells_b)))
 
             this.b_time-=time;
 
