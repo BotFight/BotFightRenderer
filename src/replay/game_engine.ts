@@ -9,39 +9,89 @@ export class Map{
     cells_walls: number[][];
 
     constructor(map_string: string){
-        let infos:string[] = map_string.split("#");
-        let info_dim:string[] = infos[0].split(",");
-        this.dim_x = parseInt(info_dim[0]);
-        this.dim_y = parseInt(info_dim[1]);
+        if(map_string.length!=0)
+        {
+            let infos:string[] = map_string.split("#");
+            let info_dim:string[] = infos[0].split(",");
+            this.dim_x = parseInt(info_dim[0]);
+            this.dim_y = parseInt(info_dim[1]);
 
-        let info_a:string[] = infos[1].split(",")
-        let info_b:string[] = infos[2].split(",")
-        this.start_a = [parseInt(info_a[0]), parseInt(info_a[1])]
-        this.start_b = [parseInt(info_b[0]), parseInt(info_b[1])]
+            let info_a:string[] = infos[1].split(",")
+            let info_b:string[] = infos[2].split(",")
+            this.start_a = [parseInt(info_a[0]), parseInt(info_a[1])]
+            this.start_b = [parseInt(info_b[0]), parseInt(info_b[1])]
 
-        this.start_size = parseInt(infos[3])
-        this.min_player_size = parseInt(infos[4])
+            this.start_size = parseInt(infos[3])
+            this.min_player_size = parseInt(infos[4])
 
-        let apples:string[] = infos[5].split("|")
-        this.apple_timeline = new Array(apples.length).fill(null).map(
-            () => new Array(3).fill(0));
+            let apples:string[] = infos[5].split("|")
+            this.apple_timeline = new Array(apples.length).fill(null).map(
+                () => new Array(3).fill(0));
 
-        for(let i = 0; i< apples.length; i++){
-            let apple:string[] = apples[i].split(',');
-            for(let j = 0; j < 3; j++){
-                this.apple_timeline[i][j] = parseInt(apple[j]);
-            }   
+            for(let i = 0; i< apples.length; i++){
+                let apple:string[] = apples[i].split(',');
+                for(let j = 0; j < 3; j++){
+                    this.apple_timeline[i][j] = parseInt(apple[j]);
+                }   
+            }
+
+            this.cells_walls = new Array(this.dim_y).fill(null).map(
+                () => new Array(this.dim_x).fill(0));
+
+            for(let i = 0; i< this.dim_y; i++){
+                for(let j = 0; j < this.dim_x; j++){
+                    this.cells_walls[i][j] = parseInt(infos[6][i*this.dim_x+j]);
+                }   
+            }
+        } else{
+            this.dim_x = 0;
+            this.dim_y = 0;
+            this.start_a = [-1, -1];
+            this.start_b = [-1, -1];
+            this.start_size = 5;
+            this.min_player_size = 2;
+            this.apple_timeline = new Array(0).fill(null).map(
+                () => new Array(0).fill(0));
         }
+        
 
-        this.cells_walls = new Array(this.dim_y).fill(null).map(
+    }
+
+
+    get_enum_map(round_num: number): number[][] {
+        let enum_map:number[][] = new Array(this.dim_y).fill(null).map(
             () => new Array(this.dim_x).fill(0));
 
         for(let i = 0; i< this.dim_y; i++){
-            for(let j = 0; j < this.dim_x; j++){
-                this.cells_walls[i][j] = parseInt(infos[6][i*this.dim_x+j]);
-            }   
+            for(let j = 0; j< this.dim_x; j++){
+                for(let k = 0; k < this.apple_timeline.length; k++){
+                    if(this.apple_timeline[k][0] == round_num){
+                        let x = this.apple_timeline[k][1]
+                        let y = this.apple_timeline[k][1]
+                        enum_map[y][x] = 2;
+                    }
+                    
+                }
+
+                if(this.cells_walls[i][j]){
+                    enum_map[i][j] = 1;
+                }else{
+                    enum_map[i][j] = 0;
+                }
+
+            }
+
         }
 
+        
+        if(this.start_a[0]!=-1){
+            enum_map[this.start_a[1]][this.start_a[0]] = 3;
+            
+        }
+        if(this.start_b[0]!=-1){
+            enum_map[this.start_b[1]][this.start_b[0]] = 5;
+        } 
+        return enum_map;
     }
 }
 
@@ -132,6 +182,8 @@ export class Board {
 
         this.cells_a[this.map.start_a[1]][this.map.start_a[0]] = 1
         this.cells_b[this.map.start_b[1]][this.map.start_b[0]] = 1
+
+        this.spawn_apples()
     }
 
     play_turn(turn: Direction[], cells_lost:number[][], time:number): void{
@@ -188,10 +240,7 @@ export class Board {
         }       
     }
 
-    next_turn(): void {
-        this.is_as_turn = !this.is_as_turn;
-        this.turn_count++;
-
+    spawn_apples(): void {
         while(this.apple_counter < this.map.apple_timeline.length 
             && this.map.apple_timeline[this.apple_counter][0] <= 
             this.get_round_num()){
@@ -202,6 +251,15 @@ export class Board {
             this.cells_apples[y][x] = 1
             this.apple_counter++;
         }
+    }
+
+    next_turn(): void {
+        this.is_as_turn = !this.is_as_turn;
+        this.turn_count++;
+
+        this.spawn_apples()
+
+        
     }
 
     get_round_num(): number {

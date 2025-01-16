@@ -78,7 +78,6 @@ export default function Renderer() {
       <div>
       <Game
         currentMatchStateIndex={currentMatchStateIndex}
-        setCurrentMatchStateIndex={setCurrentMatchStateIndex}
         matchStates={matchStates}
       />
       <Selector setMatchId={setMatchId}/>
