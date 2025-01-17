@@ -9,50 +9,40 @@ export class Map{
     cells_walls: number[][];
 
     constructor(map_string: string){
-        if(map_string.length!=0)
-        {
-            let infos:string[] = map_string.split("#");
-            let info_dim:string[] = infos[0].split(",");
-            this.dim_x = parseInt(info_dim[0]);
-            this.dim_y = parseInt(info_dim[1]);
+        
+        let infos:string[] = map_string.split("#");
+        let info_dim:string[] = infos[0].split(",");
+        this.dim_x = parseInt(info_dim[0]);
+        this.dim_y = parseInt(info_dim[1]);
 
-            let info_a:string[] = infos[1].split(",")
-            let info_b:string[] = infos[2].split(",")
-            this.start_a = [parseInt(info_a[0]), parseInt(info_a[1])]
-            this.start_b = [parseInt(info_b[0]), parseInt(info_b[1])]
+        let info_a:string[] = infos[1].split(",")
+        let info_b:string[] = infos[2].split(",")
+        this.start_a = [parseInt(info_a[0]), parseInt(info_a[1])]
+        this.start_b = [parseInt(info_b[0]), parseInt(info_b[1])]
 
-            this.start_size = parseInt(infos[3])
-            this.min_player_size = parseInt(infos[4])
+        this.start_size = parseInt(infos[3])
+        this.min_player_size = parseInt(infos[4])
 
-            let apples:string[] = infos[5].split("|")
-            this.apple_timeline = new Array(apples.length).fill(null).map(
-                () => new Array(3).fill(0));
+        let apples:string[] = infos[5].split("|")
+        this.apple_timeline = new Array(apples.length).fill(null).map(
+            () => new Array(3).fill(0));
 
-            for(let i = 0; i< apples.length; i++){
-                let apple:string[] = apples[i].split(',');
-                for(let j = 0; j < 3; j++){
-                    this.apple_timeline[i][j] = parseInt(apple[j]);
-                }   
-            }
-
-            this.cells_walls = new Array(this.dim_y).fill(null).map(
-                () => new Array(this.dim_x).fill(0));
-
-            for(let i = 0; i< this.dim_y; i++){
-                for(let j = 0; j < this.dim_x; j++){
-                    this.cells_walls[i][j] = parseInt(infos[6][i*this.dim_x+j]);
-                }   
-            }
-        } else{
-            this.dim_x = 0;
-            this.dim_y = 0;
-            this.start_a = [-1, -1];
-            this.start_b = [-1, -1];
-            this.start_size = 5;
-            this.min_player_size = 2;
-            this.apple_timeline = new Array(0).fill(null).map(
-                () => new Array(0).fill(0));
+        for(let i = 0; i< apples.length; i++){
+            let apple:string[] = apples[i].split(',');
+            for(let j = 0; j < 3; j++){
+                this.apple_timeline[i][j] = parseInt(apple[j]);
+            }   
         }
+
+        this.cells_walls = new Array(this.dim_y).fill(null).map(
+            () => new Array(this.dim_x).fill(0));
+
+        for(let i = 0; i< this.dim_y; i++){
+            for(let j = 0; j < this.dim_x; j++){
+                this.cells_walls[i][j] = parseInt(infos[6][i*this.dim_x+j]);
+            }   
+        }
+        
         
 
     }

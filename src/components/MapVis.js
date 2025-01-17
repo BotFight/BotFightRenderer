@@ -14,22 +14,24 @@ export default function MapVis({
   bSpawn,
   mapHeight, mapWidth, 
   walls,
-  cellType}) {
+  cellType,
+  setASpawn,
+  setBSpawn,
+  setTile,
+  rerender
 
+
+}) {
+  const cellSize = 30;
   const canvasRef = useRef(null);
-  const [showSnakeStart, setShowSnakeStart] = useState(true); 
-  const [aSpawn, setASpawn] = useState([-1, -1]); 
-  const [bSpawn, setBSpawn] = useState([-1, -1]);
-  const [mapHeight, setMapHeight] = useState(20); 
-  const [mapWidth, setMapWidth] = useState(20);  
-  const [rerender, setRerender] = useState(false)
+  
   const [mouseCellX, setMouseCellX] = useState(-1); 
   const [mouseCellY, setMouseCellY] = useState(-1); 
-  const cellSize = 30;
-  const [cellType, setCellType] = useState(0);
+  const [rerender, setRerender] = useState(rerender); 
 
   const handleMouseMove = (e) => {
-    const { offsetX, offsetY } = e.nativeEvent;
+    const offsetX = e.clientX - rectBounding.left;
+    const offsetY = e.clientY - rectBounding.top;
 
     // Check if mouse is over the rectangle
     setMouseCellX(Math.floor(offsetX/cellSize));
@@ -41,27 +43,30 @@ export default function MapVis({
     setMouseCellY(-1);
   };
 
+  const handleClick = (event) => {
+    const offsetX = e.clientX - rectBounding.left;
+    const offsetY = e.clientY - rectBounding.top;
+
+    const cellX = Math.floor(offsetX/cellSize);
+    const cellY = Math.floor(offsetY/cellSize);
+
+    setTile(cellX, cellY);
+  };
+
   useEffect(() => {
+    setRerender(rerender)
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
     const width = mapWidth * cellSize;
     const height = mapHeight * cellSize;
 
-    setShowSnakeStart(showSnakeStart);
-    setASpawn(aSpawn);
-    setBSpawn(bSpawn);
-    setMapHeight(mapHeight);
-    setMapWidth(mapWidth);
-    setRerender(false);
-    setWalls(walls);
-    setCellType(cellType);
-
     canvas.width = width;
     canvas.height = height;
 
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseout', handleMouseOut);
+    canvas.addEventListener('click', handleClick);
 
     const drawTile = (x, y, color) => {
         ctx.fillStyle = color;
@@ -140,7 +145,7 @@ export default function MapVis({
        }
 
        const drawCell = (x, y) => {
-          if(walls[x][y]){
+          if(walls[y][x]){
             drawWall(y, x);
           }
           else if(showSnakeStart && x == aSpawn[1] && y == aSpawn[0]){
@@ -172,10 +177,10 @@ export default function MapVis({
     bSpawn, 
     mapHeight, 
     mapWidth, 
-    rerender,
     walls, 
     mouseCellX,
-    mouseCellY
+    mouseCellY,
+    rerender
   ]);
 
   return (
