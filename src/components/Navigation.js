@@ -3,7 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
 function Navigation({
-    
+  onBack, onForward, onInputChange, togglePlay, inputValue, isPlaying, playSpeed, onSpeedChange 
+
  }) {
     return (
     <div className="navigation p-5 flex justify-between items-center bg-gray-800 ">

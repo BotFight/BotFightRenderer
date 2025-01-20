@@ -1,3 +1,6 @@
+import { useEffect, useRef, useState } from 'react';
+import { Direction } from '../replay/game_engine';
+
 const GridValues = {
   EMPTY: 0,
   WALL: 1,
@@ -27,11 +30,13 @@ export default function MapVis({
   
   const [mouseCellX, setMouseCellX] = useState(-1); 
   const [mouseCellY, setMouseCellY] = useState(-1); 
-  const [rerender, setRerender] = useState(rerender); 
 
   const handleMouseMove = (e) => {
-    const offsetX = e.clientX - rectBounding.left;
-    const offsetY = e.clientY - rectBounding.top;
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
 
     // Check if mouse is over the rectangle
     setMouseCellX(Math.floor(offsetX/cellSize));
@@ -43,9 +48,13 @@ export default function MapVis({
     setMouseCellY(-1);
   };
 
-  const handleClick = (event) => {
-    const offsetX = e.clientX - rectBounding.left;
-    const offsetY = e.clientY - rectBounding.top;
+  const handleClick = (e) => {
+    console.log(cellType);
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
 
     const cellX = Math.floor(offsetX/cellSize);
     const cellY = Math.floor(offsetY/cellSize);
@@ -54,7 +63,6 @@ export default function MapVis({
   };
 
   useEffect(() => {
-    setRerender(rerender)
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
@@ -71,12 +79,18 @@ export default function MapVis({
     const drawTile = (x, y, color) => {
         ctx.fillStyle = color;
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-
+        ctx.strokeStyle = 'black';
         if(x==mouseCellX && y == mouseCellY){
-          ctx.strokeStyle = 'black';
-          ctx.lineWidth = 5; 
-          ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
+          ctx.lineWidth = 2; 
+        } else{
+          ctx.lineWidth = 0.25; 
         }
+        ctx.strokeRect(
+          x*cellSize+(ctx.lineWidth/2), 
+          y*cellSize+(ctx.lineWidth/2), 
+          cellSize-(ctx.lineWidth), 
+          cellSize-(ctx.lineWidth)
+        );
         
     }
 
@@ -145,31 +159,32 @@ export default function MapVis({
        }
 
        const drawCell = (x, y) => {
-          if(walls[y][x]){
-            drawWall(y, x);
+          if(walls != null && walls[y][x]){
+            drawWall(x, y);
           }
-          else if(showSnakeStart && x == aSpawn[1] && y == aSpawn[0]){
-            drawSnakeHead(y, x, 'green', direction.NORTH);
+          else if(showSnakeStart && x == aSpawn[0] && y == aSpawn[1]){
+            drawSnakeHead(x, y, 'green', Direction.NORTH);
           }
-          else if(showSnakeStart && x == bSpawn[1] && y == bSpawn[0]){
-            drawSnakeHead(y, x, 'blue', direction.NORTH);
+          else if(showSnakeStart && x == bSpawn[0] && y == bSpawn[1]){
+            drawSnakeHead(x, y, 'blue', Direction.NORTH);
           }
       }
 
-    for (let x = 0; x < gridSizeHeight; x++) {
-        for (let y = 0; y < gridSizeWidth; y++) {
+    for (let y = 0; y < mapHeight; y++) {
+        for (let x = 0; x < mapWidth; x++) {
             drawTile(x, y, '#B19E4E');
         }
     }
 
-    for (let x = 0; x < gridSizeHeight; x++) {
-        for (let y = 0; y < gridSizeWidth; y++) {
+    for (let y = 0; y < mapHeight; y++) {
+        for (let x = 0; x < mapWidth; x++) {
             drawCell(x, y);
         }
     }
     return () => {
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseout', handleMouseOut);
+      canvas.removeEventListener('click', handleClick);
     };
     
   }, [

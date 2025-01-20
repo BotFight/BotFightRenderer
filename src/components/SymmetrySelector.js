@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
-export default function Selector({handleSymmetryChange}) {
-    const [ids, setIds] = useState(["Vertical, Horizontal, Origin"]);
+export default function SymmetrySelector({handleSymmetryChange}) {
+    const [ids, setIds] = useState(["Vertical", "Horizontal", "Origin"]);
     useEffect(() => {
     }, []);
     

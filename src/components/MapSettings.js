@@ -8,8 +8,8 @@ function MapSettings({
   appleNum, handleAppleNumChange
 }) {
     return (
-    <div className="navigation p-5 flex justify-between items-center bg-gray-800 ">
-    <div className="pr-5">
+      <div className="flex flex-row items-start justify-start gap-5">
+      <div>
         
         <input
           type="number"
