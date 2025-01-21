@@ -5,7 +5,8 @@ function MapSettings({
   mapHeight, handleHeightChange,
   mapWidth, handleWidthChange,
   appleRate, handleAppleRateChange,
-  appleNum, handleAppleNumChange
+  appleNum, handleAppleNumChange,
+  startSize, handleStartSizeChange
 }) {
     return (
       <div className="flex flex-row items-start justify-start gap-5">
@@ -45,6 +46,15 @@ function MapSettings({
           onChange={handleAppleNumChange}
           className="nav-input"
           placeholder="Apple Spawn #"
+        />
+      </div>
+      <div>
+      <input
+          type="number"
+          value={startSize}
+          onChange={handleStartSizeChange}
+          className="nav-input"
+          placeholder="Start Size"
         />
       </div>
       

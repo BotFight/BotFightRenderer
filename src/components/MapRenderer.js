@@ -27,6 +27,8 @@ export default function MapRenderer() {
     const [appleNum, setAppleNum] = useState(1);
     const [symmetry, setSymmetry] = useState("Vertical");
     const [canvasRerender, setCanvasRerender] = useState(false)
+    const [startSize, setStartSize] = useState(5)
+
 
     const [mapString, setMapString] = useState("");
     const [showMapString, setShowMapString] = useState(false);
@@ -38,6 +40,9 @@ export default function MapRenderer() {
     const max_apple_num = 5;
     const min_apple_rate = 50;
     const max_apple_rate = 150;
+    const min_start_size = 3;
+    const max_start_size = 64;
+    const min_size = 2;
 
     const reflect = (x, y) => {
       if(symmetry=="Vertical"){
@@ -107,6 +112,11 @@ export default function MapRenderer() {
       setCanvasRerender(!canvasRerender)
     };
 
+    const handleStartSizeChange = (event) => {
+      const value = parseInt(event.target.value, 10);
+        setStartSize(Math.max(Math.min(max_start_size, value), min_start_size))
+    };
+
     const handleSymmetryChange = (event) => {
       const value = event.target.value;
       setSymmetry(value);
@@ -126,6 +136,8 @@ export default function MapRenderer() {
       parts.push(mapWidth.toString()+","+mapHeight.toString());
       parts.push(aSpawn[0].toString()+","+aSpawn[1].toString());
       parts.push(bSpawn[0].toString()+","+bSpawn[1].toString());
+      parts.push(startSize.toString());
+      parts.push(min_size.toString());
       parts.push(appleRate.toString()+","+appleNum.toString()+","+symmetry);
 
       let wallarr = []
@@ -257,6 +269,8 @@ export default function MapRenderer() {
         handleAppleRateChange={handleAppleRateChange}
         appleNum={appleNum}
         handleAppleNumChange={handleAppleNumChange}
+        startSize={startSize}
+        handleStartSizeChange={handleStartSizeChange}
       />
       
       </div>
