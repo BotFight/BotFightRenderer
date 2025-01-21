@@ -1,76 +1,100 @@
-'use client';
-
 import { useEffect, useRef, useState } from 'react';
 import { Direction } from '../replay/game_engine';
 
 const GridValues = {
-    EMPTY: 0,
-    WALL: 1,
-    APPLE: 2,
-    SNAKE_A_HEAD: 3,
-    SNAKE_A_BODY: 4,
-    SNAKE_B_HEAD: 5,
-    SNAKE_B_BODY: 6,
+  EMPTY: 0,
+  WALL: 1,
+  APPLE: 2,
+  SNAKE_A_HEAD: 3,
+  SNAKE_A_BODY: 4,
+  SNAKE_B_HEAD: 5,
+  SNAKE_B_BODY: 6,
 }
 
-export default function Game({ currentMatchStateIndex,  matchStates }) {
-  const canvasRef = useRef(null);
-  const [grid, setGrid] = useState([]);    
-  const [gridSizeWidth, setGridSizeWidth] = useState(0); 
-  const [gridSizeHeight, setGridSizeHeight] = useState(0);
+export default function MapVis({
+  showSnakeStart, 
+  aSpawn,
+  bSpawn,
+  mapHeight, mapWidth, 
+  walls,
+  cellType,
+  setASpawn,
+  setBSpawn,
+  setTile,
+  rerender
+
+
+}) {
   const cellSize = 30;
+  const canvasRef = useRef(null);
+  
+  const [mouseCellX, setMouseCellX] = useState(-1); 
+  const [mouseCellY, setMouseCellY] = useState(-1); 
+
+  const handleMouseMove = (e) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+
+    // Check if mouse is over the rectangle
+    setMouseCellX(Math.floor(offsetX/cellSize));
+    setMouseCellY(Math.floor(offsetY/cellSize));
+  };
+
+  const handleMouseOut = () => {
+    setMouseCellX(-1);
+    setMouseCellY(-1);
+  };
+
+  const handleClick = (e) => {
+    console.log(cellType);
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+
+    const cellX = Math.floor(offsetX/cellSize);
+    const cellY = Math.floor(offsetY/cellSize);
+
+    setTile(cellX, cellY);
+  };
 
   useEffect(() => {
-    if (!matchStates) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    
-    setGridSizeHeight(matchStates[0].map_state.length);
-    setGridSizeWidth(matchStates[0].map_state[0].length);
-    setGrid(matchStates[currentMatchStateIndex].map_state);
 
-    const width = gridSizeWidth * cellSize;
-    const height = gridSizeHeight * cellSize;
+    const width = mapWidth * cellSize;
+    const height = mapHeight * cellSize;
 
     canvas.width = width;
     canvas.height = height;
 
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseout', handleMouseOut);
+    canvas.addEventListener('click', handleClick);
+
     const drawTile = (x, y, color) => {
         ctx.fillStyle = color;
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-    }
-    const drawSnake = (x, y, color) => {
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(
-          x * cellSize + cellSize / 2,  // center x
-          y * cellSize + cellSize / 2,  // center y
-          cellSize / 2,                 // radius
-          0,                           // start angle
-          Math.PI * 2                  // end angle (full circle)
+        ctx.strokeStyle = 'black';
+        if(x==mouseCellX && y == mouseCellY){
+          ctx.lineWidth = 2; 
+        } else{
+          ctx.lineWidth = 0.25; 
+        }
+        ctx.strokeRect(
+          x*cellSize+(ctx.lineWidth/2), 
+          y*cellSize+(ctx.lineWidth/2), 
+          cellSize-(ctx.lineWidth), 
+          cellSize-(ctx.lineWidth)
         );
-        ctx.fill();    
+        
     }
 
-     const drawFood = (x, y) => {
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
-        ctx.arc(
-          x * cellSize + cellSize / 2,
-          y * cellSize + cellSize / 2, 
-          cellSize / 4,
-          0,
-          Math.PI * 2
-        );
-        ctx.fill();
-       
-        // Border
-        ctx.strokeStyle = 'darkred';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-       }
-       
-       const drawSnakeHead = (x, y, color, direction) => {
+    const drawSnakeHead = (x, y, color, direction) => {
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(
@@ -135,42 +159,44 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
        }
 
        const drawCell = (x, y) => {
-        switch (grid[x][y]) {
-            case GridValues.WALL:
-                drawWall(y, x);
-                break;
-            case GridValues.APPLE:
-                drawFood(y, x);
-                break;
-            case GridValues.SNAKE_A_HEAD:
-                drawSnakeHead(y, x, 'green', matchStates[currentMatchStateIndex].a_dir);
-                break;
-            case GridValues.SNAKE_A_BODY:
-                drawSnake(y, x, 'green');
-                break;
-            case GridValues.SNAKE_B_HEAD:
-                drawSnakeHead(y, x, 'blue',  matchStates[currentMatchStateIndex].b_dir);
-                break;
-            case GridValues.SNAKE_B_BODY:
-                drawSnake(y, x, 'blue');
-                break;
-        }
-    }
+          if(walls != null && walls[y][x]){
+            drawWall(x, y);
+          }
+          else if(showSnakeStart && x == aSpawn[0] && y == aSpawn[1]){
+            drawSnakeHead(x, y, 'green', Direction.NORTH);
+          }
+          else if(showSnakeStart && x == bSpawn[0] && y == bSpawn[1]){
+            drawSnakeHead(x, y, 'blue', Direction.NORTH);
+          }
+      }
 
-
-    
-    for (let x = 0; x < gridSizeHeight; x++) {
-        for (let y = 0; y < gridSizeWidth; y++) {
+    for (let y = 0; y < mapHeight; y++) {
+        for (let x = 0; x < mapWidth; x++) {
             drawTile(x, y, '#B19E4E');
         }
     }
 
-    for (let x = 0; x < gridSizeHeight; x++) {
-        for (let y = 0; y < gridSizeWidth; y++) {
+    for (let y = 0; y < mapHeight; y++) {
+        for (let x = 0; x < mapWidth; x++) {
             drawCell(x, y);
         }
     }
-  }, [grid, matchStates, gridSizeWidth, gridSizeHeight, cellSize, currentMatchStateIndex]);
+    return () => {
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseout', handleMouseOut);
+      canvas.removeEventListener('click', handleClick);
+    };
+    
+  }, [
+    aSpawn, 
+    bSpawn, 
+    mapHeight, 
+    mapWidth, 
+    walls, 
+    mouseCellX,
+    mouseCellY,
+    rerender
+  ]);
 
   return (
     <div className="flex justify-center items-center bg-gray-100 min-w-screen">
