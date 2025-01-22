@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import Game from '../Game'
 import Navigation from '../Navigation';
 import LocalSelector from './LocalSelector';
+import MapSelector from './MapSelector';
 import { useState } from 'react';
 import { processData} from "../../replay/process_replay"
 import ReassignDirectory from './ReassignDirectory';
@@ -18,7 +19,8 @@ function LocalRenderer() {
   const [finalBot2File, setFinalBot2File] = useState(null);
   const [shouldPlayMatch, setShouldPlayMatch] = useState(false);
   const [engineOutput, setEngineOutput] = useState(null);
-  
+  const [map, setMap] = useState(null);
+
   const handleBack = () => {
     setCurrentMatchStateIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
@@ -65,10 +67,10 @@ function LocalRenderer() {
     const runMatch = async () => {
       const directoryPathObject = await window.electron.storeGet('directory');
       const directoryPath = directoryPathObject ? directoryPathObject.path : null;
-
       if (!shouldPlayMatch || !finalBot1File || !finalBot2File) {
         return;
       }
+      setEngineOutput("Playing match...");
       try {
         setMatchStates(null);
         setCurrentMatchStateIndex(0);
@@ -77,7 +79,7 @@ function LocalRenderer() {
         const scriptArgs = [
           '-a', finalBot1File.name,
           '-b', finalBot2File.name,
-          '-m', 'pillars',
+          '-m', map,
           '-r'
         ];
         setEngineOutput(await window.electron.runPythonScript(scriptArgs, directoryPath));
@@ -103,6 +105,9 @@ function LocalRenderer() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 relative">
       <div className="absolute top-4 left-4">
         <ReassignDirectory />
+      </div>
+      <div className='mb-4'>
+        <MapSelector onSelectMap={setMap} />
       </div>
       <div className='flex flex-row h-full'>
         <Game

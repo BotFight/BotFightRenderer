@@ -19,6 +19,7 @@ function createWindow() {
     })
     require('@electron/remote/main').enable(win.webContents)
     win.loadURL('http://localhost:3000/electron')
+    win.webContents.openDevTools()
 }
 
 ipcMain.handle('run-python-script', async (event, scriptArgs, directoryPath) => {
