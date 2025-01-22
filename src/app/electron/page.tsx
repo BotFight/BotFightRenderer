@@ -1,5 +1,5 @@
 'use client';
-import DirectoryInput from '@/components/DirectoryInput';
+import DirectoryInput from '@/components/electron/DirectoryInput';
 
 export default function ElectronHome() {
   return (

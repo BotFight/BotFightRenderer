@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
-import Game from './Game'
-import Navigation from './Navigation';
+import Game from '../Game'
+import Navigation from '../Navigation';
 import LocalSelector from './LocalSelector';
 import { useState } from 'react';
-import { processData} from "../replay/process_replay"
+import { processData} from "../../replay/process_replay"
 import ReassignDirectory from './ReassignDirectory';
 import GameOutputs from './GameOutputs';
 
