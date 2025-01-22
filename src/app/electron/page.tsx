@@ -1,12 +1,10 @@
 'use client';
+import DirectoryInput from '@/components/DirectoryInput';
 
-import React from 'react';
-import LocalRenderer from '@/components/LocalRenderer';
-
-export default function Home() {
+export default function ElectronHome() {
   return (
-    <main>
-    <LocalRenderer />
-  </main>
+    <div>
+      <DirectoryInput />
+    </div>
   );
 }

@@ -4,16 +4,21 @@ import Navigation from './Navigation';
 import LocalSelector from './LocalSelector';
 import { useState } from 'react';
 import { processData} from "../replay/process_replay"
+import ReassignDirectory from './ReassignDirectory';
+import GameOutputs from './GameOutputs';
+
+const path = require('path');
 
 function LocalRenderer() {
   const [currentMatchStateIndex, setCurrentMatchStateIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playSpeed, setPlaySpeed] = useState(1000); 
+  const [playSpeed, setPlaySpeed] = useState(50); 
   const [matchStates, setMatchStates] = useState(null);
   const [finalBot1File, setFinalBot1File] = useState(null);
   const [finalBot2File, setFinalBot2File] = useState(null);
   const [shouldPlayMatch, setShouldPlayMatch] = useState(false);
-
+  const [engineOutput, setEngineOutput] = useState(null);
+  
   const handleBack = () => {
     setCurrentMatchStateIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
@@ -58,7 +63,9 @@ function LocalRenderer() {
 
   useEffect(() => {
     const runMatch = async () => {
-      console.log("Running match");
+      const directoryPathObject = await window.electron.storeGet('directory');
+      const directoryPath = directoryPathObject ? directoryPathObject.path : null;
+
       if (!shouldPlayMatch || !finalBot1File || !finalBot2File) {
         return;
       }
@@ -66,15 +73,19 @@ function LocalRenderer() {
         setMatchStates(null);
         setCurrentMatchStateIndex(0);
         setIsPlaying(false);
-        console.log("Running match with ", finalBot1File, finalBot2File);
-        const result = await window.electron.runPythonScript([
+        console.log("Running match with ", finalBot1File, finalBot2File, directoryPath);
+        const scriptArgs = [
           '-a', finalBot1File.name,
           '-b', finalBot2File.name,
           '-m', 'pillars',
           '-r'
-        ]);
-        console.log("THIS IS THE RESULT ", result)
-        const matchLog = await JSON.parse(result);
+        ];
+        setEngineOutput(await window.electron.runPythonScript(scriptArgs, directoryPath));
+        const resultFilePath = path.join(directoryPath, 'game_env', 'match_runs', 'result.json');
+        const resultFileContent = await window.electron.readFile(resultFilePath);
+        const matchLog = JSON.parse(resultFileContent);
+        
+
         const m = await processData(matchLog);
         setMatchStates(m.match_states);
       }
@@ -87,27 +98,31 @@ function LocalRenderer() {
   }, [shouldPlayMatch]);
 
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800">
-    <div>
-    <Game
-      currentMatchStateIndex={currentMatchStateIndex}
-      setCurrentMatchStateIndex={setCurrentMatchStateIndex}
-      matchStates={matchStates}
-    />
-    </div>
-    <LocalSelector setFinalBot1File={setFinalBot1File} setFinalBot2File={setFinalBot2File} setShouldPlayMatch={setShouldPlayMatch}/>
-    <Navigation
-      onBack={handleBack}
-      onForward={handleForward}
-      onInputChange={handleInputChange}
-      togglePlay={togglePlay}
-      inputValue={currentMatchStateIndex}
-      isPlaying={isPlaying}
-      onSpeedChange={handleSpeedChange}
-    />
-  </div>
-  )
-}
 
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 relative">
+      <div className="absolute top-4 left-4">
+        <ReassignDirectory />
+      </div>
+      <div className='flex flex-row h-full'>
+        <Game
+          currentMatchStateIndex={currentMatchStateIndex}
+          setCurrentMatchStateIndex={setCurrentMatchStateIndex}
+          matchStates={matchStates}
+        />
+        <GameOutputs engineOutput={engineOutput} />
+      </div>
+      <LocalSelector setFinalBot1File={setFinalBot1File} setFinalBot2File={setFinalBot2File} setShouldPlayMatch={setShouldPlayMatch}/>
+      <Navigation
+        onBack={handleBack}
+        onForward={handleForward}
+        onInputChange={handleInputChange}
+        togglePlay={togglePlay}
+        inputValue={currentMatchStateIndex}
+        isPlaying={isPlaying}
+        onSpeedChange={handleSpeedChange}
+      />
+    </div>
+  );
+}
 export default LocalRenderer
