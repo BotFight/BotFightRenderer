@@ -179,9 +179,23 @@ export class Board {
     play_turn(turn: Direction[], cells_lost:number[][], time:number): void{
         console.log(turn);
         if(this.is_as_turn){
-            turn.forEach((action, index)=>{
-                this.snake_a.push_move(action);
-
+            if(Array.isArray(turn)){
+                turn.forEach((action, index)=>{
+                    this.snake_a.push_move(action);
+    
+                    let x:number = this.snake_a.head_loc[0]
+                    let y:number = this.snake_a.head_loc[1]
+                    
+                    if(this.cells_apples[y][x] > 0){
+                        this.snake_a.apples_eaten+=this.cells_apples[y][x];
+                        this.cells_apples[y][x] = 0;
+                    }
+                    this.cells_a[y][x]++;
+                    
+                })
+            } else{
+                this.snake_a.push_move(turn);
+    
                 let x:number = this.snake_a.head_loc[0]
                 let y:number = this.snake_a.head_loc[1]
                 
@@ -190,8 +204,9 @@ export class Board {
                     this.cells_apples[y][x] = 0;
                 }
                 this.cells_a[y][x]++;
-                
-            })
+
+            }
+            
 
             cells_lost.forEach((cell, index)=>{
                 this.cells_a[cell[1]][cell[0]]--;
@@ -203,8 +218,21 @@ export class Board {
             this.a_time-=time;
             
         } else{
-            turn.forEach((action, index)=>{
-                this.snake_b.push_move(action);
+            if(Array.isArray(turn)){
+                turn.forEach((action, index)=>{
+                    this.snake_b.push_move(action);
+
+                    let x:number = this.snake_b.head_loc[0]
+                    let y:number = this.snake_b.head_loc[1]
+
+                    if(this.cells_apples[y][x] > 0){
+                        this.snake_b.apples_eaten+=this.cells_apples[y][x];
+                        this.cells_apples[y][x] = 0;
+                    }
+                    this.cells_b[y][x]++;
+                })
+            } else{
+                this.snake_b.push_move(turn);
 
                 let x:number = this.snake_b.head_loc[0]
                 let y:number = this.snake_b.head_loc[1]
@@ -214,7 +242,8 @@ export class Board {
                     this.cells_apples[y][x] = 0;
                 }
                 this.cells_b[y][x]++;
-            })
+                
+            }
 
             cells_lost.forEach((cell, index)=>{
                 this.cells_b[cell[1]][cell[0]]--;
