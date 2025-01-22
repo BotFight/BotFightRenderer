@@ -176,8 +176,8 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
     <div className="flex justify-center items-center bg-gray-100 min-w-screen">
       <canvas
         ref={canvasRef}
-        width={800}
-        height={800}
+        width={400}
+        height={400}
         className="border border-gray-300 bg-white"
       />
     </div>

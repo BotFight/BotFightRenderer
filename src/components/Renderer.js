@@ -7,7 +7,7 @@ import { processData} from "../replay/process_replay"
 export default function Renderer() {
   const [currentMatchStateIndex, setCurrentMatchStateIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playSpeed, setPlaySpeed] = useState(1000); 
+  const [playSpeed, setPlaySpeed] = useState(50); 
   const [matchStates, setMatchStates] = useState(null);
   const [matchId, setMatchId] = useState(1);
 

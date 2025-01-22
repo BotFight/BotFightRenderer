@@ -177,6 +177,7 @@ export class Board {
     }
 
     play_turn(turn: Direction[], cells_lost:number[][], time:number): void{
+        console.log(turn);
         if(this.is_as_turn){
             turn.forEach((action, index)=>{
                 this.snake_a.push_move(action);
