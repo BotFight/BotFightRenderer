@@ -12,7 +12,7 @@ export default function Renderer() {
  const [isPlaying, setIsPlaying] = useState(false);
  const [playSpeed, setPlaySpeed] = useState(200);
  const [matchStates, setMatchStates] = useState(null);
- const [matchId, setMatchId] = useState(null);
+ const [matchId, setMatchId] = useState(1);
 
 
  const handleBack = () => {
