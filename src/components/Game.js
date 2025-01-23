@@ -5,12 +5,9 @@ import { Direction } from '../replay/game_engine';
 
 const GridValues = {
     EMPTY: 0,
-    WALL: 1,
-    APPLE: 2,
-    SNAKE_A_HEAD: 3,
-    SNAKE_A_BODY: 4,
-    SNAKE_B_HEAD: 5,
-    SNAKE_B_BODY: 6,
+    PLAYER_A: 1,
+    PLAYER_B: 2,
+    WALL:3
 }
 
 export default function Game({ currentMatchStateIndex,  matchStates }) {
@@ -39,95 +36,11 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
         ctx.fillStyle = color;
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
     }
-    const drawSnake = (x, y, color) => {
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(
-          x * cellSize + cellSize / 2,  // center x
-          y * cellSize + cellSize / 2,  // center y
-          cellSize / 2,                 // radius
-          0,                           // start angle
-          Math.PI * 2                  // end angle (full circle)
-        );
-        ctx.fill();    
-    }
-
-     const drawFood = (x, y) => {
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
-        ctx.arc(
-          x * cellSize + cellSize / 2,
-          y * cellSize + cellSize / 2, 
-          cellSize / 4,
-          0,
-          Math.PI * 2
-        );
-        ctx.fill();
        
-        // Border
-        ctx.strokeStyle = 'darkred';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-       }
+    const drawPlayer = (x, y, color) => {
        
-       const drawSnakeHead = (x, y, color, direction) => {
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(
-          x * cellSize + cellSize / 2,
-          y * cellSize + cellSize / 2,
-          cellSize / 2,
-          0,
-          Math.PI * 2
-        );
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.fillStyle = 'white';
-        
-        switch(direction) {
-          case Direction.EAST:
-            drawEyes(x + 3/4, y + 1/3, x + 3/4, y + 2/3);
-            break;
-          case Direction.WEST:
-            drawEyes(x + 1/4, y + 1/3, x + 1/4, y + 2/3);
-            break;
-          case Direction.NORTH:
-            drawEyes(x + 1/3, y + 1/4, x + 2/3, y + 1/4);
-            break;
-          case Direction.SOUTH:
-            drawEyes(x + 1/3, y + 3/4, x + 2/3, y + 3/4);
-            break;
-          case Direction.NORTHEAST:
-            drawEyes(x + 2/3, y + 1/3, x + 3/4, y + 1/4);
-            break;
-          case Direction.NORTHWEST:
-            drawEyes(x + 1/3, y + 1/3, x + 1/4, y + 1/4);
-            break;
-          case Direction.SOUTHEAST:
-            drawEyes(x + 2/3, y + 2/3, x + 3/4, y + 3/4);
-            break;
-          case Direction.SOUTHWEST:
-            drawEyes(x + 1/3, y + 2/3, x + 1/4, y + 3/4);
-            break;
-        }
+      }
        
-        function drawEyes(x1, y1, x2, y2) {
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            ctx.arc(x1 * cellSize, y1 * cellSize, 4, 0, Math.PI * 2);
-            ctx.arc(x2 * cellSize, y2 * cellSize, 4, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.fillStyle = 'black';
-            ctx.beginPath();
-            ctx.arc(x1 * cellSize, y1 * cellSize, 2, 0, Math.PI * 2);
-            ctx.arc(x2 * cellSize, y2 * cellSize, 2, 0, Math.PI * 2);
-            ctx.fill();
-          }
-       }
 
        const drawWall = (x, y) => {
         ctx.fillStyle = 'black';
@@ -139,20 +52,11 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
             case GridValues.WALL:
                 drawWall(y, x);
                 break;
-            case GridValues.APPLE:
-                drawFood(y, x);
+            case GridValues.PLAYER_A:
+                drawPlayer(y, x, 'green');
                 break;
-            case GridValues.SNAKE_A_HEAD:
-                drawSnakeHead(y, x, 'green', matchStates[currentMatchStateIndex].a_dir);
-                break;
-            case GridValues.SNAKE_A_BODY:
-                drawSnake(y, x, 'green');
-                break;
-            case GridValues.SNAKE_B_HEAD:
-                drawSnakeHead(y, x, 'blue',  matchStates[currentMatchStateIndex].b_dir);
-                break;
-            case GridValues.SNAKE_B_BODY:
-                drawSnake(y, x, 'blue');
+            case GridValues.PLAYER_B:
+                drawPlayer(y, x, 'blue');
                 break;
         }
     }

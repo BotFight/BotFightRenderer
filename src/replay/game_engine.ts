@@ -28,7 +28,11 @@ export class Board {
                 x = this.last_move_a[0]
                 y = this.last_move_a[1]
 
-                this.map[y][x] = 3
+                if(this.in_map(x, y)) {
+                    this.map[y][x] = 3
+
+                }
+                this.last_move_a = move
             } 
         } else{
             let x = move[0]
@@ -38,7 +42,11 @@ export class Board {
                 x = this.last_move_b[0]
                 y = this.last_move_b[1]
 
-                this.map[y][x] = 3
+                if(this.in_map(x, y)) {
+                    this.map[y][x] = 3
+                }
+
+                this.last_move_b = move
             } 
 
         }
