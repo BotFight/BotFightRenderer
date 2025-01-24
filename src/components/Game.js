@@ -44,7 +44,38 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
 
 
     
-      
+    const drawPlayer = (x, y, color) => {
+      const padding = 4;
+      const size = cellSize - padding * 2; // The knight shape will fit inside the available space
+    
+      // Draw the main body of the knight (the horse head)
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x * cellSize + size / 4, y * cellSize + size / 4); // Start at the neck
+      ctx.lineTo(x * cellSize + size / 2, y * cellSize + size / 2); // Draw to the middle of the horse's head
+      ctx.lineTo(x * cellSize + size, y * cellSize + size / 4); // Draw to the top of the horse's head
+      ctx.lineTo(x * cellSize + size, y * cellSize + size / 1.5); // Right side of the knight's body
+      ctx.lineTo(x * cellSize + size / 4, y * cellSize + size); // Bottom of the body
+      ctx.lineTo(x * cellSize + size / 4, y * cellSize + size / 2); // Back to the neck
+      ctx.closePath();
+      ctx.fill();
+    
+      // Draw the eyes of the knight (a small white dot)
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(x * cellSize + size / 1.5, y * cellSize + size / 3, 3, 0, 2 * Math.PI);
+      ctx.fill();
+    
+      // Draw the mane of the knight (a few lines behind the horse's head)
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x * cellSize + size / 2, y * cellSize + size / 2); // Start from the neck
+      ctx.lineTo(x * cellSize + size / 2, y * cellSize + size / 4); // Short mane line
+      ctx.moveTo(x * cellSize + size / 2.5, y * cellSize + size / 2); // Start second line
+      ctx.lineTo(x * cellSize + size / 2.5, y * cellSize + size / 4); // Second mane line
+      ctx.stroke();
+    }
 
 
       const drawWall = (x, y) => {
