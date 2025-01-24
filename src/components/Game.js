@@ -6,14 +6,12 @@ import { Direction } from '../replay/game_engine';
 
 
 const GridValues = {
-   EMPTY: 0,
-   WALL: 1,
-   APPLE: 2,
-   SNAKE_A_HEAD: 3,
-   SNAKE_A_BODY: 4,
-   SNAKE_B_HEAD: 5,
-   SNAKE_B_BODY: 6,
+  EMPTY: 0,
+  PLAYER_A: 1,
+  PLAYER_B: 2,
+  WALL:3
 }
+
 
 
 export default function Game({ currentMatchStateIndex,  matchStates }) {
@@ -166,24 +164,15 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
 
         const drawCell = (x, y) => {
         switch (matchStates[currentMatchStateIndex].map_state[x][y]) {
-            case GridValues.WALL:
-                drawWall(y, x);
-                break;
-            case GridValues.APPLE:
-                drawFood(y, x);
-                break;
-            case GridValues.SNAKE_A_HEAD:
-                drawSnakeHead(y, x, 'green', matchStates[currentMatchStateIndex].a_dir);
-                break;
-            case GridValues.SNAKE_A_BODY:
-                drawSnake(y, x, 'green');
-                break;
-            case GridValues.SNAKE_B_HEAD:
-                drawSnakeHead(y, x, 'blue',  matchStates[currentMatchStateIndex].b_dir);
-                break;
-            case GridValues.SNAKE_B_BODY:
-                drawSnake(y, x, 'blue');
-                break;
+          case GridValues.WALL:
+              drawWall(y, x);
+              break;
+          case GridValues.PLAYER_A:
+              drawPlayer(y, x, 'green');
+              break;
+          case GridValues.PLAYER_B:
+              drawPlayer(y, x, 'blue');
+              break;
         }
     }
 
