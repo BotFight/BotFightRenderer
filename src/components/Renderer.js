@@ -6,13 +6,19 @@ import { processData} from "../replay/process_replay"
 import PlayerStats from './PlayerStats';
 
 
-export default function Renderer() {
+export default function Renderer({matchId: incomingMatchId, showSelector = true}){
  const [currentMatchStateIndex, setCurrentMatchStateIndex] = useState(0);
  const [validationMatch, setValidationMatch] = useState(true)
  const [isPlaying, setIsPlaying] = useState(false);
  const [playSpeed, setPlaySpeed] = useState(200);
  const [matchStates, setMatchStates] = useState(null);
- const [matchId, setMatchId] = useState(1);
+ const [matchId, setMatchId] = useState(null);
+
+ useEffect(() => {
+  if (incomingMatchId) {
+    setMatchId(incomingMatchId);
+  }
+}, [incomingMatchId]);
 
 
  const handleBack = () => {
@@ -55,7 +61,9 @@ const handleSpeedChange = (event) => {
 
 
  useEffect(() => {
+  console.log(matchId);
    const fetchData = async () => {
+    
      if (matchId) {
       try {
         const response = await fetch('https://botfightwebserver.onrender.com/api/v1/game-match-log/id?id=' + matchId);
@@ -74,7 +82,24 @@ const handleSpeedChange = (event) => {
       } catch (error) {
         console.error("Error processing match data ", error);
       }
+    } else{
+      try{
+        const response = await fetch('/result.json');
+        if (!response.ok) {
+          throw new Error('Failed to fetch match data ', response.status);
+        }
+        const data = await response.json();
+        setValidationMatch(false)
+        //const matchLog = await JSON.parse(data["matchLog"]);
+        const m = await processData(data);
+        setMatchStates(m.match_states);
+      } catch(error){
+        console.error("Error processing match data ", error);
+      }
+      
     }
+
+    
  }
  setIsPlaying(false)
  setCurrentMatchStateIndex(0);
@@ -103,11 +128,11 @@ const handleSpeedChange = (event) => {
 
  return (
    <div className='min-h-screen flex flex-col items-center justify-center gap-4'>
-     <Selector setMatchId={setMatchId}/>
-     <PlayerStats
+      {showSelector && <Selector setMatchId={setMatchId}/>}
+     {/* <PlayerStats
       currentMatchStateIndex={currentMatchStateIndex}
       matchStates={matchStates}
-     />
+     /> */}
      <Game
        currentMatchStateIndex={currentMatchStateIndex}
        matchStates={matchStates}
