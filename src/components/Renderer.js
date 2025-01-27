@@ -66,7 +66,7 @@ const handleSpeedChange = (event) => {
     
      if (matchId) {
       try {
-        const response = await fetch('https://botfightwebserver.onrender.com/api/v1/game-match-log/id?id=' + matchId);
+        const response = await fetch('https://cs6601webserver.onrender.com/api/v1/game-match-log/id?id=' + matchId);
         if (!response.ok) {
           throw new Error('Failed to fetch match data ', response.status);
         }
