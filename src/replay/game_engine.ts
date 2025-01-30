@@ -1,64 +1,72 @@
 export class Board {
     map: number[][];
 
-    is_as_turn: boolean;
-    last_move_a: number[];
-    last_move_b: number[];
+    last_move_a1: number[];
+    last_move_a2: number[];
+    last_move_b1: number[];
+    last_move_b2: number[];
     width: number;
     height: number;
+    p1_rooks: string[];
+    p2_rooks: string[];
 
-    constructor(width: number, height:number){
+    constructor(width: number, height:number, p1_rooks:string[], p2_rooks:string[]){
         this.map = new Array(height).fill(null).map(
             () => new Array(width).fill(0));
-
-        this.is_as_turn = true;
-        this.last_move_a = [-1, -1];
-        this.last_move_b = [-1, -1];
+        this.last_move_a1 = [-1, -1];
+        this.last_move_a2 = [-1, -1];
+        this.last_move_b1 = [-1, -1];
+        this.last_move_b2 = [-1, -1];
         this.width = width;
         this.height = height;
+        this.p1_rooks = p1_rooks
+        this.p2_rooks = p2_rooks
 
     }
 
-    play_turn(move: number[]): void{
-        if(this.is_as_turn){
-            let x = move[0]
-            let y = move[1]
-            if(this.in_map(x, y) && this.map[y][x] == 0){
-                this.map[y][x] = 1
-                x = this.last_move_a[0]
-                y = this.last_move_a[1]
+    play_turn(move: (string|number)[]): void{
+        let rook:string = String(move[0])
 
-                if(this.in_map(x, y)) {
-                    this.map[y][x] = 3
+        let x:number = Number(move[1])
+        let y:number = Number(move[2])
 
-                }
-                this.last_move_a = move
-            } 
-        } else{
-            let x = move[0]
-            let y = move[1]
-            if(this.in_map(x, y) && this.map[y][x] == 0){
-                this.map[y][x] = 2
-                x = this.last_move_b[0]
-                y = this.last_move_b[1]
+        let arr:number[] = [];
+        let player_enum:number = 0;
 
-                if(this.in_map(x, y)) {
-                    this.map[y][x] = 3
-                }
-
-                this.last_move_b = move
-            } 
-
+        if(rook === this.p1_rooks[0]){
+            arr = this.last_move_a1
+            player_enum = 1;
+        } else if (rook === this.p1_rooks[1]){
+            arr = this.last_move_a2
+            player_enum = 1;
+        } else if(rook === this.p2_rooks[0]){
+            arr = this.last_move_b1
+            player_enum = 2;
+        } else if(rook === this.p2_rooks[1]){
+            arr = this.last_move_b2;
+            player_enum = 2;
         }
-        this.is_as_turn = !this.is_as_turn
+
+    
+        if(this.in_map(x, y) && this.map[y][x] == 0){
+            let last_x:number = arr[0]
+            let last_y:number = arr[1]
+
+            if(this.in_map(last_x, last_y)) {
+                this.map[last_y][last_x] = 3
+            }
+
+            this.map[y][x] = player_enum;
+
+            arr[0] = last_x;
+            arr[1] = last_y;
+        } 
     }
 
     in_map(x:number, y:number): boolean{
         return x >= 0 && x < this.width && y >= 0 && y < this.height;
-
     }
    
-
     get_enum_map(): number[][] {
         let enum_map:number[][] = new Array(this.height).fill(null).map(
             () => new Array(this.width).fill(0));
@@ -66,9 +74,7 @@ export class Board {
         for(let i = 0; i< this.height; i++){
             for(let j = 0; j< this.width; j++){
                 enum_map[i][j] = this.map[i][j];
-            
             }
-
         }
         return enum_map;
     }

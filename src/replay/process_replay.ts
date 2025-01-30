@@ -1,4 +1,3 @@
-import fs from 'fs'
 import {Direction, Board} from './game_engine'
 
 
@@ -26,7 +25,7 @@ class MatchState{
 export async function processData(history: BoardHistory): Promise<Match> {
     let match_states: MatchState[] = new Array(history.moves.length+1).fill(null);
 
-    let b:Board = new Board(history.width, history.height)
+    let b:Board = new Board(history.width, history.height, history.player1_rooks, history.player2_rooks)
     
     if(history.moves.length>0){
         match_states[0] = new MatchState(b)
@@ -43,9 +42,11 @@ export async function processData(history: BoardHistory): Promise<Match> {
 }
 
 interface BoardHistory{
-    moves:number[][],
+    moves:(string|number)[][],
     winner:string,
     win_reason: string,
     width:number,
-    height:number
+    height:number,
+    player1_rooks:string[],
+    player2_rooks:string[]
 }
