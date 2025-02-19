@@ -65,27 +65,31 @@ function LocalRenderer() {
 
   useEffect(() => {
     const runMatch = async () => {
-      const directoryPathObject = await window.electron.storeGet('directory');
-      const directoryPath = directoryPathObject ? directoryPathObject.path : null;
+      const directoryPath = path.join(path.resolve(), 'src', 'engine')
       if (!shouldPlayMatch || !finalBot1File || !finalBot2File) {
         return;
       }
       setEngineOutput("Playing match...");
       try {
+        num = await window.electron.storeGet("numMatches")
         setMatchStates(null);
         setCurrentMatchStateIndex(0);
         setIsPlaying(false);
-        console.log("Running match with ", finalBot1File, finalBot2File, directoryPath);
+        console.log("Running match with ", finalBot1File, finalBot2File, map, 1);
         const scriptArgs = [
-          '-a', finalBot1File.name,
-          '-b', finalBot2File.name,
+          '-a', finalBot1File,
+          '-b', finalBot2File,
           '-m', map,
-          '-r'
+          '-n', num,
         ];
-        setEngineOutput(await window.electron.runPythonScript(scriptArgs, directoryPath));
-        const resultFilePath = path.join(directoryPath, 'game_env', 'match_runs', 'result.json');
+        setEngineOutput(await window.electron.runPythonScript(scriptArgs));
+        const resultFilePath = path.join(directoryPath, 'match_runs', 'result.json');
         const resultFileContent = await window.electron.readFile(resultFilePath);
+
         const matchLog = JSON.parse(resultFileContent);
+        await window.electron.writeMatch(num, matchLog);
+
+        await window.electron.storeSet("numMatches", (num+1)%100000)
         
 
         const m = await processData(matchLog);
@@ -103,9 +107,9 @@ function LocalRenderer() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 relative">
-      <div className="absolute top-4 left-4">
+      {/* <div className="absolute top-4 left-4">
         <ReassignDirectory />
-      </div>
+      </div> */}
       <div className='mb-4'>
         <MapSelector onSelectMap={setMap} />
       </div>

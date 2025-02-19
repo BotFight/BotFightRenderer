@@ -3,6 +3,8 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 const path = require('path');
 
+const { app } = require('electron') 
+
 export default function DirectoryInput() {
   const router = useRouter();
   const [directory, setDirectory] = useState(null);
@@ -29,9 +31,9 @@ export default function DirectoryInput() {
       const dirName = inputPath.split('/').pop() || inputPath;
       const newDirectory = { name: dirName, path: inputPath };
       setDirectory(newDirectory);
+      
 
-      const mapsFilePath = path.join(newDirectory.path, 'game_env', 'maps.json');
-      const mapsFileContent = await window.electron.readFile(mapsFilePath);
+      const mapsFileContent = await window.electron.readMap();
       const mapPairs = JSON.parse(mapsFileContent);
       
       const maps = Object.keys(mapPairs);

@@ -3,14 +3,19 @@ import React, { useEffect, useState } from 'react';
 function MapSelector({ onSelectMap }) {
   const [maps, setMaps] = useState([]);
   const [selectedMap, setSelectedMap] = useState('');
+  const [pairs, setPairs] = useState({});
 
   useEffect(() => {
-    const fetchMaps = async () => {
-      const maps = await window.electron.storeGet('maps');
-      if (maps) {
-        setMaps(maps);
-        setSelectedMap(maps[0]); // Set the first map as the default selected map
-      }
+    const fetchMaps = async() => {
+      const mapPairs = await window.electron.storeGet("maps");
+
+      const maps = Object.keys(mapPairs);
+
+
+
+      setMaps(maps);
+      setPairs(mapPairs);
+      onSelectMap(mapPairs[maps[0]])
     };
     fetchMaps();
   }, []);
@@ -19,7 +24,7 @@ function MapSelector({ onSelectMap }) {
     const selectedMap = event.target.value;
     setSelectedMap(selectedMap);
     if (onSelectMap) {
-      onSelectMap(selectedMap);
+      onSelectMap(pairs[selectedMap]);
     }
   };
 

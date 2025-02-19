@@ -19,7 +19,19 @@ const LocalSelector = ({setFinalBot1File, setFinalBot2File, setShouldPlayMatch})
     } else {
         setBot2File(dirInfo);
     }
-};
+  };
+
+  const handleFolderSelect = (botNumber) => async () => {
+    console.log("pressed");
+    console.log(window.electron);
+    const folder = await window.electron.selectFolder(); // Invoke the Electron function
+    if (botNumber === 1) {
+      setBot1File(folder);
+    } else {
+      setBot2File(folder);
+    }
+  };
+  
   const clearSelection = (botNumber) => {
     if (botNumber === 1) {
       setBot1File(null);
@@ -29,8 +41,8 @@ const LocalSelector = ({setFinalBot1File, setFinalBot2File, setShouldPlayMatch})
   };
 
   const handleBattleStart = () => {
-    clearSelection(1);
-    clearSelection(2);
+    // clearSelection(1);
+    // clearSelection(2);
     setFinalBot1File(bot1File);
     setFinalBot2File(bot2File);
     setShouldPlayMatch(true);
@@ -51,13 +63,7 @@ const LocalSelector = ({setFinalBot1File, setFinalBot2File, setShouldPlayMatch})
                 <span className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors">
                   Select Bot {botNumber}
                 </span>
-                <input
-                    type="file"
-                    onChange={onFileChange}
-                    className="hidden"
-                    webkitdirectory=""
-                    directory=""
-              />
+                <button onClick={onFileChange} style={{display: 'none'}} id="selectFolderBtn"/>
               </label>
             </div>
             <p className="text-gray-300 text-xs">Click or drag file</p>
@@ -86,13 +92,13 @@ const LocalSelector = ({setFinalBot1File, setFinalBot2File, setShouldPlayMatch})
         <FileUploadBox 
           botNumber={1}
           file={bot1File}
-          onFileChange={handleFileChange(1)}
+          onFileChange={handleFolderSelect(1)}
           onClear={() => clearSelection(1)}
         />
         <FileUploadBox 
           botNumber={2}
           file={bot2File}
-          onFileChange={handleFileChange(2)}
+          onFileChange={handleFolderSelect(2)}
           onClear={() => clearSelection(2)}
         />
       </div>
