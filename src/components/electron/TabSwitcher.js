@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import LocalRenderer from './LocalRenderer';
 import MapRenderer from './MapRenderer'
 import Replayer from './Replayer'
+import Deleter from './Deleter'
 
 function TabSwitcher() {
   const [activeTab, setActiveTab] = useState(0);  // State to track active tab
@@ -32,6 +33,12 @@ function TabSwitcher() {
         >
           Match Replayer
         </button>
+        <button
+          className={`px-4 py-2 rounded-md text-sm font-medium ${activeTab === 3 ? 'bg-green-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          onClick={() => handleTabClick(3)}
+        >
+          Deleter
+        </button>
       </div>
 
       <div>
@@ -49,6 +56,11 @@ function TabSwitcher() {
         {activeTab === 2 && (
           <div className="tab-pane">
             <Replayer/>
+          </div>
+        )}
+        {activeTab === 3 && (
+          <div className="tab-pane">
+            <Deleter/>
           </div>
         )}
       </div>

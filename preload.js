@@ -12,6 +12,10 @@ window.electron = {
     writeMap: (mapPairs) => ipcRenderer.invoke('write-map', mapPairs),
     writeMatch: (num, match) => ipcRenderer.invoke('write-match', num, match),
     getMatches: () => ipcRenderer.invoke('get-matches'),
+    deleteMatch: (matchName) => ipcRenderer.invoke('delete-match', matchName),
+    deleteMatches: () => ipcRenderer.invoke('delete-matches'),
+    deleteMap: (mapName) => ipcRenderer.invoke('delete-map', mapName),
+    deleteMaps: () => ipcRenderer.invoke('delete-maps'),
     readMatch: (match_json) => ipcRenderer.invoke('read-match', match_json),
     copyMatch: (sourcefile, num) => ipcRenderer.invoke('copy-match', sourcefile, num),
 };

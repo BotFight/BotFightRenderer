@@ -9,31 +9,32 @@ import {
  SelectValue,
 } from "@/components/ui/select"
 
-export default function Selector({dict,setValue,message, label}) {
+export default function MatchSelector({setMatchId}) {
   const [ids, setIds] = useState([]);
-  const [placeholder, setPlaceholder] = useState("Select");
   useEffect(() => {
-    console.log(Array.isArray(ids))
-    setIds(dict)
-    setPlaceholder(message)
-  }, [dict]);
+    const fetchMatches = async () => {
+      const files = await window.electron.getMatches();
+      setIds(files);
+    }
+    fetchMatches();
+  }, []);
  
   const handleChange = (value) => {
-      setValue(value);
+      setMatchId(value);
   }
 
 
 return (
   <Select onValueChange={handleChange}>
     <SelectTrigger className="w-[180px]">
-      <SelectValue placeholder={placeholder}/>
+      <SelectValue placeholder="Select a Match ID" />
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
-        <SelectLabel>{label}</SelectLabel>
+        <SelectLabel>Match IDs</SelectLabel>
         {ids.map((id) => (
           <SelectItem key={id} value={id}>
-            {id}
+            {id.substring(0, id.length-5)}
           </SelectItem>
         ))}
       </SelectGroup>

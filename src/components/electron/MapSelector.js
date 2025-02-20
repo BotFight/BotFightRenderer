@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+ } from "@/components/ui/select"
+
 function MapSelector({ onSelectMap }) {
   const [maps, setMaps] = useState([]);
   const [selectedMap, setSelectedMap] = useState('');
@@ -15,13 +25,12 @@ function MapSelector({ onSelectMap }) {
 
       setMaps(maps);
       setPairs(mapPairs);
-      onSelectMap(mapPairs[maps[0]])
     };
     fetchMaps();
   }, []);
 
-  const handleChange = (event) => {
-    const selectedMap = event.target.value;
+  const handleChange = (value) => {
+    const selectedMap = value;
     setSelectedMap(selectedMap);
     if (onSelectMap) {
       onSelectMap(pairs[selectedMap]);
@@ -29,16 +38,23 @@ function MapSelector({ onSelectMap }) {
   };
 
   return (
-    <div className='flex flex-col items-center'>
-      <h1 className='text-white'>Map</h1>
-      <select value={selectedMap} onChange={handleChange} className="p-2 border rounded">
-        {maps.map((map) => (
-          <option key={map} value={map}>
-            {map}
-          </option>
-        ))}
-      </select>
-    </div>
+     <Select onValueChange={handleChange}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select a Map" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Maps</SelectLabel>
+            {maps.map((map) => (
+              <SelectItem key={map} value={map}>
+                {map}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+
+
   );
 }
 

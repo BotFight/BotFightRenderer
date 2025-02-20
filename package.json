@@ -1,9 +1,10 @@
 {
-  "name": "replayer",
+  "name": "bytefight-client-2025",
   "version": "0.1.0",
   "private": true,
   "main": "main.js",
   "homepage": "./",
+  "description": "Bytefight client for 2025",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -18,27 +19,82 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "concurrently": "^9.1.2",
-    "cross-env": "^7.0.3",
-    "electron": "^34.0.0",
-    "electron-store": "^10.0.0",
-    "lucide-react": "^0.473.0",
     "@radix-ui/react-select": "^2.1.4",
+    "asar": "^3.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron-store": "^10.0.0",
+    "lucide-react": "^0.473.0",
     "next": "15.1.4",
+    "ps-tree": "^1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "wait-on": "^8.0.2",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "wait-on": "^8.0.2"
   },
   "devDependencies": {
     "@types/node": "^20.17.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "build": {
+    "appId": "com.bytefight.bytefightclient2025",
+    "productName": "Bytefight Client 2025",
+    "files": [
+      {
+        "from": "out/",
+        "to": "",
+        "filter": [
+          "**/*"
+        ]
+      },
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "engine/",
+        "to": "engine/",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "target": [
+      "dmg",
+      "zip",
+      "nsis",
+      "AppImage",
+      "deb",
+      "rpm",
+      "snap"
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "snap"
+      ],
+      "category": "Utility"
+    },
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis"
+    }
   }
 }

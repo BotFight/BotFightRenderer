@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { processData} from "../../replay/process_replay"
 
 import GameOutputs from './GameOutputs';
-import Selector from './Selector'
+import MatchSelector from './MatchSelector'
 
 
 const path = require('path');
@@ -92,7 +92,7 @@ function Replayer() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 relative">
 
       <div className='mb-4'>
-        <Selector setMatchId={setMatchId} />
+        <MatchSelector setMatchId={setMatchId} />
       </div>
       <div className='flex flex-row h-full'>
         <Game

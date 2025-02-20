@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')  // Added dialog here
-const { spawn } = require('child_process')
+const { spawn, exec } = require('child_process')
 const path = require('path');
 const { match } = require('assert');
 const fs = require('fs').promises;
@@ -13,6 +13,16 @@ const userDataPath = app.getPath('userData');  // Get the user data directory
 const metaFilePath = path.join(userDataPath, 'meta.json')
 const dataFilePath = path.join(userDataPath, 'maps.json')
 const matchPath = path.join(userDataPath, 'match_runs')
+
+
+let enginePath;
+
+if (app.isPackaged) {
+  enginePath = path.join(process.resourcesPath, 'engine');
+} else {
+  enginePath = path.join(app.getAppPath(), 'engine');
+}
+
 async function initMaps() {
 
     if (!store) {
@@ -31,7 +41,7 @@ async function initMaps() {
     }catch (error){
 
     }
-    let ogResponse = await fs.readFile(path.join(app.getAppPath(), 'src','engine', '_internal', 'maps.json'));
+    let ogResponse = await fs.readFile(path.join(enginePath, '_internal', 'maps.json'));
     let originalMaps = JSON.parse(ogResponse);
     
     Object.keys(originalMaps).forEach(key => {
@@ -39,8 +49,6 @@ async function initMaps() {
     });
     
     store.set("maps", mapPairs)
-
-
     
   }
 
@@ -57,6 +65,7 @@ async function initMatches(){
     }
 
     store.set("numMatches", metadata["numMatches"]);
+    store.set("matchDir", matchPath);
 
     try{
         await fs.access(matchPath);
@@ -84,17 +93,29 @@ function createWindow() {
         }
     })
     require('@electron/remote/main').enable(win.webContents)
-    win.loadURL('http://localhost:3000/electron')
-    win.webContents.openDevTools()
+
+    // In your main Electron process (main.js or main.ts)
+    if (!app.isPackaged) {
+        win.loadURL('http://localhost:3000/electron')  // URL served by your dev server (like React's dev server)
+    } else {
+        console.log(`file://${path.join(__dirname,  'index.html')}`)
+        win.loadURL(`file://${path.join(__dirname, 'index.html')}`);
+    }
+
+    if (!app.isPackaged) {
+        win.webContents.openDevTools()
+    }
 }
 
+
+let pythonProcess;
 ipcMain.handle('run-python-script', async (event, scriptArgs) => {
   console.log('ipcMain.handle called with args:', scriptArgs);
     return new Promise((resolve, reject) => {
         console.log('Running python script with args:', scriptArgs);
-        const gameScript = path.join(path.resolve(),'src','engine', 'run_game_dist.exe');
-        const pythonProcess = spawn(gameScript, [...scriptArgs],{
-            cwd: path.join(path.resolve(),'src','engine'),
+        const gameScript = path.join(enginePath, 'run_game_dist.exe');
+        pythonProcess = spawn(gameScript, [...scriptArgs],{
+            cwd: enginePath,
             shell: true
         });
         let scriptOutput = '';
@@ -207,6 +228,14 @@ ipcMain.handle('dialog:selectFolder', async () => {
     }
   })
 
+  ipcMain.handle('get-match-result', async (event)=>{
+    try {
+        await fs.copyFile(sourcefile, path.join(enginePath, `${num}.json`));
+    } catch (error) {
+        throw new Error(`Failed to read file: ${error.message}`);
+    }
+  })
+
 
   ipcMain.handle('copy-match', async (event, sourcefile, num)=>{
     try {
@@ -225,6 +254,49 @@ ipcMain.handle('dialog:selectFolder', async () => {
         throw new Error(`Failed to read file: ${error.message}`);
     }
   });
+
+  ipcMain.handle('delete-match', async (event, file) => {
+        console.log("hello");
+        const filePath = path.join(matchPath, file);
+        await fs.unlink(filePath);
+  });
+
+
+  ipcMain.handle('delete-matches', async (event) => {
+    try{
+        const files = await fs.readdir(matchPath);
+        for (const file of files) {
+            const filePath = path.join(matchPath, file);
+            await fs.unlink(filePath);
+            
+        }
+    }
+    catch(err){
+
+    }
+  });
+
+  ipcMain.handle('delete-map', async (event, map) =>{
+    console.log("hello");
+    maps = store.get("maps");
+    console.log(map)
+    delete maps[map]
+    console.log(maps)
+    store.set("maps", maps);
+  })
+
+  ipcMain.handle('delete-maps', async (event, map) =>{
+    let ogResponse = await fs.readFile(path.join(enginePath, '_internal', 'maps.json'));
+    let originalMaps = JSON.parse(ogResponse);
+
+    mapPairs={}
+    Object.keys(originalMaps).forEach(key => {
+        mapPairs[key] = originalMaps[key];
+    });
+    
+    store.set("maps", mapPairs)
+  })
+  
   
   
 app.on('before-quit', async()=>{
@@ -235,9 +307,39 @@ app.on('before-quit', async()=>{
         maps = store.get("maps");
     }
 
+    console.log(pythonProcess.killed)
+    console.log(`taskkill /PID ${pythonProcess.pid} /T /F  `)
+    if (pythonProcess!=null && !pythonProcess.killed) {
+        if (process.platform === "win32") {
+            exec(`taskkill /PID ${pythonProcess.pid} /T /F  `, (err) => {
+                if (err) {
+                    console.error("Failed to kill process:", err);
+                } else {
+                    console.log("Process killed");
+                }
+            });
+        } else {
+            exec(`kill -9 ${pythonProcess.pid} `, (err) => {
+                if (err) {
+                    console.error("Failed to kill process:", err);
+                } else {
+                    console.log("Process killed");
+                }
+            });
+        }
+        pythonProcess.kill(); 
+    }
+
     console.log("writing")
+
+    
     await fs.writeFile(dataFilePath, JSON.stringify(maps, null, 2));  // Writing data to JSON file
     await fs.writeFile(metaFilePath, JSON.stringify({"numMatches" : num}, null, 2)); 
+
+    
+    
+
+
 })
 
 app.on('ready', async () => {

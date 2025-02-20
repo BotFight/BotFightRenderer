@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
 
-const LocalSelector = ({setFinalBot1File, setFinalBot2File, setShouldPlayMatch}) => {
+const LocalSelector = ({map, setFinalBot1File, setFinalBot2File, setShouldPlayMatch}) => {
 
   const [bot1File, setBot1File] = useState(null);
   const [bot2File, setBot2File] = useState(null);
@@ -105,7 +105,7 @@ const LocalSelector = ({setFinalBot1File, setFinalBot2File, setShouldPlayMatch})
       <div className="flex justify-center mt-6">
         <button 
           className={`px-4 py-2 rounded text-sm text-white
-            ${bot1File && bot2File 
+            ${(bot1File && bot2File && map != null)
               ? 'bg-green-500 hover:bg-green-600' 
               : 'bg-gray-600 cursor-not-allowed'}`}
           disabled={!bot1File || !bot2File}

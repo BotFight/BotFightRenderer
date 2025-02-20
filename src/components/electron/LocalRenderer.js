@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from 'react'
 import Game from '../Game'
 import Navigation from '../Navigation';
@@ -66,26 +67,27 @@ function LocalRenderer() {
 
   useEffect(() => {
     const runMatch = async () => {
-      const directoryPath = path.join(path.resolve(), 'src', 'engine')
       if (!shouldPlayMatch || !finalBot1File || !finalBot2File) {
         return;
       }
       setEngineOutput("Playing match...");
       try {
         let num = await window.electron.storeGet("numMatches")
+        let outdir = await window.electron.storeGet("matchDir")
         setMatchStates(null);
         setCurrentMatchStateIndex(0);
         setIsPlaying(false);
         console.log("Running match with ", finalBot1File, finalBot2File, map, 1);
+        
+        const resultFilePath = path.join(outdir, `${num}.json`);
         const scriptArgs = [
           '-a', finalBot1File,
           '-b', finalBot2File,
-          '-m', map
+          '-m', map,
+          '-o', resultFilePath
         ];
         setEngineOutput(await window.electron.runPythonScript(scriptArgs));
-        const resultFilePath = path.join(directoryPath, 'match_runs', 'result.json');
         const resultFileContent = await window.electron.readFile(resultFilePath);
-
         const matchLog = JSON.parse(resultFileContent);
         await window.electron.copyMatch(resultFilePath, num);
         await window.electron.storeSet("numMatches", (num+1)%100000)
@@ -122,7 +124,7 @@ function LocalRenderer() {
         />
         <GameOutputs engineOutput={engineOutput} />
       </div>
-      <LocalSelector setFinalBot1File={setFinalBot1File} setFinalBot2File={setFinalBot2File} setShouldPlayMatch={setShouldPlayMatch}/>
+      <LocalSelector map={map} setFinalBot1File={setFinalBot1File} setFinalBot2File={setFinalBot2File} setShouldPlayMatch={setShouldPlayMatch}/>
       <Navigation
         onBack={handleBack}
         onForward={handleForward}
