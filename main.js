@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')  // Added dialog here
 const { spawn } = require('child_process')
-const path = require('path')
+const path = require('path');
+const { match } = require('assert');
 const fs = require('fs').promises;
 require('@electron/remote/main').initialize()
 
@@ -74,7 +75,7 @@ async function initMatches(){
 function createWindow() {
     initMaps()
     win = new BrowserWindow({
-        fullscreen: true,
+        fullscreen: false,
         
         webPreferences: {
             enableRemoteModule: true,
@@ -160,7 +161,6 @@ ipcMain.handle('dialog:selectFolder', async () => {
     return result.filePaths[0];
   });
 
-
   ipcMain.handle('write-map', async (event, data) => {
 
     try {
@@ -172,6 +172,49 @@ ipcMain.handle('dialog:selectFolder', async () => {
       return { success: false, error: error.message };
     }
   });
+
+  ipcMain.handle('get-matches', async (event,)=>{
+    try{
+        const files = await fs.readdir(matchPath);
+        return files
+    }
+    catch(err){
+
+    }
+    
+  })
+
+
+  ipcMain.handle('read-match', async (event,match_json)=>{
+    try{
+        const data = await fs.readFile(path.join(matchPath, match_json), 'utf8');
+        console.log(data);
+        return data;
+    }
+    catch(err){
+        console.log(err);
+    }
+    
+  })
+
+
+
+  ipcMain.handle('load-match', async (event, sourcefile, num)=>{
+    try {
+        await fs.copyFile(sourcefile, path.join(matchPath, `${num}.json`));
+    } catch (error) {
+        throw new Error(`Failed to read file: ${error.message}`);
+    }
+  })
+
+
+  ipcMain.handle('copy-match', async (event, sourcefile, num)=>{
+    try {
+        await fs.copyFile(sourcefile, path.join(matchPath, `${num}.json`));
+    } catch (error) {
+        throw new Error(`Failed to read file: ${error.message}`);
+    }
+  })
 
 
   ipcMain.handle('write-match', async (event) => {
@@ -189,15 +232,17 @@ app.on('before-quit', async()=>{
     maps = {}
     if (store) {
         num = store.get("numMatches");
-        maps = store.get("maps")
-        
+        maps = store.get("maps");
     }
+
+    console.log("writing")
     await fs.writeFile(dataFilePath, JSON.stringify(maps, null, 2));  // Writing data to JSON file
     await fs.writeFile(metaFilePath, JSON.stringify({"numMatches" : num}, null, 2)); 
 })
 
 app.on('ready', async () => {
     await initMaps();  // Check if file exists and create it if necessary
+    await initMatches();
     createWindow();
     }
 )

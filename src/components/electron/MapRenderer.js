@@ -137,24 +137,21 @@ export default function MapRenderer() {
     };
 
     const handleSaveMap = async() => {
-      
-      let response = await window.electron.storeGet("maps");
-      let mapPairs = JSON.parse(response);
-      let generated_string = getMapString();
+      const invalidChars = /[<>:"/\\|?*]/;
+      if(mapName !="" && !invalidChars.test(mapName)){
+        let mapPairs = await window.electron.storeGet("maps");
+        let generated_string = getMapString();
 
-      mapPairs[mapName] = generated_string;
-      
-      try {
-        const result = await window.electron.storeSet("maps", mapPairs);  // Send data to Electron to write to file
-        console.log(mapPairs)
-        if (result.success) {
-          alert('Data saved successfully!');
-        } else {
-          alert('Error saving data: ' + result.error);
+        mapPairs[mapName] = generated_string;
+        
+        try {
+          await window.electron.storeSet("maps", mapPairs);  // Send data to Electron to write to file
+        } catch (error) {
+          console.error('Error:', error);
         }
-      } catch (error) {
-        console.error('Error:', error);
+
       }
+      
 
     }
 

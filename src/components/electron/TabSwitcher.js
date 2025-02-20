@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import LocalRenderer from './LocalRenderer';
 import MapRenderer from './MapRenderer'
+import Replayer from './Replayer'
 
 function TabSwitcher() {
   const [activeTab, setActiveTab] = useState(0);  // State to track active tab
@@ -47,8 +48,7 @@ function TabSwitcher() {
         )}
         {activeTab === 2 && (
           <div className="tab-pane">
-            <h2 className="text-xl font-semibold">Tab 3 Content</h2>
-            <p>This is the content for Tab 3.</p>
+            <Replayer/>
           </div>
         )}
       </div>

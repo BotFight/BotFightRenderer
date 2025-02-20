@@ -10,5 +10,8 @@ window.electron = {
     readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
     readMap: () => ipcRenderer.invoke('read-map'),
     writeMap: (mapPairs) => ipcRenderer.invoke('write-map', mapPairs),
-    writeMatch: (num, match) => ipcRenderer.invoke('write-match', num, match)
+    writeMatch: (num, match) => ipcRenderer.invoke('write-match', num, match),
+    getMatches: () => ipcRenderer.invoke('get-matches'),
+    readMatch: (match_json) => ipcRenderer.invoke('read-match', match_json),
+    copyMatch: (sourcefile, num) => ipcRenderer.invoke('copy-match', sourcefile, num),
 };

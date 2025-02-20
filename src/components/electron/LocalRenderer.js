@@ -8,6 +8,7 @@ import { processData} from "../../replay/process_replay"
 import ReassignDirectory from './ReassignDirectory';
 import GameOutputs from './GameOutputs';
 
+
 const path = require('path');
 
 function LocalRenderer() {
@@ -71,7 +72,7 @@ function LocalRenderer() {
       }
       setEngineOutput("Playing match...");
       try {
-        num = await window.electron.storeGet("numMatches")
+        let num = await window.electron.storeGet("numMatches")
         setMatchStates(null);
         setCurrentMatchStateIndex(0);
         setIsPlaying(false);
@@ -79,21 +80,21 @@ function LocalRenderer() {
         const scriptArgs = [
           '-a', finalBot1File,
           '-b', finalBot2File,
-          '-m', map,
-          '-n', num,
+          '-m', map
         ];
         setEngineOutput(await window.electron.runPythonScript(scriptArgs));
         const resultFilePath = path.join(directoryPath, 'match_runs', 'result.json');
         const resultFileContent = await window.electron.readFile(resultFilePath);
 
         const matchLog = JSON.parse(resultFileContent);
-        await window.electron.writeMatch(num, matchLog);
-
+        await window.electron.copyMatch(resultFilePath, num);
         await window.electron.storeSet("numMatches", (num+1)%100000)
-        
 
         const m = await processData(matchLog);
         setMatchStates(m.match_states);
+
+        setIsPlaying(false)
+        setCurrentMatchStateIndex(0);
       }
       catch (error) {
         console.error("Error running match ", error);
