@@ -12,8 +12,8 @@ function TabSwitcher() {
   };
 
   return (
-    <div className="h-screen flex p-4 flex-col">
-      <div className="flex-none space-x-1 border-gray-300">
+    <div className="h-screen flex flex-col">
+      <div className="flex-none ml-2 space-x-2 border-gray-300">
         {/* Tab Buttons */}
         <button
           className={`px-4 py-2 rounded-t-md text-sm font-medium transition-colors duration-300 ${
