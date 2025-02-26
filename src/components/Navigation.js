@@ -27,11 +27,15 @@ function Navigation({
 }) {
   return (
     <div className="flex flex-row gap-2 items-center">
-      <button onClick={onBack} className="px-2 py-1 border rounded">Back</button>
-      <button onClick={togglePlay} className="px-2 py-1 border rounded">
+      <button onClick={onBack} className="px-4 py-2 bg-yellow-500 text-black font-bold  rounded hover:bg-yellow-400">
+        Back
+      </button>
+      <button onClick={togglePlay} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">
         {isPlaying ? "Pause" : "Play"}
       </button>
-      <button onClick={onForward} className="px-2 py-1 border rounded">Forward</button>
+      <button onClick={onForward} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">
+        Forward
+      </button>
       <Input
         type="number"
         value={inputValue}

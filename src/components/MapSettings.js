@@ -11,52 +11,51 @@ function MapSettings({
     return (
       <div className="flex flex-row items-start justify-start gap-5">
       <div>
-        
         <input
           type="number"
           value={mapHeight}
           onChange={handleHeightChange}
-          className="nav-input"
+          className="w-16 px-2 py-1 border rounded"
           placeholder="Map Height"
         />
-
       </div>
       <div>
-      <input
+        <input
           type="number"
           value={mapWidth}
           onChange={handleWidthChange}
-          className="nav-input"
+          className="w-16 px-2 py-1 border rounded"
           placeholder="Map Width"
         />
       </div>
       <div>
-      <input
+        <input
           type="number"
           value={appleRate}
           onChange={handleAppleRateChange}
-          className="nav-input"
+          className="w-16 px-2 py-1 border rounded"
           placeholder="Apple Spawn Rate"
         />
       </div>
       <div>
-      <input
+        <input
           type="number"
           value={appleNum}
           onChange={handleAppleNumChange}
-          className="nav-input"
+          className="w-16 px-2 py-1 border rounded"
           placeholder="Apple Spawn #"
         />
       </div>
       <div>
-      <input
+        <input
           type="number"
           value={startSize}
           onChange={handleStartSizeChange}
-          className="nav-input"
+          className="w-16 px-2 py-1 border rounded"
           placeholder="Start Size"
         />
       </div>
+
       
       
     </div>

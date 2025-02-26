@@ -57,7 +57,7 @@ export class Map{
                 for(let k = 0; k < this.apple_timeline.length; k++){
                     if(this.apple_timeline[k][0] == round_num){
                         let x = this.apple_timeline[k][1]
-                        let y = this.apple_timeline[k][1]
+                        let y = this.apple_timeline[k][2]
                         enum_map[y][x] = 2;
                     }
                     
@@ -72,7 +72,6 @@ export class Map{
             }
 
         }
-
         
         if(this.start_a[0]!=-1){
             enum_map[this.start_a[1]][this.start_a[0]] = 3;
@@ -91,43 +90,46 @@ export class Map{
 class Snake{
     apples_eaten: number;
     head_loc: [number, number];
-    dir:Direction;
+    dir:Action;
 
     constructor(start_loc:[number, number], start_size:number){
         this.apples_eaten = 0;
         this.head_loc = start_loc;
-        this.dir = Direction.NORTH;
+        this.dir = Action.NORTH;
     }
 
-    push_move(action:Direction): void {
-        this.dir = action;
+    push_move(action:Action): void {
+        if(action != Action.TRAP){
+            this.dir = action;
+        }
+            
 
         switch (action){
-            case Direction.NORTH:
+            case Action.NORTH:
                 this.head_loc[1]-=1;
                 break;
-            case Direction.NORTHEAST:
+            case Action.NORTHEAST:
                 this.head_loc[1]-=1;
                 this.head_loc[0]+=1;
                 break;
-            case Direction.EAST:
+            case Action.EAST:
                 this.head_loc[0]+=1;
                 break;
-            case Direction.SOUTHEAST:
+            case Action.SOUTHEAST:
                 this.head_loc[1]+=1;
                 this.head_loc[0]+=1;
                 break;
-            case Direction.SOUTH:
+            case Action.SOUTH:
                 this.head_loc[1]+=1;
                 break;
-            case Direction.SOUTHWEST:
+            case Action.SOUTHWEST:
                 this.head_loc[1]+=1;
                 this.head_loc[0]-=1;
                 break;
-            case Direction.WEST:
+            case Action.WEST:
                 this.head_loc[0]-=1;
                 break;
-            case Direction.NORTHWEST:
+            case Action.NORTHWEST:
                 this.head_loc[1]-=1;
                 this.head_loc[0]-=1;
                 break;
@@ -143,6 +145,8 @@ export class Board {
     cells_a: number[][];
     cells_b: number[][];
     cells_apples: number[][];
+    cells_a_traps:number[][];
+    cells_b_traps: number[][];
     is_as_turn: boolean;
     a_time: number;
     b_time: number;
@@ -160,6 +164,13 @@ export class Board {
             () => new Array(map.dim_x).fill(0));
         this.cells_apples = new Array(map.dim_y).fill(null).map(
             () => new Array(map.dim_x).fill(0));
+        this.cells_a_traps = new Array(map.dim_y).fill(null).map(
+            () => new Array(map.dim_x).fill(0));
+        this.cells_b_traps = new Array(map.dim_y).fill(null).map(
+            () => new Array(map.dim_x).fill(0));
+            
+
+                
 
         this.is_as_turn = a_start;
         this.a_time = start_time;
@@ -176,21 +187,24 @@ export class Board {
         this.spawn_apples()
     }
 
-    play_turn(turn: Direction[], cells_lost:number[][], time:number): void{
-        console.log(turn);
+    play_turn(turn: Action[], cells_lost:number[][], traps_created:number[][], traps_lost:number[][], time:number): void{
         if(this.is_as_turn){
             if(Array.isArray(turn)){
                 turn.forEach((action, index)=>{
-                    this.snake_a.push_move(action);
-    
-                    let x:number = this.snake_a.head_loc[0]
-                    let y:number = this.snake_a.head_loc[1]
+                    if(action != Action.TRAP){
+                        this.snake_a.push_move(action);
+        
+                        let x:number = this.snake_a.head_loc[0]
+                        let y:number = this.snake_a.head_loc[1]
+                        
+                        if(this.cells_apples[y][x] > 0){
+                            this.snake_a.apples_eaten+=this.cells_apples[y][x];
+                            this.cells_apples[y][x] = 0;
+                        }
                     
-                    if(this.cells_apples[y][x] > 0){
-                        this.snake_a.apples_eaten+=this.cells_apples[y][x];
-                        this.cells_apples[y][x] = 0;
+                        this.cells_a[y][x]++;
                     }
-                    this.cells_a[y][x]++;
+                    
                     
                 })
             } else{
@@ -203,7 +217,10 @@ export class Board {
                     this.snake_a.apples_eaten+=this.cells_apples[y][x];
                     this.cells_apples[y][x] = 0;
                 }
-                this.cells_a[y][x]++;
+
+                if(turn != Action.TRAP){
+                    this.cells_a[y][x]++;
+                }
 
             }
             
@@ -211,16 +228,34 @@ export class Board {
             cells_lost.forEach((cell, index)=>{
                 this.cells_a[cell[1]][cell[0]]--;
             })
-            if(cells_lost.length >1){
-                console.log(cells_lost);
-            }
+            traps_created.forEach((cell, index)=>{
+                this.cells_a[cell[1]][cell[0]]--;
+                this.cells_a_traps[cell[1]][cell[0]] = 1;
+                
+            })
 
             this.a_time-=time;
             
         } else{
             if(Array.isArray(turn)){
                 turn.forEach((action, index)=>{
-                    this.snake_b.push_move(action);
+                    if(action != Action.TRAP){
+                        this.snake_b.push_move(action);
+
+                        let x:number = this.snake_b.head_loc[0]
+                        let y:number = this.snake_b.head_loc[1]
+
+                        if(this.cells_apples[y][x] > 0){
+                            this.snake_b.apples_eaten+=this.cells_apples[y][x];
+                            this.cells_apples[y][x] = 0;
+                        }
+                        
+                        this.cells_b[y][x]++;
+                    }
+                })
+            } else{
+                if(turn != Action.TRAP){
+                    this.snake_b.push_move(turn);
 
                     let x:number = this.snake_b.head_loc[0]
                     let y:number = this.snake_b.head_loc[1]
@@ -229,41 +264,36 @@ export class Board {
                         this.snake_b.apples_eaten+=this.cells_apples[y][x];
                         this.cells_apples[y][x] = 0;
                     }
+                
                     this.cells_b[y][x]++;
-                })
-            } else{
-                this.snake_b.push_move(turn);
-
-                let x:number = this.snake_b.head_loc[0]
-                let y:number = this.snake_b.head_loc[1]
-
-                if(this.cells_apples[y][x] > 0){
-                    this.snake_b.apples_eaten+=this.cells_apples[y][x];
-                    this.cells_apples[y][x] = 0;
                 }
-                this.cells_b[y][x]++;
                 
             }
 
             cells_lost.forEach((cell, index)=>{
                 this.cells_b[cell[1]][cell[0]]--;
             })
-            if(cells_lost.length >1){
-                console.log(cells_lost);
-            }
-            
-            //console.log("b")
-            //console.log(JSON.parse(JSON.stringify(this.cells_b)))
+
+            traps_created.forEach((cell, index)=>{
+                this.cells_b[cell[1]][cell[0]]--;
+                this.cells_b_traps[cell[1]][cell[0]] = 1;
+            })
 
             this.b_time-=time;
 
-        }       
+        }  
+        
+        traps_lost.forEach((cell, index)=>{
+            this.cells_a_traps[cell[1]][cell[0]] = 0;
+            this.cells_b_traps[cell[1]][cell[0]] = 0;
+        })
+
     }
 
     spawn_apples(): void {
         while(this.apple_counter < this.map.apple_timeline.length 
             && this.map.apple_timeline[this.apple_counter][0] <= 
-            this.get_round_num()){
+            this.get_turn_num()){
 
             let x:number = this.map.apple_timeline[this.apple_counter][1]
             let y:number = this.map.apple_timeline[this.apple_counter][2]
@@ -282,19 +312,46 @@ export class Board {
         
     }
 
-    get_round_num(): number {
-        return Math.trunc(this.turn_count/2);
+    get_turn_num(): number {
+        return this.turn_count;
     }
 
-    get_enum_map(): number[][] {
+
+    get_trap_map(): number[][] {
+        let trap_map:number[][] = new Array(this.map.dim_y).fill(null).map(
+            () => new Array(this.map.dim_x).fill(0));
+
+        for(let i = 0; i< this.map.dim_y; i++){
+            for(let j = 0; j< this.map.dim_x; j++){
+                trap_map[i][j] = 1 * this.cells_a_traps[i][j] + 2 * this.cells_b_traps[i][j]
+            }
+        }
+
+        return trap_map
+
+
+    }
+
+    get_apple_map(): number[][] {
+        let apple_map:number[][] = new Array(this.map.dim_y).fill(null).map(
+            () => new Array(this.map.dim_x).fill(0));   
+
+        for(let i = 0; i< this.map.dim_y; i++){
+            for(let j = 0; j< this.map.dim_x; j++){
+                apple_map[i][j] = this.cells_apples[i][j]
+            }
+        }
+        return apple_map
+    
+    }
+
+    get_occupancy_map(): number[][] {
         let enum_map:number[][] = new Array(this.map.dim_y).fill(null).map(
             () => new Array(this.map.dim_x).fill(0));
 
         for(let i = 0; i< this.map.dim_y; i++){
             for(let j = 0; j< this.map.dim_x; j++){
-                if(this.cells_apples[i][j]){
-                    enum_map[i][j] = 2;
-                } else if(this.map.cells_walls[i][j]){
+                if(this.map.cells_walls[i][j]){
                     enum_map[i][j] = 1;
                 }
                 else if(this.cells_a[i][j]>0){
@@ -323,7 +380,7 @@ export class Board {
     
 }
 
-export enum Direction{
+export enum Action{
     NORTH = 0,
     NORTHEAST = 1,
     EAST = 2,
@@ -331,7 +388,8 @@ export enum Direction{
     SOUTH = 4,
     SOUTHWEST = 5,
     WEST = 6,
-    NORTHWEST = 7
+    NORTHWEST = 7,
+    TRAP = 8
 }
 
 

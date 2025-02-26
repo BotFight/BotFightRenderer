@@ -67,7 +67,6 @@ function Replayer() {
   useEffect(()=>{
 
     const fetchMatch = async () => {
-        console.log(matchId)
         if (matchId != null && matchId.substring(0, matchId.length-5) >= 0) {
             console.log(matchId)
             
@@ -89,12 +88,12 @@ function Replayer() {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 relative">
+    <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 relative gap-6">
 
-      <div className='mb-4'>
-        <MatchSelector setMatchId={setMatchId} />
-      </div>
-      <div className='flex flex-row h-full'>
+
+      <MatchSelector setMatchId={setMatchId} />
+      
+      <div className='flex flex-row'>
         <Game
           currentMatchStateIndex={currentMatchStateIndex}
           setCurrentMatchStateIndex={setCurrentMatchStateIndex}

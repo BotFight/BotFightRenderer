@@ -14,15 +14,18 @@ function Deleter() {
     await window.electron.deleteMap(map);
     
     delete maps[map]
+    
     setMaps(maps)
+    alert("Map deleted!")
     setMap(null);
   }
 
   const handleDeleteMaps = async() => {
     await window.electron.deleteMaps();
-    setMap(null);
     const mapPairs = await window.electron.storeGet("maps")
     setMaps(mapPairs)
+    setMap(null);
+    alert("Custom maps deleted!")
   }
 
   const handleDeleteMatch = async() => {
@@ -31,6 +34,8 @@ function Deleter() {
     setMatches(updatedMatches)
     setMatch(null)
     await window.electron.deleteMatch(matchJSON);
+
+    alert("Match deleted!")
     
     
   }
@@ -39,6 +44,8 @@ function Deleter() {
     setMatches([]);
     setMatch(null);
     await window.electron.deleteMatches();
+
+    alert("Matches deleted!")
     
   }
 
@@ -51,7 +58,7 @@ function Deleter() {
       });
       setMatches(matchIDs);
 
-      console.log("hello")
+      ("hello")
 
       const mapPairs = await window.electron.storeGet("maps")
       setMaps(mapPairs)
@@ -66,8 +73,8 @@ function Deleter() {
   
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 gap-2" >
-    <div>
+    <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 gap-10" >
+    <div className="flex gap-x-4">
       <Selector dict={Object.keys(maps)} setValue={setMap} message={"Select a map"} label={"Map"}/>
       <button
         onClick={handleDeleteMap}
@@ -83,7 +90,7 @@ function Deleter() {
         
     </div>
 
-      <div>
+    <div className="flex gap-x-4">
       <Selector dict={matches} setValue={setMatch} message={"Select a match"} label={"Match ID"}/>
         <button
           onClick={handleDeleteMatch}

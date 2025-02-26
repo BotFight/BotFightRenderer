@@ -6,21 +6,12 @@ function ShowSpawn ({
 
   return (
     <div>
-      <label
-        style={{
-          color: 'black',              // text color
-          backgroundColor: 'white',    // white background for label
-          padding: '2px 2px',         // padding inside the label for spacing
-          borderRadius: '2px',         // optional: rounded corners for label
-          alignItems: 'center',        // vertically align checkbox and text
-        }}
-      >
+      <label className="w-50 px-2 py-0.5 rounded text-black bg-white inline-flex items-center">
         <input
           type="checkbox"
           checked={showSnakeStart} // bind the checkbox to the state
           onChange={handleShowSnakeStart} // handle the change event
-
-          
+          className="h-4 w-4 mr-2" // Add margin-left here to create space after the checkbox
         />
         Show Spawn Location
       </label>

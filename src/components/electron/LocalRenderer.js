@@ -87,16 +87,23 @@ function LocalRenderer() {
           '-o', resultFilePath
         ];
         setEngineOutput(await window.electron.runPythonScript(scriptArgs));
-        const resultFileContent = await window.electron.readFile(resultFilePath);
-        const matchLog = JSON.parse(resultFileContent);
-        await window.electron.copyMatch(resultFilePath, num);
-        await window.electron.storeSet("numMatches", (num+1)%100000)
 
-        const m = await processData(matchLog);
-        setMatchStates(m.match_states);
+        try{
+          const resultFileContent = await window.electron.readFile(resultFilePath);
+          const matchLog = JSON.parse(resultFileContent);
+          await window.electron.copyMatch(resultFilePath, num);
+          await window.electron.storeSet("numMatches", (num+1)%100000)
 
-        setIsPlaying(false)
-        setCurrentMatchStateIndex(0);
+          const m = await processData(matchLog);
+          setMatchStates(m.match_states);
+
+          setIsPlaying(false)
+          setCurrentMatchStateIndex(0);
+          setCurrentMatchStateIndex(0);
+        } catch{
+
+        }
+        
       }
       catch (error) {
         console.error("Error running match ", error);
@@ -109,14 +116,11 @@ function LocalRenderer() {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 relative">
-      {/* <div className="absolute top-4 left-4">
-        <ReassignDirectory />
-      </div> */}
+    <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 relative gap-3">
       <div className='mb-4'>
         <MapSelector onSelectMap={setMap} />
       </div>
-      <div className='flex flex-row h-full'>
+      <div className='flex flex-row'>
         <Game
           currentMatchStateIndex={currentMatchStateIndex}
           setCurrentMatchStateIndex={setCurrentMatchStateIndex}

@@ -12,58 +12,74 @@ function TabSwitcher() {
   };
 
   return (
-    <div className="p-4">
-      <div className="flex space-x-4 mb-4">
+    <div className="h-screen flex p-4 flex-col">
+      <div className="flex-none space-x-1 border-gray-300">
         {/* Tab Buttons */}
         <button
-          className={`px-4 py-2 rounded-md text-sm font-medium ${activeTab === 0 ? 'bg-green-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          className={`px-4 py-2 rounded-t-md text-sm font-medium transition-colors duration-300 ${
+            activeTab === 0
+              ? 'bg-yellow-500 text-black border-b-2 border-yellow-500'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
           onClick={() => handleTabClick(0)}
         >
           Match Player
         </button>
         <button
-          className={`px-4 py-2 rounded-md text-sm font-medium ${activeTab === 1 ? 'bg-green-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          className={`px-4 py-2 rounded-t-md text-sm font-medium transition-colors duration-300 ${
+            activeTab === 1
+              ? 'bg-yellow-500 text-black border-b-2 border-yellow-500'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
           onClick={() => handleTabClick(1)}
         >
           Map Builder
         </button>
         <button
-          className={`px-4 py-2 rounded-md text-sm font-medium ${activeTab === 2 ? 'bg-green-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          className={`px-4 py-2 rounded-t-md text-sm font-medium transition-colors duration-300 ${
+            activeTab === 2
+              ? 'bg-yellow-500 text-black border-b-2 border-yellow-500'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
           onClick={() => handleTabClick(2)}
         >
           Match Replayer
         </button>
         <button
-          className={`px-4 py-2 rounded-md text-sm font-medium ${activeTab === 3 ? 'bg-green-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          className={`px-4 py-2 rounded-t-md text-sm font-medium transition-colors duration-300 ${
+            activeTab === 3
+              ? 'bg-yellow-500 text-black border-b-2 border-yellow-500'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
           onClick={() => handleTabClick(3)}
         >
           Deleter
         </button>
       </div>
 
-      <div>
+
+      
+
         {/* Tab Content */}
         {activeTab === 0 && (
-          <div className="tab-pane">
-            <LocalRenderer/>
-          </div>
+            <LocalRenderer />
         )}
         {activeTab === 1 && (
-          <div className="tab-pane">
-            <MapRenderer/>
-          </div>
+
+            <MapRenderer />
+
         )}
         {activeTab === 2 && (
-          <div className="tab-pane">
-            <Replayer/>
-          </div>
+
+            <Replayer />
+
         )}
         {activeTab === 3 && (
-          <div className="tab-pane">
-            <Deleter/>
-          </div>
+ 
+            <Deleter />
         )}
-      </div>
+
+      
     </div>
   );
 }

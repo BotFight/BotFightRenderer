@@ -1,6 +1,4 @@
-import fs from 'fs'
-import {Direction, Board, Map} from './game_engine'
-
+import {Action, Board, Map} from './game_engine'
 
 class Match{
     match_states: MatchState[];
@@ -21,9 +19,11 @@ class MatchState{
     time_a: number;
     time_b: number;
     map_state: number[][];
-    a_dir: Direction;
-    b_dir: Direction;
-    round_num: number;
+    trap_state: number[][];
+    apple_state: number[][];
+    a_dir: Action;
+    b_dir: Action;
+    turn_num: number;
     a_to_play: boolean;
     a_apples_eaten: number;
     b_apples_eaten: number;
@@ -35,7 +35,7 @@ class MatchState{
         this.time_b = b.b_time;
         this.a_dir = b.snake_a.dir;
         this.b_dir = b.snake_b.dir;
-        this.round_num = b.get_round_num();
+        this.turn_num = b.get_turn_num();
         this.a_to_play = b.is_as_turn;
 
         this.a_apples_eaten = b.snake_a.apples_eaten;
@@ -44,15 +44,14 @@ class MatchState{
         this.a_length = a_length;
         this.b_length = b_length;
 
-        this.map_state = b.get_enum_map();
+        this.map_state = b.get_occupancy_map();
+        this.trap_state = b.get_trap_map();
+        this.apple_state = b.get_apple_map();
         
-    }
-
-    
+    }    
 }
 
 export async function processData(history: BoardHistory): Promise<Match> {
-    console.log(history);
     let match_states: MatchState[] = new Array(history.turn_count+1).fill(null);
 
     let m:Map = new Map(history.game_map);
@@ -60,11 +59,13 @@ export async function processData(history: BoardHistory): Promise<Match> {
     
     if(history.turn_count>0){
         match_states[0] = new MatchState(b, history.a_length[0], history.b_length[0])
+        
         for(let i:number = 1; i<= history.turn_count; i++){
-            console.log(i);
-            b.play_turn(history.moves[i-1], history.cells_lost[i-1], history.times[i-1]);
+            
+            b.play_turn(history.moves[i-1], history.cells_lost[i-1], history.traps_created[i-1], history.traps_lost[i-1], history.times[i-1]);
             match_states[i] = new MatchState(b, history.a_length[i], history.b_length[i]);
             b.next_turn();
+            
         }
     }
 
@@ -87,4 +88,7 @@ interface BoardHistory{
     cells_lost: number[][][],
     a_length: number[],
     b_length: number[],
+    traps_created: number[][][],
+    traps_lost: number[][][]
+
 }

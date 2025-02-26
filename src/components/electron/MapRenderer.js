@@ -30,20 +30,13 @@ export default function MapRenderer() {
     const [startSize, setStartSize] = useState(5)
     const [mapName, setMapName] = useState("")
 
-
-
-
-    const [mapString, setMapString] = useState("");
-    const [showMapString, setShowMapString] = useState(false);
-    const [copied, setCopied] = useState(false);
-
-    const min_map = 5;
+    const min_map = 1;
     const max_map = 64;
     const min_apple_num = 1;
     const max_apple_num = 5;
-    const min_apple_rate = 50;
+    const min_apple_rate = 1;
     const max_apple_rate = 150;
-    const min_start_size = 3;
+    const min_start_size = 1;
     const max_start_size = 64;
     const min_size = 2;
 
@@ -146,6 +139,7 @@ export default function MapRenderer() {
         
         try {
           await window.electron.storeSet("maps", mapPairs);  // Send data to Electron to write to file
+          alert("Map saved successfully!");
         } catch (error) {
           console.error('Error:', error);
         }
@@ -156,8 +150,6 @@ export default function MapRenderer() {
     }
 
     const getMapString = () => {
-      setShowMapString(true);
-
       let parts = [
 
       ]
@@ -193,10 +185,8 @@ export default function MapRenderer() {
     const handleGenerateMap = () => {
       
       let generated_string = getMapString();
-      setMapString(generated_string);
       navigator.clipboard.writeText(generated_string).then(() => {
-        setCopied(true); // Set "copied" state to true after copying
-        setTimeout(() => setCopied(false), 5000); // Reset "copied" feedback after 2 seconds
+        alert("Map string copied to clipboard!");
       });
       return generated_string;
       
@@ -272,7 +262,7 @@ export default function MapRenderer() {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 gap-2" >
+    <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 gap-5" >
       <MapVis
         showSnakeStart={showSnakeStart}
         aSpawn={aSpawn}
@@ -310,57 +300,26 @@ export default function MapRenderer() {
       
       </div>
 
-      <div>
+      <div className="flex flex-row gap-5 items-center">
         <input
           type="text"
           value={mapName}
           onChange={handleChangeMapName}
-          className="nav-input"
+          className="nav-input px-2 py-1 border rounded"
           placeholder="Map Name"
         />
         <button 
           onClick={handleSaveMap}
 
-          style={{
-            padding: '10px 20px',      // padding inside the button
-            borderRadius: '25px',      // rounded corners
-            backgroundColor: 'white',  // white background
-            color: 'black',            // black text color
-            border: '2px solid black', // black border
-            cursor: 'pointer',        // pointer cursor on hover
-            margin: '10px',            // margin outside the button (space outside the button)
-            fontSize: '16px',          // text size
-            fontWeight: 'bold'         // font weight
-          }}
+          className="px-4 py-2 bg-yellow-500 text-black font-bold  rounded hover:bg-yellow-400"
         >Save Map</button>
         <button 
           onClick={handleGenerateMap}
-
-          style={{
-            padding: '10px 20px',      // padding inside the button
-            borderRadius: '25px',      // rounded corners
-            backgroundColor: 'white',  // white background
-            color: 'black',            // black text color
-            border: '2px solid black', // black border
-            cursor: 'pointer',        // pointer cursor on hover
-            margin: '10px',            // margin outside the button (space outside the button)
-            fontSize: '16px',          // text size
-            fontWeight: 'bold'         // font weight
-          }}
+          className="px-4 py-2 bg-yellow-500 text-black font-bold  rounded hover:bg-yellow-400"
         >Copy Map String</button>
         
       </div>
-      
 
-      
-
-      {/* {showMapString && (
-          <div>
-            <p>{mapString}</p>
-          </div>
-        )} */}
-
-        {copied && <p style={{ color: 'green' }}>Copied to clipboard!</p>}
     </div>
   );
 }

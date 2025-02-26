@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Direction } from '../../replay/game_engine';
+import { Action } from '../../replay/game_engine';
 
 const GridValues = {
   EMPTY: 0,
@@ -25,46 +25,54 @@ export default function MapVis({
 
 
 }) {
-  const cellSize = 30;
   const canvasRef = useRef(null);
   
   const [mouseCellX, setMouseCellX] = useState(-1); 
   const [mouseCellY, setMouseCellY] = useState(-1); 
+  const [cellSize, setCellSize] = useState(30);
 
-  const handleMouseMove = (e) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-
-    // Check if mouse is over the rectangle
-    setMouseCellX(Math.floor(offsetX/cellSize));
-    setMouseCellY(Math.floor(offsetY/cellSize));
-  };
-
-  const handleMouseOut = () => {
-    setMouseCellX(-1);
-    setMouseCellY(-1);
-  };
-
-  const handleClick = (e) => {
-    console.log(cellType);
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-
-    const cellX = Math.floor(offsetX/cellSize);
-    const cellY = Math.floor(offsetY/cellSize);
-
-    setTile(cellX, cellY);
-  };
+  
 
   useEffect(() => {
+    const handleMouseMove = (e) => {
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+  
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+  
+      // Check if mouse is over the rectangle
+      setMouseCellX(Math.floor(offsetX/cellSize));
+      setMouseCellY(Math.floor(offsetY/cellSize));
+    };
+  
+    const handleMouseOut = () => {
+      setMouseCellX(-1);
+      setMouseCellY(-1);
+    };
+  
+    const handleClick = (e) => {
+      console.log(cellType);
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+  
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+  
+      const cellX = Math.floor(offsetX/cellSize);
+      const cellY = Math.floor(offsetY/cellSize);
+  
+      setTile(cellX, cellY);
+    };
+    
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
+    const maxSize = 640
+    let cellCalc = Math.min(maxSize/mapWidth, maxSize/mapHeight)
+    const minSize = 15
+    cellCalc = Math.max(cellCalc, minSize)
+    setCellSize(cellCalc)
 
     const width = mapWidth * cellSize;
     const height = mapHeight * cellSize;
@@ -112,28 +120,28 @@ export default function MapVis({
         ctx.fillStyle = 'white';
         
         switch(direction) {
-          case Direction.EAST:
+          case Action.EAST:
             drawEyes(x + 3/4, y + 1/3, x + 3/4, y + 2/3);
             break;
-          case Direction.WEST:
+          case Action.WEST:
             drawEyes(x + 1/4, y + 1/3, x + 1/4, y + 2/3);
             break;
-          case Direction.NORTH:
+          case Action.NORTH:
             drawEyes(x + 1/3, y + 1/4, x + 2/3, y + 1/4);
             break;
-          case Direction.SOUTH:
+          case Action.SOUTH:
             drawEyes(x + 1/3, y + 3/4, x + 2/3, y + 3/4);
             break;
-          case Direction.NORTHEAST:
+          case Action.NORTHEAST:
             drawEyes(x + 2/3, y + 1/3, x + 3/4, y + 1/4);
             break;
-          case Direction.NORTHWEST:
+          case Action.NORTHWEST:
             drawEyes(x + 1/3, y + 1/3, x + 1/4, y + 1/4);
             break;
-          case Direction.SOUTHEAST:
+          case Action.SOUTHEAST:
             drawEyes(x + 2/3, y + 2/3, x + 3/4, y + 3/4);
             break;
-          case Direction.SOUTHWEST:
+          case Action.SOUTHWEST:
             drawEyes(x + 1/3, y + 2/3, x + 1/4, y + 3/4);
             break;
         }
@@ -163,10 +171,10 @@ export default function MapVis({
             drawWall(x, y);
           }
           else if(showSnakeStart && x == aSpawn[0] && y == aSpawn[1]){
-            drawSnakeHead(x, y, 'green', Direction.NORTH);
+            drawSnakeHead(x, y, 'green', Action.NORTH);
           }
           else if(showSnakeStart && x == bSpawn[0] && y == bSpawn[1]){
-            drawSnakeHead(x, y, 'blue', Direction.NORTH);
+            drawSnakeHead(x, y, 'blue', Action.NORTH);
           }
       }
 

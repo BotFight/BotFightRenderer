@@ -6,7 +6,7 @@ export default function CellSelector({handleCellChange}) {
     
   return (
     <div>
-        <select onChange={handleCellChange}>
+        <select onChange={handleCellChange} className="w-32 px-2 py-1 border rounded">
             {ids.map(id => <option key={id} value={id}>{id}</option>)}
         </select>
     </div>

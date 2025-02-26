@@ -12,8 +12,8 @@ export default function GameOutputs({ engineOutput }) {
   return (
     <div
       ref={outputRef}
-      className="bg-black text-green-500 p-4 rounded-lg overflow-y-auto"
-      style={{ width: '600px', height: '400px' }}
+      className="bg-black text-green-500 p-4 rounded-lg overflow-y-auto text-sm"
+      style={{ width: '600px', height: '450px' }}
     >      <pre>{engineOutput}</pre>
     </div>
   );
