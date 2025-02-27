@@ -31,7 +31,7 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
     ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
   }
 
-  if (matchStates) {
+  if (matchStates != null  && matchStates.length > 0 && matchStates[0] != null) {
     const gridSizeWidth = matchStates[0].map_state.length;
     const gridSizeHeight = matchStates[0].map_state[0].length;
 

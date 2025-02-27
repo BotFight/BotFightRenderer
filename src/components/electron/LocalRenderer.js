@@ -101,7 +101,7 @@ function LocalRenderer() {
           setCurrentMatchStateIndex(0);
           setCurrentMatchStateIndex(0);
         } catch{
-
+          console.error("match not found")
         }
         
       }

@@ -5,6 +5,7 @@
   "main": "main.js",
   "homepage": "./",
   "description": "Bytefight client for 2025",
+  "author":"Henry Liao <hliao62@gatech.edu>",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
