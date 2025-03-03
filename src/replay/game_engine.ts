@@ -7,6 +7,7 @@ export class Map{
     min_player_size: number;
     apple_timeline: number[][];
     cells_walls: number[][];
+    cells_portals: number[][];
 
     constructor(map_string: string){
         
@@ -23,12 +24,31 @@ export class Map{
         this.start_size = parseInt(infos[3])
         this.min_player_size = parseInt(infos[4])
 
-        let apples:string[] = infos[5].split("|")
-        this.apple_timeline = new Array(apples.length).fill(null).map(
+        let portals:string[] = infos[5].split("|");
+        this.cells_portals = new Array(this.dim_y).fill(null).map(
+            () => new Array(this.dim_x).fill(-1));
+
+
+        for(let i = 0; i< portals.length; i++){
+            let portal:string[]= portals[i].split(",")
+            let x1: number = parseInt(portal[0])
+            let y1: number = parseInt(portal[1])
+            let x2: number = parseInt(portal[2])
+            let y2: number = parseInt(portal[3])
+
+            this.cells_portals[y1][x1] = (this.dim_y * y1 + x1) 
+        }
+
+
+        let apples:string[] = infos[6].split("|")
+        console.log(apples)
+        this.apple_timeline = new Array(apples.length).
+        fill(null).map(
             () => new Array(3).fill(0));
 
         for(let i = 0; i< apples.length; i++){
             let apple:string[] = apples[i].split(',');
+            
             for(let j = 0; j < 3; j++){
                 this.apple_timeline[i][j] = parseInt(apple[j]);
             }   
@@ -39,7 +59,7 @@ export class Map{
 
         for(let i = 0; i< this.dim_y; i++){
             for(let j = 0; j < this.dim_x; j++){
-                this.cells_walls[i][j] = parseInt(infos[6][i*this.dim_x+j]);
+                this.cells_walls[i][j] = parseInt(infos[7][i*this.dim_x+j]);
             }   
         }
         
@@ -97,46 +117,6 @@ class Snake{
         this.head_loc = start_loc;
         this.dir = Action.NORTH;
     }
-
-    push_move(action:Action): void {
-        if(action != Action.TRAP){
-            this.dir = action;
-        }
-            
-
-        switch (action){
-            case Action.NORTH:
-                this.head_loc[1]-=1;
-                break;
-            case Action.NORTHEAST:
-                this.head_loc[1]-=1;
-                this.head_loc[0]+=1;
-                break;
-            case Action.EAST:
-                this.head_loc[0]+=1;
-                break;
-            case Action.SOUTHEAST:
-                this.head_loc[1]+=1;
-                this.head_loc[0]+=1;
-                break;
-            case Action.SOUTH:
-                this.head_loc[1]+=1;
-                break;
-            case Action.SOUTHWEST:
-                this.head_loc[1]+=1;
-                this.head_loc[0]-=1;
-                break;
-            case Action.WEST:
-                this.head_loc[0]-=1;
-                break;
-            case Action.NORTHWEST:
-                this.head_loc[1]-=1;
-                this.head_loc[0]-=1;
-                break;
-
-        }
-
-    }
         
 }
 
@@ -187,42 +167,36 @@ export class Board {
         this.spawn_apples()
     }
 
-    play_turn(turn: Action[], cells_lost:number[][], traps_created:number[][], traps_lost:number[][], time:number): void{
+    play_turn(turn: Action[],cells_gained:number[][], cells_lost:number[][], traps_created:number[][], traps_lost:number[][], time:number): void{
+        console.log(cells_gained)
+        console.log("hello")
         if(this.is_as_turn){
             if(Array.isArray(turn)){
                 turn.forEach((action, index)=>{
                     if(action != Action.TRAP){
-                        this.snake_a.push_move(action);
-        
-                        let x:number = this.snake_a.head_loc[0]
-                        let y:number = this.snake_a.head_loc[1]
-                        
-                        if(this.cells_apples[y][x] > 0){
-                            this.snake_a.apples_eaten+=this.cells_apples[y][x];
-                            this.cells_apples[y][x] = 0;
-                        }
-                    
-                        this.cells_a[y][x]++;
+                        this.snake_a.dir = action;
                     }
                     
                     
                 })
             } else{
-                this.snake_a.push_move(turn);
-    
-                let x:number = this.snake_a.head_loc[0]
-                let y:number = this.snake_a.head_loc[1]
-                
-                if(this.cells_apples[y][x] > 0){
-                    this.snake_a.apples_eaten+=this.cells_apples[y][x];
-                    this.cells_apples[y][x] = 0;
-                }
-
-                if(turn != Action.TRAP){
-                    this.cells_a[y][x]++;
-                }
+                this.snake_a.dir = turn;
 
             }
+
+            
+
+            cells_gained.forEach((cell, index)=>{
+                this.cells_a[cell[1]][cell[0]]++;
+                this.snake_a.head_loc = [cell[0], cell[1]]
+
+                if(this.cells_apples[cell[1]][cell[0]] > 0){
+                    this.snake_a.apples_eaten+=1;
+                    this.cells_apples[cell[1]][cell[0]] = 0;
+                }
+            })
+
+            
             
 
             cells_lost.forEach((cell, index)=>{
@@ -240,43 +214,34 @@ export class Board {
             if(Array.isArray(turn)){
                 turn.forEach((action, index)=>{
                     if(action != Action.TRAP){
-                        this.snake_b.push_move(action);
-
-                        let x:number = this.snake_b.head_loc[0]
-                        let y:number = this.snake_b.head_loc[1]
-
-                        if(this.cells_apples[y][x] > 0){
-                            this.snake_b.apples_eaten+=this.cells_apples[y][x];
-                            this.cells_apples[y][x] = 0;
-                        }
-                        
-                        this.cells_b[y][x]++;
+                        this.snake_b.dir = action;
                     }
+                    
+                    
                 })
             } else{
-                if(turn != Action.TRAP){
-                    this.snake_b.push_move(turn);
+                this.snake_b.dir = turn;
 
-                    let x:number = this.snake_b.head_loc[0]
-                    let y:number = this.snake_b.head_loc[1]
-
-                    if(this.cells_apples[y][x] > 0){
-                        this.snake_b.apples_eaten+=this.cells_apples[y][x];
-                        this.cells_apples[y][x] = 0;
-                    }
-                
-                    this.cells_b[y][x]++;
-                }
-                
             }
+
+            cells_gained.forEach((cell, index)=>{
+                this.cells_b[cell[1]][cell[0]]++;
+                this.snake_b.head_loc = [cell[0], cell[1]]
+
+                if(this.cells_apples[cell[1]][cell[0]] > 0){
+                    this.snake_b.apples_eaten+=1;
+                    this.cells_apples[cell[1]][cell[0]] = 0;
+                }
+            })
+            
 
             cells_lost.forEach((cell, index)=>{
                 this.cells_b[cell[1]][cell[0]]--;
             })
-
             traps_created.forEach((cell, index)=>{
                 this.cells_b[cell[1]][cell[0]]--;
                 this.cells_b_traps[cell[1]][cell[0]] = 1;
+                
             })
 
             this.b_time-=time;
@@ -298,6 +263,9 @@ export class Board {
             let x:number = this.map.apple_timeline[this.apple_counter][1]
             let y:number = this.map.apple_timeline[this.apple_counter][2]
 
+            console.log(x)
+            console.log(y)
+
             this.cells_apples[y][x] = 1
             this.apple_counter++;
         }
@@ -314,6 +282,18 @@ export class Board {
 
     get_turn_num(): number {
         return this.turn_count;
+    }
+
+    get_portal_map(): number[][] {
+        let portal_map:number[][] =  new Array(this.map.dim_y).fill(null).map(
+            () => new Array(this.map.dim_x).fill(0));
+        
+        for(let i = 0; i< this.map.dim_y; i++){
+            for(let j = 0; j< this.map.dim_x; j++){
+                portal_map[i][j] = this.map.cells_portals[i][j]
+            }
+        }
+        return portal_map
     }
 
 

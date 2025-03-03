@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { Direction } from '../replay/game_engine';
 
 const GridValues = {
   EMPTY: 0,
@@ -11,15 +10,14 @@ const GridValues = {
   SNAKE_B_BODY: 6,
 }
 
+
 export default function MapVis({
   showSnakeStart, 
   aSpawn,
   bSpawn,
   mapHeight, mapWidth, 
-  walls,
+  walls, portals,
   cellType,
-  setASpawn,
-  setBSpawn,
   setTile,
   rerender
 
@@ -94,6 +92,7 @@ export default function MapVis({
         
     }
 
+
     const drawSnakeHead = (x, y, color, direction) => {
         ctx.fillStyle = color;
         ctx.beginPath();
@@ -110,7 +109,10 @@ export default function MapVis({
         ctx.stroke();
 
         ctx.fillStyle = 'white';
-        
+
+  
+        drawEyes(x + 1/3, y + 1/4, x + 2/3, y + 1/4);
+           
         switch(direction) {
           case Direction.EAST:
             drawEyes(x + 3/4, y + 1/3, x + 3/4, y + 2/3);
@@ -118,9 +120,7 @@ export default function MapVis({
           case Direction.WEST:
             drawEyes(x + 1/4, y + 1/3, x + 1/4, y + 2/3);
             break;
-          case Direction.NORTH:
-            drawEyes(x + 1/3, y + 1/4, x + 2/3, y + 1/4);
-            break;
+          
           case Direction.SOUTH:
             drawEyes(x + 1/3, y + 3/4, x + 2/3, y + 3/4);
             break;
@@ -161,6 +161,10 @@ export default function MapVis({
        const drawCell = (x, y) => {
           if(walls != null && walls[y][x]){
             drawWall(x, y);
+          } 
+          else if(portals != null && portals[y][x] >= 0){
+            drawPortal(x, y)
+
           }
           else if(showSnakeStart && x == aSpawn[0] && y == aSpawn[1]){
             drawSnakeHead(x, y, 'green', Direction.NORTH);
@@ -193,6 +197,7 @@ export default function MapVis({
     mapHeight, 
     mapWidth, 
     walls, 
+    portals,
     mouseCellX,
     mouseCellY,
     rerender

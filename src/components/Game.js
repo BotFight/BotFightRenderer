@@ -13,6 +13,7 @@ const GridValues = {
    SNAKE_A_BODY: 4,
    SNAKE_B_HEAD: 5,
    SNAKE_B_BODY: 6,
+   PORTAL:7
 }
 
 
@@ -194,6 +195,27 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
       }
     }
 
+    const drawPortal = (x, y) => {
+      if(matchStates[currentMatchStateIndex].portals[y][x] > 0){
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.beginPath();
+        ctx.arc(
+          x * cellSize + cellSize / 2,
+          y * cellSize + cellSize / 2,
+          cellSize / 2.2,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        
+      }
+    }
+
+
     const drawApple = (x, y) => {
       if(matchStates[currentMatchStateIndex].apple_state[y][x] > 0){
         drawFood(x, y)
@@ -214,6 +236,7 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
     }
 
     const drawCell = (x, y) => {
+      drawPortal(x, y)
       drawApple(x, y) 
       drawOccupancy(x, y)
       if (matchStates[currentMatchStateIndex].map_state[y][x] === GridValues.EMPTY) {

@@ -13,6 +13,8 @@ const GridValues = {
     SNAKE_A_BODY: 4,
     SNAKE_B_HEAD: 5,
     SNAKE_B_BODY: 6,
+    START_PORTAL:7,
+    END_PORTAL:8
 }
 
 export default function MapRenderer() {
@@ -22,6 +24,7 @@ export default function MapRenderer() {
     const [mapHeight, setMapHeight] = useState(20); 
     const [mapWidth, setMapWidth] = useState(20);  
     const [walls, setWalls] = useState(null);  // Array to store wall positions, initially empty
+    const [portals, setPortals] = useState(null);  // Array to store wall positions, initially empty
     const [cellType, setCellType] = useState(GridValues.EMPTY);
     const [appleRate, setAppleRate] = useState(50);
     const [appleNum, setAppleNum] = useState(1);
@@ -29,6 +32,8 @@ export default function MapRenderer() {
     const [canvasRerender, setCanvasRerender] = useState(false)
     const [startSize, setStartSize] = useState(5)
     const [mapName, setMapName] = useState("")
+    const [startPortal, setStartPortal] = useState([-1, -1])
+    const [endPortal, setEndPortal] = useState([-1, -1])
 
     const min_map = 1;
     const max_map = 64;
@@ -57,6 +62,7 @@ export default function MapRenderer() {
 
     const handleCellChange = (event) => {
       const value = event.target.value;
+      
       switch(value) {
           case "Space":
               setCellType(GridValues.EMPTY);
@@ -68,11 +74,19 @@ export default function MapRenderer() {
               setCellType(GridValues.WALL);
               break;
           case "Snake A":
+
               setCellType(GridValues.SNAKE_A_HEAD);
               break;
           case "Snake B":
+  
               setCellType(GridValues.SNAKE_B_HEAD);
               break;
+          case "Portal 1":
+              setCellType(GridValues.START_PORTAL)
+              break;
+          case "Portal 2":
+              setCellType(GridValues.END_PORTAL)
+              break
       }
   };
 
@@ -82,8 +96,11 @@ export default function MapRenderer() {
         const f = Math.max(Math.min(max_map, value), min_map)
         setMapHeight(f);
         setWalls(new Array(f).fill().map(() => new Array(mapWidth).fill(false)));
+        setPortals(new Array(f).fill().map(() => new Array(mapWidth).fill(-1)));
         setASpawn([-1, -1])
         setBSpawn([-1, -1])
+        setStartPortal([-1, -1])
+        setEndPortal([-1, -1])
     };
 
     const handleWidthChange = (event) => {
@@ -91,8 +108,11 @@ export default function MapRenderer() {
         const f = Math.max(Math.min(max_map, value), min_map)
         setMapWidth(f);
         setWalls(new Array(mapHeight).fill().map(() => new Array(f).fill(false)));
+        setPortals(new Array(mapHeight).fill().map(() => new Array(f).fill(-1)));
         setASpawn([-1, -1])
         setBSpawn([-1, -1])
+        setStartPortal([-1, -1])
+        setEndPortal([-1, -1])
     };
 
     const handleAppleRateChange = (event) => {
@@ -124,8 +144,11 @@ export default function MapRenderer() {
       const value = event.target.value;
       setSymmetry(value);
       setWalls(new Array(mapHeight).fill().map(() => new Array(mapWidth).fill(false)));
+      setPortals(new Array(mapHeight).fill().map(() => new Array(mapWidth).fill(-1)));
       setASpawn([-1, -1])
       setBSpawn([-1, -1])
+      setStartPortal([-1, -1])
+      setEndPortal([-1, -1])
       
     };
 
@@ -153,12 +176,33 @@ export default function MapRenderer() {
       let parts = [
 
       ]
+      
+      let portalList=[]
+
+      for(let i = 0; i< mapHeight; i++){
+        for(let j = 0; j< mapWidth; j++){
+          let portalString = []
+          if(portals[i][j] >= 0){
+            let othery = Math.floor(portals[i][j] / mapWidth)
+            let otherx = portals[i][j] % mapWidth
+
+            portalString.push(j)
+            portalString.push(i)
+            portalString.push(otherx)
+            portalString.push(othery)
+
+            portalList.push(portalString.join(","))
+
+          } 
+        }
+      }
 
       parts.push(mapWidth.toString()+","+mapHeight.toString());
       parts.push(aSpawn[0].toString()+","+aSpawn[1].toString());
       parts.push(bSpawn[0].toString()+","+bSpawn[1].toString());
       parts.push(startSize.toString());
       parts.push(min_size.toString());
+      parts.push(portalList.join("|"));
       parts.push(appleRate.toString()+","+appleNum.toString()+","+symmetry);
 
       let wallarr = []
@@ -194,22 +238,31 @@ export default function MapRenderer() {
 
   
     const setTile = (x, y) =>{
+      if(cellType != GridValues.START_PORTAL && cellType != GridValues.END_PORTAL){
+        setStartPortal([-1, -1])
+        setEndPortal([-1, -1])
+      }
       if(cellType==GridValues.EMPTY){
-        
         if(x==aSpawn[0] && y ==aSpawn[1]){
           setASpawn([-1, -1])
           setBSpawn([-1, -1])
-          setCanvasRerender(!canvasRerender)
+
         } else if(x==bSpawn[0] && y ==bSpawn[1]){
           setASpawn([-1, -1])
           setBSpawn([-1, -1])
-          setCanvasRerender(!canvasRerender)
         } else if(walls != null && walls[y][x]){
           
           walls[y][x] = false;
           const reflection = reflect(x, y);
           walls[reflection[1]][reflection[0]] = false;
-          setCanvasRerender(!canvasRerender)
+        } else if(portals != null && portals[y][x] >= 0){
+          const partnerPortal = portals[y][x]
+
+          const partnerPortalX = partnerPortal % mapWidth
+          const partnerPortalY = Math.floor(partnerPortal / mapWidth)
+
+          portals[y][x] = -1;
+          portals[partnerPortalY][partnerPortalX] = -1;
         }
       } else if(cellType == GridValues.SNAKE_A_HEAD){
         const reflection = reflect(x, y);
@@ -217,6 +270,14 @@ export default function MapRenderer() {
           if(walls != null && walls[y][x]){
             walls[y][x] = false;
             walls[reflection[1]][reflection[0]] = false;
+          } else if(portals != null && portals[y][x] >= 0){
+            const partnerPortal = portals[y][x]
+  
+            const partnerPortalX = partnerPortal % mapWidth
+            const partnerPortalY = Math.floor(partnerPortal / mapWidth)
+  
+            portals[y][x] = -1;
+            portals[partnerPortalY][partnerPortalX] = -1;
           }
           if(reflection[0]!= x || reflection[1]!=y){
             setASpawn([x, y])
@@ -231,6 +292,14 @@ export default function MapRenderer() {
           if(walls != null && walls[y][x]){
             walls[y][x] = false;
             walls[reflection[1]][reflection[0]] = false;
+          }else if(portals != null && portals[y][x] >= 0){
+            const partnerPortal = portals[y][x]
+  
+            const partnerPortalX = partnerPortal % mapWidth
+            const partnerPortalY = Math.floor(partnerPortal / mapWidth)
+  
+            portals[y][x] = -1;
+            portals[partnerPortalY][partnerPortalX] = -1;
           }
           if(reflection[0]!= x || reflection[1]!=y){
             setBSpawn([x, y])
@@ -239,24 +308,94 @@ export default function MapRenderer() {
         }
         
       } else if(cellType == GridValues.WALL){
+        const reflection = reflect(x, y);
         if(x==aSpawn[0] && y ==aSpawn[1]){
           setASpawn([-1, -1])
           setBSpawn([-1, -1])
         } else if(x==bSpawn[0] && y ==bSpawn[1]){
           setASpawn([-1, -1])
           setBSpawn([-1, -1])
+        } else if(portals != null && portals[y][x] >= 0){
+          const partnerPortal = portals[y][x]
+
+          const partnerPortalX = partnerPortal % mapWidth
+          const partnerPortalY = Math.floor(partnerPortal / mapWidth)
+
+          portals[y][x] = -1;
+          portals[partnerPortalY][partnerPortalX] = -1;
         }
         walls[y][x] = true;
-        const reflection = reflect(x, y);
         walls[reflection[1]][reflection[0]] = true;
-        setCanvasRerender(!canvasRerender)
+      } else if(cellType == GridValues.START_PORTAL){
+        const reflection = reflect(x, y);
+        if(x==aSpawn[0] && y ==aSpawn[1]){
+          setASpawn([-1, -1])
+          setBSpawn([-1, -1])
+        } else if(x==bSpawn[0] && y ==bSpawn[1]){
+          setASpawn([-1, -1])
+          setBSpawn([-1, -1])
+        } else if(walls != null && walls[y][x]){
+          walls[y][x] = 0;
+          walls[reflection[1]][reflection[0]] = 0;
+        } else if(portals != null && portals[y][x] >= 0){
+          const partnerPortal = portals[y][x]
+
+          const partnerPortalX = partnerPortal % mapWidth
+          const partnerPortalY = Math.floor(partnerPortal / mapWidth)
+
+          portals[y][x] = -1;
+          portals[partnerPortalY][partnerPortalX] = -1;
+        
+
+        }
+
+        if(endPortal[0] != -1){
+          portals[y][x] = endPortal[1] * mapWidth + endPortal[0]
+          portals[endPortal[1]][endPortal[0]] = y * mapWidth + x
+          setEndPortal([-1, -1])
+
+        } else{
+          setStartPortal([x, y])
+        }
+      } else if(cellType == GridValues.END_PORTAL){
+        const reflection = reflect(x, y);
+        if(x==aSpawn[0] && y ==aSpawn[1]){
+          setASpawn([-1, -1])
+          setBSpawn([-1, -1])
+        } else if(x==bSpawn[0] && y ==bSpawn[1]){
+          setASpawn([-1, -1])
+          setBSpawn([-1, -1])
+        } else if(walls != null && walls[y][x] > 0){
+          walls[y][x] = 0;
+          walls[reflection[1]][reflection[0]] = 0;
+        } else if(portals != null && portals[y][x] >= 0){
+          const partnerPortal = portals[y][x]
+
+          const partnerPortalX = partnerPortal % mapWidth
+          const partnerPortalY = Math.floor(partnerPortal / mapWidth)
+
+          portals[y][x] = -1;
+          portals[partnerPortalY][partnerPortalX] = -1;
+        }
+        if(startPortal[0] != -1){
+          portals[y][x] = startPortal[1] * mapWidth + startPortal[0]
+          portals[startPortal[1]][startPortal[0]] = y * mapWidth + x
+          setStartPortal([-1, -1])
+
+        } else{
+          setEndPortal([x, y])
+        }
       }
+      setCanvasRerender(!canvasRerender)
     }
 
     useEffect(() => {
 
       if(walls==null){
         setWalls(new Array(mapHeight).fill().map(() => new Array(mapWidth).fill(false)));
+      }
+      if(portals == null){
+        setPortals(new Array(mapHeight).fill().map(() => new Array(mapWidth).fill(-1)));
       }
     }, []);
 
@@ -267,12 +406,13 @@ export default function MapRenderer() {
         showSnakeStart={showSnakeStart}
         aSpawn={aSpawn}
         bSpawn={bSpawn}
+        startPortal={startPortal}
+        endPortal={endPortal}
         mapHeight={mapHeight}
         mapWidth={mapWidth}
         walls={walls}
+        portals={portals}
         cellType={cellType}
-        setASpawn={setASpawn}
-        setBSpawn={setBSpawn}
         setTile={setTile}
         rerender={canvasRerender}
 

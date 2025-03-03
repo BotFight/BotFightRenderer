@@ -21,6 +21,7 @@ class MatchState{
     map_state: number[][];
     trap_state: number[][];
     apple_state: number[][];
+    portals: number[][];
     a_dir: Action;
     b_dir: Action;
     turn_num: number;
@@ -44,6 +45,7 @@ class MatchState{
         this.a_length = a_length;
         this.b_length = b_length;
 
+        this.portals = b.get_portal_map();
         this.map_state = b.get_occupancy_map();
         this.trap_state = b.get_trap_map();
         this.apple_state = b.get_apple_map();
@@ -62,7 +64,7 @@ export async function processData(history: BoardHistory): Promise<Match> {
         
         for(let i:number = 1; i<= history.turn_count; i++){
             
-            b.play_turn(history.moves[i-1], history.cells_lost[i-1], history.traps_created[i-1], history.traps_lost[i-1], history.times[i-1]);
+            b.play_turn(history.moves[i-1], history.cells_gained[i-1], history.cells_lost[i-1], history.traps_created[i-1], history.traps_lost[i-1], history.times[i-1]);
             match_states[i] = new MatchState(b, history.a_length[i], history.b_length[i]);
             b.next_turn();
             
@@ -85,6 +87,7 @@ interface BoardHistory{
     reason: string,
     turn_count: number,
     start_time: number,
+    cells_gained: number[][][],
     cells_lost: number[][][],
     a_length: number[],
     b_length: number[],

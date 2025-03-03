@@ -14,6 +14,7 @@ const speeds = [
   { label: "1x", value: 200 },
   { label: "2x", value: 100 },
   { label: "4x", value: 50 },
+  { label: "8x", value: 25 }
 ];
 
 function Navigation({
