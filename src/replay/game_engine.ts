@@ -31,12 +31,16 @@ export class Map{
 
         for(let i = 0; i< portals.length; i++){
             let portal:string[]= portals[i].split(",")
-            let x1: number = parseInt(portal[0])
-            let y1: number = parseInt(portal[1])
-            let x2: number = parseInt(portal[2])
-            let y2: number = parseInt(portal[3])
+            if(portal.length ==4){
+                let x1: number = parseInt(portal[0])
+                let y1: number = parseInt(portal[1])
+                let x2: number = parseInt(portal[2])
+                let y2: number = parseInt(portal[3])
 
-            this.cells_portals[y1][x1] = (this.dim_y * y1 + x1) 
+                this.cells_portals[y1][x1] = (this.dim_y * y2 + x2) 
+
+            }
+            
         }
 
 
