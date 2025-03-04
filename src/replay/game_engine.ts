@@ -24,7 +24,7 @@ export class Map{
         this.start_size = parseInt(infos[3])
         this.min_player_size = parseInt(infos[4])
 
-        let portals:string[] = infos[5].split("|");
+        let portals:string[] = infos[5].split("_");
         this.cells_portals = new Array(this.dim_y).fill(null).map(
             () => new Array(this.dim_x).fill(-1));
 
@@ -40,7 +40,7 @@ export class Map{
         }
 
 
-        let apples:string[] = infos[6].split("|")
+        let apples:string[] = infos[6].split("_")
         console.log(apples)
         this.apple_timeline = new Array(apples.length).
         fill(null).map(
