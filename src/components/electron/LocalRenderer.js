@@ -81,10 +81,10 @@ function LocalRenderer() {
         
         const resultFilePath = path.join(outdir, `${num}.json`);
         const scriptArgs = [
-          '-a', finalBot1File,
-          '-b', finalBot2File,
-          '-m', map,
-          '-o', resultFilePath
+          '--a_dir', `"${finalBot1File}"`,
+          '--b_dir', `"${finalBot2File}"`,
+          '--map_string', `"${map}"`,
+          '--output_dir', `"${resultFilePath}"`
         ];
         setEngineOutput(await window.electron.runPythonScript(scriptArgs));
 
