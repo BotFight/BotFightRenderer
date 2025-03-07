@@ -102,9 +102,9 @@ function createWindow() {
         win.loadURL(`file://${path.join(__dirname, 'index.html')}`);
     }
 
-    // if (!app.isPackaged) {
-    win.webContents.openDevTools()
-    // }
+    if (!app.isPackaged) {
+        win.webContents.openDevTools()
+    }
 }
 
 
