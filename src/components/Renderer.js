@@ -123,6 +123,7 @@ const handleSpeedChange = (event) => {
           inputValue={currentMatchStateIndex}
           isPlaying={isPlaying}
           onSpeedChange={handleSpeedChange}
+          matchStates={matchStates}
         />
       )}
    </div>

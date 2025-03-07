@@ -180,10 +180,7 @@ export class Board {
         
     }
 
-    play_turn(turn: Action[],cells_gained:number[][], cells_lost:number[][], traps_created:number[][], traps_lost:number[][], time:number): void{
-        console.log(cells_gained)
-        console.log("hello")
-
+    play_turn(turn: Action[],cells_gained:number[][], cells_lost:number[][], traps_created:number[][], traps_lost:number[][], time:number): void{            
         if(this.is_as_turn){
             if(Array.isArray(turn)){
                 turn.forEach((action, index)=>{

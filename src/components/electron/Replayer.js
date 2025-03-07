@@ -108,6 +108,7 @@ function Replayer() {
         inputValue={currentMatchStateIndex}
         isPlaying={isPlaying}
         onSpeedChange={handleSpeedChange}
+        matchStates={matchStates}
       />
     </div>
   );
