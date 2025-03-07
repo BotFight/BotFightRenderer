@@ -11,8 +11,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "fixindex": "node update-index.js",
     "electron:serve": "concurrently \"cross-env BROWSER=none npm run dev\" \"npm run electron:start\"",
-    "electron:build": "next build && electron-builder",
+    "electron:build": "next build && npm run fixindex && electron-builder",
     "electron:start": "wait-on tcp:3000 && electron ."
   },
   "dependencies": {
