@@ -117,23 +117,24 @@ function LocalRenderer() {
 
 
   return (
-    <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 relative gap-3">
-      <div className='mb-4'>
-        <MapSelector onSelectMap={setMap} />
-      </div>
-      <div className='flex flex-row space-x-4'>
+    <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 relative gap-2">            
+      <div className='flex flex-row space-x-4 mt-4'>
       <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates}></PlayerStats>        
-        <Game
-          currentMatchStateIndex={currentMatchStateIndex}
-          setCurrentMatchStateIndex={setCurrentMatchStateIndex}
-          matchStates={matchStates}
-        />        
+      <div className="flex flex-col items-center gap-4"> 
+      <MapSelector onSelectMap={setMap} />
+          <Game
+            currentMatchStateIndex={currentMatchStateIndex}
+            setCurrentMatchStateIndex={setCurrentMatchStateIndex}
+            matchStates={matchStates}
+          />       
+        </div>
         <div className="flex flex-col gap-4 items-center">
           <h1 className="text-white font-bold"> Debug Outputs </h1>
           <GameOutputs engineOutput={engineOutput} />
         </div>
       </div>
       <LocalSelector map={map} setFinalBot1File={setFinalBot1File} setFinalBot2File={setFinalBot2File} setShouldPlayMatch={setShouldPlayMatch}/>      
+      <div className='mb-4'>
       <Navigation
         onBack={handleBack}
         onForward={handleForward}
@@ -144,6 +145,7 @@ function LocalRenderer() {
         onSpeedChange={handleSpeedChange}
         matchStates={matchStates}
       />
+      </div>
     </div>
   );
 }
