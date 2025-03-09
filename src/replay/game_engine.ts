@@ -45,7 +45,7 @@ export class Map{
 
 
         let apples:string[] = infos[6].split("_")
-        console.log(apples)
+ 
         this.apple_timeline = new Array(apples.length).
         fill(null).map(
             () => new Array(3).fill(0));
@@ -303,9 +303,6 @@ export class Board {
 
             let x:number = this.map.apple_timeline[this.apple_counter][1]
             let y:number = this.map.apple_timeline[this.apple_counter][2]
-
-            console.log(x)
-            console.log(y)
 
             this.cells_apples[y][x] = 1
             this.apple_counter++;
