@@ -114,7 +114,7 @@ ipcMain.handle('run-python-script', async (event, scriptArgs) => {
     return new Promise((resolve, reject) => {
         console.log('Running python script with args:', scriptArgs);
         const gameScript = path.join(enginePath, 'run_game_dist');
-        pythonProcess = spawn(gameScript, [...scriptArgs],{
+        pythonProcess = spawn(`"${gameScript}"`, [...scriptArgs],{
             cwd: enginePath,
             shell: true
         });

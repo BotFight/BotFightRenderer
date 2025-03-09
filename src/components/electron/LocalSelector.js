@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
+import { Button } from '@/components/ui/button'
 
 const LocalSelector = ({map, setFinalBot1File, setFinalBot2File, setShouldPlayMatch}) => {
 
@@ -103,7 +104,7 @@ const LocalSelector = ({map, setFinalBot1File, setFinalBot2File, setShouldPlayMa
         />
       </div>
       <div className="flex justify-center mt-6">
-        <button 
+        <Button 
           className={`px-4 py-2 rounded text-sm text-white
             ${(bot1File && bot2File && map != null)
               ? 'bg-green-500 hover:bg-green-600' 
@@ -112,7 +113,7 @@ const LocalSelector = ({map, setFinalBot1File, setFinalBot2File, setShouldPlayMa
           onClick={handleBattleStart}
         >
           Start Battle
-        </button>
+        </Button>
       </div>
     </div>
   );

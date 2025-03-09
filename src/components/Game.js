@@ -36,6 +36,7 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
     const gridSizeWidth = matchStates[0].map_state.length;
     const gridSizeHeight = matchStates[0].map_state[0].length;
 
+
     const maxSize = 512
 
     let cellCalc = Math.min(maxSize/gridSizeWidth, maxSize/gridSizeHeight)
@@ -49,8 +50,8 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
       ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
     }
 
-    const width = gridSizeWidth * cellSize;
-    const height = gridSizeHeight * cellSize;
+    const width =  gridSizeHeight * cellSize;
+    const height = gridSizeWidth * cellSize;
 
 
     canvas.width = width;
@@ -176,21 +177,22 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
     }
 
     const drawOccupancy = (x, y) => {
-      switch (matchStates[currentMatchStateIndex].map_state[x][y]) {
+      
+      switch (matchStates[currentMatchStateIndex].map_state[y][x]) {
         case GridValues.WALL:
-            drawWall(y, x, 'brown');
+            drawWall(x, y, 'brown');
             break;
         case GridValues.SNAKE_A_HEAD:
-            drawSnakeHead(y, x, 'green', matchStates[currentMatchStateIndex].a_dir);
+            drawSnakeHead(x, y, 'green', matchStates[currentMatchStateIndex].a_dir);
             break;
         case GridValues.SNAKE_A_BODY:
-            drawSnake(y, x, 'green');
+            drawSnake(x, y, 'green');
             break;
         case GridValues.SNAKE_B_HEAD:
-            drawSnakeHead(y, x, 'blue',  matchStates[currentMatchStateIndex].b_dir);
+            drawSnakeHead(x, y, 'blue',  matchStates[currentMatchStateIndex].b_dir);
             break;
         case GridValues.SNAKE_B_BODY:
-            drawSnake(y, x, 'blue');
+            drawSnake(x, y, 'blue');
             break;
       }
     }

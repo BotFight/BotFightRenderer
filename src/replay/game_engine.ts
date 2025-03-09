@@ -31,17 +31,21 @@ export class Map{
 
         for(let i = 0; i< portals.length; i++){
             let portal:string[]= portals[i].split(",")
-            let x1: number = parseInt(portal[0])
-            let y1: number = parseInt(portal[1])
-            let x2: number = parseInt(portal[2])
-            let y2: number = parseInt(portal[3])
+            if(portal.length ==4){
+                let x1: number = parseInt(portal[0])
+                let y1: number = parseInt(portal[1])
+                let x2: number = parseInt(portal[2])
+                let y2: number = parseInt(portal[3])
 
-            this.cells_portals[y1][x1] = (this.dim_y * y1 + x1) 
+                this.cells_portals[y1][x1] = (this.dim_x * y2 + x2) 
+
+            }
+            
         }
 
 
         let apples:string[] = infos[6].split("_")
-        console.log(apples)
+ 
         this.apple_timeline = new Array(apples.length).
         fill(null).map(
             () => new Array(3).fill(0));
@@ -167,9 +171,16 @@ export class Board {
         this.spawn_apples()
     }
 
-    play_turn(turn: Action[],cells_gained:number[][], cells_lost:number[][], traps_created:number[][], traps_lost:number[][], time:number): void{
-        console.log(cells_gained)
-        console.log("hello")
+    get_portal(x: number, y:number):[number, number] {
+        if(this.map.cells_portals[y][x] >=0){
+            let num:number = this.map.cells_portals[y][x];
+            return [num %this.map.dim_x, Math.floor(num/this.map.dim_x)]
+        }
+        return [-1, -1]
+        
+    }
+
+    play_turn(turn: Action[],cells_gained:number[][], cells_lost:number[][], traps_created:number[][], traps_lost:number[][], time:number): void{            
         if(this.is_as_turn){
             if(Array.isArray(turn)){
                 turn.forEach((action, index)=>{
@@ -193,7 +204,15 @@ export class Board {
                 if(this.cells_apples[cell[1]][cell[0]] > 0){
                     this.snake_a.apples_eaten+=1;
                     this.cells_apples[cell[1]][cell[0]] = 0;
+
+                    let portal:[number, number] = this.get_portal(cell[0], cell[1])
+
+                    if(portal[0]!= -1){
+                        
+                        this.cells_apples[portal[1]][portal[0]] = 0;
+                    }
                 }
+
             })
 
             
@@ -206,6 +225,11 @@ export class Board {
                 this.cells_a[cell[1]][cell[0]]--;
                 this.cells_a_traps[cell[1]][cell[0]] = 1;
                 
+                let portal:[number, number] = this.get_portal(cell[0], cell[1])
+
+                if(portal[0]!= -1){
+                    this.cells_a_traps[portal[1]][portal[0]] = 1;
+                }
             })
 
             this.a_time-=time;
@@ -231,6 +255,17 @@ export class Board {
                 if(this.cells_apples[cell[1]][cell[0]] > 0){
                     this.snake_b.apples_eaten+=1;
                     this.cells_apples[cell[1]][cell[0]] = 0;
+
+                    console.log(this.turn_count)
+
+                    let portal:[number, number] = this.get_portal(cell[0], cell[1])
+
+                    console.log(portal)
+
+
+                    if(portal[0]!= -1){
+                        this.cells_apples[portal[1]][portal[0]] = 0;
+                    }
                 }
             })
             
@@ -241,6 +276,11 @@ export class Board {
             traps_created.forEach((cell, index)=>{
                 this.cells_b[cell[1]][cell[0]]--;
                 this.cells_b_traps[cell[1]][cell[0]] = 1;
+
+                let portal:[number, number] = this.get_portal(cell[0], cell[1])
+                if(portal[0]!= -1){
+                    this.cells_b_traps[portal[1]][portal[0]] = 1;
+                }
                 
             })
 
@@ -251,6 +291,13 @@ export class Board {
         traps_lost.forEach((cell, index)=>{
             this.cells_a_traps[cell[1]][cell[0]] = 0;
             this.cells_b_traps[cell[1]][cell[0]] = 0;
+
+
+            let portal:[number, number] = this.get_portal(cell[0], cell[1])
+            if(portal[0]!= -1){
+                this.cells_a_traps[portal[1]][portal[0]] = 0;
+                this.cells_b_traps[portal[1]][portal[0]] = 0;
+            }
         })
 
     }
@@ -263,12 +310,15 @@ export class Board {
             let x:number = this.map.apple_timeline[this.apple_counter][1]
             let y:number = this.map.apple_timeline[this.apple_counter][2]
 
-            console.log(x)
-            console.log(y)
-
             this.cells_apples[y][x] = 1
             this.apple_counter++;
-        }
+
+            let portal:[number, number] = this.get_portal(x, y)
+
+            if(portal[0]!= -1){
+                this.cells_apples[portal[1]][portal[0]] = 1;
+            }
+}
     }
 
     next_turn(): void {

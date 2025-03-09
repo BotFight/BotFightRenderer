@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { processData} from "../../replay/process_replay"
 import ReassignDirectory from './ReassignDirectory';
 import GameOutputs from './GameOutputs';
+import PlayerStats from '../PlayerStats';
 
 
 const path = require('path');
@@ -81,10 +82,10 @@ function LocalRenderer() {
         
         const resultFilePath = path.join(outdir, `${num}.json`);
         const scriptArgs = [
-          '-a', finalBot1File,
-          '-b', finalBot2File,
-          '-m', map,
-          '-o', resultFilePath
+          '--a_dir', `"${finalBot1File}"`,
+          '--b_dir', `"${finalBot2File}"`,
+          '--map_string', `"${map}"`,
+          '--output_dir', `"${resultFilePath}"`
         ];
         setEngineOutput(await window.electron.runPythonScript(scriptArgs));
 
@@ -116,19 +117,24 @@ function LocalRenderer() {
 
 
   return (
-    <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 relative gap-3">
+    <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 relative gap-2">            
+      <div className='flex flex-row space-x-4 mt-4'>
+      <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates}></PlayerStats>        
+      <div className="flex flex-col items-center gap-4"> 
+      <MapSelector onSelectMap={setMap} />
+          <Game
+            currentMatchStateIndex={currentMatchStateIndex}
+            setCurrentMatchStateIndex={setCurrentMatchStateIndex}
+            matchStates={matchStates}
+          />       
+        </div>
+        <div className="flex flex-col gap-4 items-center">
+          <h1 className="text-white font-bold"> Debug Outputs </h1>
+          <GameOutputs engineOutput={engineOutput} />
+        </div>
+      </div>
+      <LocalSelector map={map} setFinalBot1File={setFinalBot1File} setFinalBot2File={setFinalBot2File} setShouldPlayMatch={setShouldPlayMatch}/>      
       <div className='mb-4'>
-        <MapSelector onSelectMap={setMap} />
-      </div>
-      <div className='flex flex-row'>
-        <Game
-          currentMatchStateIndex={currentMatchStateIndex}
-          setCurrentMatchStateIndex={setCurrentMatchStateIndex}
-          matchStates={matchStates}
-        />
-        <GameOutputs engineOutput={engineOutput} />
-      </div>
-      <LocalSelector map={map} setFinalBot1File={setFinalBot1File} setFinalBot2File={setFinalBot2File} setShouldPlayMatch={setShouldPlayMatch}/>
       <Navigation
         onBack={handleBack}
         onForward={handleForward}
@@ -137,7 +143,9 @@ function LocalRenderer() {
         inputValue={currentMatchStateIndex}
         isPlaying={isPlaying}
         onSpeedChange={handleSpeedChange}
+        matchStates={matchStates}
       />
+      </div>
     </div>
   );
 }

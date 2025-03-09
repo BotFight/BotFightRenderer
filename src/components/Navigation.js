@@ -10,6 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+
 const speeds = [
   { label: "1x", value: 200 },
   { label: "2x", value: 100 },
@@ -24,19 +27,40 @@ function Navigation({
   togglePlay,
   inputValue,
   isPlaying,
-  onSpeedChange,
+  onSpeedChange,  
+  matchStates  
 }) {
+  const [isRunningInElectron, setIsRunningInElectron] = useState(false);
+
+  useEffect(() => {
+    const checkElectron = () => {
+      return (
+        navigator.userAgent.indexOf('Electron') !== -1 ||
+        !!(window.process && window.process.versions && window.process.versions.electron)
+      );
+    };
+    
+    setIsRunningInElectron(checkElectron());
+  }, []);
+
+  useEffect(() => {
+    console.log("match states", matchStates);
+    console.log(isRunningInElectron);
+  } , [matchStates]);
+
+
+  
   return (
     <div className="flex flex-row gap-2 items-center">
-      <button onClick={onBack} className="px-4 py-2 bg-yellow-500 text-black font-bold  rounded hover:bg-yellow-400">
+      <Button onClick={onBack} disabled={!matchStates && isRunningInElectron} className="px-4 py-2 bg-yellow-500 text-black font-bold  rounded hover:bg-yellow-400">
         Back
-      </button>
-      <button onClick={togglePlay} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">
+      </Button>
+      <Button onClick={togglePlay} disabled={!matchStates && isRunningInElectron} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">
         {isPlaying ? "Pause" : "Play"}
-      </button>
-      <button onClick={onForward} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">
+      </Button>
+      <Button onClick={onForward} disabled={!matchStates && isRunningInElectron}  className="px-4 py-2 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">
         Forward
-      </button>
+      </Button>
       <Input
         type="number"
         value={inputValue}
