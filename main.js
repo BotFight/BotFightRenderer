@@ -41,7 +41,7 @@ async function initMaps() {
     }catch (error){
 
     }
-    let ogResponse = await fs.readFile(path.join(enginePath, '_internal', 'maps.json'));
+    let ogResponse = await fs.readFile(path.join(enginePath, 'src', 'maps.json'));
     let originalMaps = JSON.parse(ogResponse);
     
     Object.keys(originalMaps).forEach(key => {
@@ -113,11 +113,17 @@ ipcMain.handle('run-python-script', async (event, scriptArgs) => {
   console.log('ipcMain.handle called with args:', scriptArgs);
     return new Promise((resolve, reject) => {
         console.log('Running python script with args:', scriptArgs);
-        const gameScript = path.join(enginePath, 'run_game_dist');
-        pythonProcess = spawn(`"${gameScript}"`, [...scriptArgs],{
+        const pythonScript = path.join(enginePath,'src','run_game_dist.py');
+
+        let pycall = "python"
+        if (process.platform === 'win32') {
+            pycall = "python3"
+        }
+        pythonProcess = spawn(pycall, [`"${pythonScript}"`,...scriptArgs],{
             cwd: enginePath,
             shell: true
         });
+        
         let scriptOutput = '';
         let scriptError = '';
         
@@ -286,7 +292,7 @@ ipcMain.handle('dialog:selectFolder', async () => {
   })
 
   ipcMain.handle('delete-maps', async (event, map) =>{
-    let ogResponse = await fs.readFile(path.join(enginePath, '_internal', 'maps.json'));
+    let ogResponse = await fs.readFile(path.join(enginePath, 'src', 'maps.json'));
     let originalMaps = JSON.parse(ogResponse);
 
     mapPairs={}
