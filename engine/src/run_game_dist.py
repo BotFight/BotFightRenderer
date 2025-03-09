@@ -14,8 +14,8 @@ def main():
 
     import time
     import json
-
     try:    
+    
 
         parser = argparse.ArgumentParser(description='Run a game between two players')
         
@@ -26,6 +26,7 @@ def main():
         parser.add_argument('--output_dir', '-o', type=str, help='Output Directory', required=True)
 
         args = parser.parse_args(sys.argv[1:])
+        
         a_name = os.path.basename(args.a_dir)
         b_name = os.path.basename(args.b_dir)
 

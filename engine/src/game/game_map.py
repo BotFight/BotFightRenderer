@@ -3,7 +3,7 @@ import numpy as np
 class Map:
     """
     Map is an internal utility class used by board to initialize 
-    constants and store immutable map data.
+    constants and store immutable map data for the board.
     """
     def __init__(self, map_string):
         self.decay_timeline = [(1000, 15), (1600, 10),(1800,5), (1950, 2)]

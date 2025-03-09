@@ -1,5 +1,5 @@
 from game.board import Board
-from game.enums import Cell, Action
+from game.enums import Cell, Action, Result
 import numpy as np
 from enum import IntEnum, auto
 
@@ -44,6 +44,25 @@ class PlayerBoard:
 
         self.player_trap_cells = game_board.cells_traps_a if is_player_a else game_board.cells_traps_b
         self.enemy_trap_cells = game_board.cells_traps_b if is_player_a else game_board.cells_traps_a
+
+
+    def get_dim_x(self) -> int:
+        """
+        Returns the x dimension of the board.
+
+        Returns:
+            (int): Width of the board.
+        """
+        return self.game_board.map.dim_x
+
+    def get_dim_y(self) -> int:
+        """
+        Returns the y dimension of the board.
+
+        Returns:
+            (int): Height of the board.
+        """
+        return self.game_board.map.dim_y
 
 
     def get_direction(self, enemy:bool = False) -> Action:
@@ -923,6 +942,12 @@ class PlayerBoard:
         """
         return np.array(self.game_board.map.cells_walls)
 
+
+    # def get_winner(self) -> Result:
+    #     """
+    #     Returns result enum, either (Result.PLAYER_A, Result.)
+    #     """
+    #     return self.game_board.winner
 
     def get_portal_mask(self, descriptive:bool = False) -> np.ndarray:
         """

@@ -429,8 +429,8 @@ class Board():
             if(cells_apples_copy[head_loc[1], head_loc[0]] != 0):
                 player.eat_apple()
                 cells_apples_copy[head_loc[1], head_loc[0]]= 0
-                if(self.map.cells_portals[y, x, 0] >= 0):
-                    portal_x, portal_y = self.map.cells_portals[y, x]
+                if(self.map.cells_portals[head_loc[1], head_loc[0], 0] >= 0):
+                    portal_x, portal_y = self.map.cells_portals[head_loc[1], head_loc[0]]
                     cells_apples_copy[portal_y, portal_x] = 0
             
         if(not self.decay_applied and self.decay_index != -1):
@@ -989,7 +989,7 @@ class Board():
                 player.eat_apple()
                 self.cells_apples[head_loc[1], head_loc[0]]= 0
                 if(self.map.cells_portals[head_loc[1], head_loc[0], 0] >= 0):
-                    portal_x, portal_y = self.map.cells_portals[y, x]
+                    portal_x, portal_y = self.map.cells_portals[head_loc[1], head_loc[0]]
                     self.cells_apples[portal_y, portal_x] = 0
 
 

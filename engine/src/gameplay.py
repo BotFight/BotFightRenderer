@@ -636,6 +636,7 @@ def run_player_process(player_name, submission_dir, player_queue, return_queue, 
         import traceback
         import sys
         import importlib
+        import os
         
         import time
         import psutil
