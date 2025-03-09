@@ -5,9 +5,9 @@ import Navigation from '../Navigation';
 import { useState } from 'react';
 import { processData} from "../../replay/process_replay"
 
-import GameOutputs from './GameOutputs';
-import MatchSelector from './MatchSelector'
 
+import MatchSelector from './MatchSelector'
+import PlayerStats from '../PlayerStats'
 
 const path = require('path');
 
@@ -89,27 +89,44 @@ function Replayer() {
 
   return (
     <div className="flex-grow flex flex-col items-center justify-center bg-gray-800 relative gap-6">
+      <div className='flex flex-row space-x-4 mt-4'>
+        
+        <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates}></PlayerStats>      
+        
+        <div className="flex flex-col items-center gap-4"> 
 
+          <MatchSelector setMatchId={setMatchId} />
+          
 
-      <MatchSelector setMatchId={setMatchId} />
-      
-      <div className='flex flex-row'>
-        <Game
-          currentMatchStateIndex={currentMatchStateIndex}
-          setCurrentMatchStateIndex={setCurrentMatchStateIndex}
-          matchStates={matchStates}
-        />
+          
+          <Game
+            currentMatchStateIndex={currentMatchStateIndex}
+            setCurrentMatchStateIndex={setCurrentMatchStateIndex}
+            matchStates={matchStates}
+          />
+
+          <Navigation
+            onBack={handleBack}
+            onForward={handleForward}
+            onInputChange={handleInputChange}
+            togglePlay={togglePlay}
+            inputValue={currentMatchStateIndex}
+            isPlaying={isPlaying}
+            onSpeedChange={handleSpeedChange}
+            matchStates={matchStates}
+          />
+
+          
+        </div>
+        
+        <div style={{
+          width: '400px',
+          height: '1px',
+          minWidth: '400px',
+          minHeight: '1px',
+        }}></div>
+        
       </div>
-      <Navigation
-        onBack={handleBack}
-        onForward={handleForward}
-        onInputChange={handleInputChange}
-        togglePlay={togglePlay}
-        inputValue={currentMatchStateIndex}
-        isPlaying={isPlaying}
-        onSpeedChange={handleSpeedChange}
-        matchStates={matchStates}
-      />
     </div>
   );
 }
