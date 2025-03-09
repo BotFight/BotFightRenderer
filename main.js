@@ -115,9 +115,9 @@ ipcMain.handle('run-python-script', async (event, scriptArgs) => {
         console.log('Running python script with args:', scriptArgs);
         const pythonScript = path.join(enginePath,'src','run_game_dist.py');
 
-        let pycall = "python"
+        let pycall = "python3"
         if (process.platform === 'win32') {
-            pycall = "python3"
+            pycall = "python"
         }
         pythonProcess = spawn(pycall, [`"${pythonScript}"`,...scriptArgs],{
             cwd: enginePath,
