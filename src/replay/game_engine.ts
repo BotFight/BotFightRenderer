@@ -37,7 +37,7 @@ export class Map{
                 let x2: number = parseInt(portal[2])
                 let y2: number = parseInt(portal[3])
 
-                this.cells_portals[y1][x1] = (this.dim_y * y2 + x2) 
+                this.cells_portals[y1][x1] = (this.dim_x * y2 + x2) 
 
             }
             
@@ -208,6 +208,7 @@ export class Board {
                     let portal:[number, number] = this.get_portal(cell[0], cell[1])
 
                     if(portal[0]!= -1){
+                        
                         this.cells_apples[portal[1]][portal[0]] = 0;
                     }
                 }
@@ -255,7 +256,12 @@ export class Board {
                     this.snake_b.apples_eaten+=1;
                     this.cells_apples[cell[1]][cell[0]] = 0;
 
+                    console.log(this.turn_count)
+
                     let portal:[number, number] = this.get_portal(cell[0], cell[1])
+
+                    console.log(portal)
+
 
                     if(portal[0]!= -1){
                         this.cells_apples[portal[1]][portal[0]] = 0;
