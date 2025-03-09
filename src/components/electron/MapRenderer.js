@@ -38,11 +38,11 @@ export default function MapRenderer() {
     const min_map = 1;
     const max_map = 64;
     const min_apple_num = 1;
-    const max_apple_num = 5;
+    const max_apple_num = 1000;
     const min_apple_rate = 1;
-    const max_apple_rate = 150;
-    const min_start_size = 1;
-    const max_start_size = 64;
+    const max_apple_rate = 200;
+    const min_start_size = 2;
+    const max_start_size = 1000;
     const min_size = 2;
 
     const reflect = (x, y) => {
@@ -202,7 +202,7 @@ export default function MapRenderer() {
       parts.push(bSpawn[0].toString()+","+bSpawn[1].toString());
       parts.push(startSize.toString());
       parts.push(min_size.toString());
-      parts.push(portalList.join("|"));
+      parts.push(portalList.join("_"));
       parts.push(appleRate.toString()+","+appleNum.toString()+","+symmetry);
 
       let wallarr = []
