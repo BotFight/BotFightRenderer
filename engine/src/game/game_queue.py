@@ -16,9 +16,9 @@ class Queue:
         """
         Initializes the queue with specified dimensions and capacity.
 
-        Parameters:
-            dim (int, optional): The dimension of the queue. Defaults to 2.
-            init_capacity (int, optional): The initial capacity of the queue. Defaults to 50.
+        Parameters:  
+            dim (int, optional): The dimension of the queue. Defaults to 2.  
+            init_capacity (int, optional): The initial capacity of the queue. Defaults to 50.  
             copy (bool, optional): Whether the queue is initializing as a copy.
         """
 
@@ -34,7 +34,7 @@ class Queue:
 
     def get_copy(self) -> "Queue":
         """
-        Returns: 
+        Returns:  
             Queue: A deep copy of the current queue.
         """
         new_q = Queue(self.dim, self.capacity)
@@ -49,7 +49,7 @@ class Queue:
         """
         Enqueues a value at the tail of the queue.
 
-        Parameters:
+        Parameters:  
             move (numpy.ndarray): The value to enqueue.
         """
         if(self.size+1 >= self.capacity):
@@ -73,7 +73,7 @@ class Queue:
         """
         Retrieves the value at the head of the queue without removing it.
 
-        Returns:
+        Returns:  
             np.array: The value at the head of the queue.
         """
         return np.array(self.q[self.head])
@@ -82,7 +82,7 @@ class Queue:
         """
         Retrieves the value at the tail of the queue without removing it.
 
-        Returns:
+        Returns:  
             np.array: The value at the tail of the queue.
         """
         return np.array(self.q[self.tail])
@@ -91,7 +91,7 @@ class Queue:
         """
         Retrieves all values in the queue without removing them.
 
-        Returns:
+        Returns:  
             numpy.ndarray: A numpy array containing all values in the queue.
         """
 
@@ -108,7 +108,7 @@ class Queue:
         Parameters:
             num_moves (int): The number of values to retrieve from the tail toward the head.
 
-        Returns:
+        Returns:  
             numpy.ndarray: A NumPy array containing the values starting from the tail and progressing toward the head.
         """
         start = (self.tail+1-num_moves+self.capacity)% self.capacity
@@ -122,10 +122,10 @@ class Queue:
         """
         Retrieves `num_moves` values starting from the head and progressing toward the tail, without removing them.
 
-        Parameters:
+        Parameters:  
             num_moves (int): The number of values to retrieve from the head toward the tail.
 
-        Returns:
+        Returns:  
             numpy.ndarray: A NumPy array containing the values starting from the head and progressing toward the tail.
         """
 
@@ -140,7 +140,7 @@ class Queue:
         """
         Enqueues multiple values at the tail of the queue.
 
-        Parameters:
+        Parameters:  
             moves (numpy.ndarray): The values to enqueue.
         """
 
@@ -164,7 +164,7 @@ class Queue:
         """
         Removes and returns a value at the head of the queue.
 
-        Returns:
+        Returns:  
             numpy.ndarray: The value removed from the head of the queue.
         """
         if(self.size==0):
@@ -179,10 +179,10 @@ class Queue:
         """
         Removes and returns multiple values from the head of the queue.
 
-        Parameters:
+        Parameters:  
             num_moves (int): The number of values to remove from the head of the queue.
 
-        Returns:
+        Returns:  
             numpy.ndarray: An array containing the values removed from the head of the queue.
         """
 
@@ -197,7 +197,7 @@ class Queue:
         """
         Returns whether the queue is empty.
 
-        Returns:
+        Returns:  
             bool: `True` if the queue is empty, `False` otherwise.
         """
 

@@ -31,11 +31,11 @@ class Board():
         """
         Initializes the board with the specified game map and configuration options.
 
-        Parameters:
-            game_map (game_map.Map): The map representing the game environment.
-            time_to_play (float, optional): The time limit for the game in seconds. Defaults to 65536.
-            build_history (bool, optional): Whether to track the history of the game. Defaults to False.
-            copy (bool, optional): Whether to initialize a copy of the game map. Defaults to False.
+        Parameters:  
+            game_map (game_map.Map): The map representing the game environment.  
+            time_to_play (float, optional): The time limit for the game in seconds. Defaults to 65536.  
+            build_history (bool, optional): Whether to track the history of the game. Defaults to False.  
+            copy (bool, optional): Whether to initialize a copy of the game map. Defaults to False.  
         """
 
         self.map = game_map
@@ -114,22 +114,22 @@ class Board():
                 
     def is_as_turn(self) -> bool:
         """
-        Returns:
-            bool: If it is player a's turn to play.
+        Returns:  
+            bool: If it is player a's turn to play.  
         """
         return self.a_to_play
 
     def get_a_time(self) -> float:
         """
-        Returns:
-            float: Time in seconds that player a has to make a turn.
+        Returns:  
+            float: Time in seconds that player a has to make a turn.    
         """
         return self.a_time
 
     def get_b_time(self) -> float:
         """
-        Returns:
-            float: Time in seconds that player b has to make a turn.
+        Returns:  
+            float: Time in seconds that player b has to make a turn.  
         """
         return self.b_time
 
@@ -137,10 +137,10 @@ class Board():
         """
         Returns whether there is an apple at the provided location. The location should be in the form (x, y).
 
-        Parameters:
-            loc (tuple): The coordinates (x, y) of the location to check for an apple.
+        Parameters:  
+            loc (tuple): The coordinates (x, y) of the location to check for an apple.  
 
-        Returns:
+        Returns:  
             bool: True if there is an apple at the specified location, False otherwise.
         """
 
@@ -148,13 +148,13 @@ class Board():
     
     def has_apple(self, x: int, y: int) -> bool:
         """
-        Returns whether there is an apple at the given coordinates (x, y).
+        Returns whether there is an apple at the given coordinates (x, y).  
 
-        Parameters:
-            x (int): The x-coordinate to check for an apple.
-            y (int): The y-coordinate to check for an apple.
+        Parameters:  
+            x (int): The x-coordinate to check for an apple.  
+            y (int): The y-coordinate to check for an apple.  
 
-        Returns:
+        Returns:  
             bool: True if there is an apple at the given coordinates, False otherwise.
         """
         return self.cells_apples[y, x] > 0
@@ -179,7 +179,7 @@ class Board():
         """
         Sets whether the history of the game should be recorded.
 
-        Parameters:
+        Parameters:  
             build_history (bool): Whether to track the game history. True to record, False to not record.
         """
 
@@ -189,7 +189,7 @@ class Board():
         """
         Sets the winner and the reason for the game's outcome.
 
-        Parameters:
+        Parameters:  
             result (enums.Result): The winner of the game.
             reason (str, optional): The reason for the outcome. Defaults to "invalid".
         """
@@ -206,7 +206,7 @@ class Board():
         """
         Returns the winner of the game.
 
-        Returns:
+        Returns:  
             enums.Result: The winner of the game.
         """
 
@@ -216,7 +216,7 @@ class Board():
         """
         Returns the string explaining the reason why the game was won.
 
-        Returns:
+        Returns:  
             str: The reason for the game's outcome.
         """
         return self.win_reason
@@ -244,10 +244,10 @@ class Board():
         """
         Returns whether a given starting bid is valid.
 
-        Parameters:
+        Parameters:  
             bid (int): The starting bid to check.
 
-        Returns:
+        Returns:  
             bool: True if the bid is valid, False otherwise.
         """
 
@@ -260,8 +260,8 @@ class Board():
         gets to go first. If the bids are equal, the starting player is 
         determined by a coin toss.
 
-        Parameters:
-            bidA (int): The bid from player A.
+        Parameters:  
+            bidA (int): The bid from player A.  
             bidB (int): The bid from player B.
         """
 
@@ -287,7 +287,7 @@ class Board():
         """
         Returns whether the bid for the first turn has been resolved.
 
-        Returns:
+        Returns:  
             bool: True if the bid has been resolved, False otherwise.
         """
         return self.bid_resolved
@@ -296,10 +296,10 @@ class Board():
         """
         Returns whether the current player can deploy a trap.
 
-        Parameters:
+        Parameters:  
             a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
 
-        Returns:
+        Returns:  
             bool: True if the current player can apply a trap, False otherwise.
         """
 
@@ -330,11 +330,11 @@ class Board():
         If the action is a trap, it checks if the trap is valid for the current player.
         Otherwise, it checks if the move is valid.
 
-        Parameters:
-            action (enums.Action): The action to validate.
+        Parameters:  
+            action (enums.Action): The action to validate.  
             a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
 
-        Returns:
+        Returns:  
             bool: True if the action is valid, False otherwise.
         """
         if(Action(action) is Action.TRAP):
@@ -349,12 +349,12 @@ class Board():
 
         If a sacrifice is applied, it checks if the move is still valid given the sacrifice. 
 
-        Parameters:
-            move (enums.Action): The move to validate.
-            sacrifice (int, optional): The amount of sacrifice to apply. If not provided, the current sacrifice value is used.
+        Parameters:  
+            move (enums.Action): The move to validate.  
+            sacrifice (int, optional): The amount of sacrifice to apply. If not provided, the current sacrifice value is used.  
             a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
 
-        Returns:
+        Returns:  
             bool: True if the move is valid, False otherwise.
         """
         
@@ -408,11 +408,11 @@ class Board():
         in the form of enums given in game.enums.Action or the ints to which the Action
         enum is mapped.
 
-        Parameters:
-            turn (enums.Action or Iterable[enums.Actions] or Iterable[int]): The action(s) the player takes in sequence.
+        Parameters:  
+            turn (enums.Action or Iterable[enums.Actions] or Iterable[int]): The action(s) the player takes in sequence.  
             a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
 
-        Returns:
+        Returns:  
             bool: True if the turn is valid, False otherwise.
         """
         if(a_to_play is None):
@@ -548,10 +548,10 @@ class Board():
         Checks if the cell is in bounds of the board, then if it is available to
         be moved into.
 
-        Parameters:
+        Parameters:  
             loc (tuple or numpy.ndarray): The coordinates of the cell to check, in the form (x, y).
 
-        Returns:
+        Returns:  
             bool: True if the cell is valid (in bounds and available), False otherwise.
         """
         return self.cell_in_bounds(loc) \
@@ -582,10 +582,10 @@ class Board():
         """
         Checks if a cell is within map bounds.
 
-        Parameters:
+        Parameters:  
             loc (Union[tuple, np.ndarray]): The coordinates of the cell to check, either as a tuple (x, y) or a numpy array.
 
-        Returns:
+        Returns:  
             bool: True if the cell is within the map bounds, False otherwise.
         """
         return 0 <= loc[0] < self.map.dim_x and 0 <= loc[1] < self.map.dim_y
@@ -594,11 +594,11 @@ class Board():
         """
         Applies a round of decay.
 
-        Parameters:
-            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
+        Parameters:  
+            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.  
             check_validity (bool, optional): Whether to check the validity of the decay action. Defaults to True.
 
-        Returns:
+        Returns:  
             bool: True if the decay was applied successfully, False if the trap is invalid.
         """
         if(a_to_play is None):
@@ -652,13 +652,13 @@ class Board():
         If check_validity is enabled, apply_turn performs checks to ensure no errors. If check_validity is 
         disabled, the turn is assumed to be valid and runs without additional checks.
 
-        Parameters:
-            turn (enums.Action or Iterable[enums.Actions] or Iterable[int]): The action(s) the player takes in sequence.
-            timer (float, optional): The timer associated with the turn. Defaults to 0.
-            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
+        Parameters:  
+            turn (enums.Action or Iterable[enums.Actions] or Iterable[int]): The action(s) the player takes in sequence.  
+            timer (float, optional): The timer associated with the turn. Defaults to 0.  
+            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.  
             check_validity (bool, optional): Whether to perform checks for validity before applying the turn. Defaults to True.
 
-        Returns:
+        Returns:  
             bool: True if the turn was applied successfully, False otherwise.
         """
         if(a_to_play is None):
@@ -746,8 +746,7 @@ class Board():
         """
         Checks to see if an apple spawned on top of the player at the turn start.
 
-
-        Parameters:
+        Parameters:  
             a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
         """
         if(not self.turn_start_checked):
@@ -770,11 +769,11 @@ class Board():
         """
         Deploys a trap for the current player.
 
-        Parameters:
-            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
+        Parameters:  
+            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.  
             check_validity (bool, optional): Whether to check the validity of the trap action. Defaults to True.
 
-        Returns:
+        Returns:  
             bool: True if the trap was applied successfully, False if the trap is invalid.
         """
 
@@ -852,12 +851,12 @@ class Board():
         This function resolves apples and interaction with traps when a player moves onto it.
 
         Parameters:
-            x (int): The x-coordinate of the square to resolve.
-            y (int): The y-coordinate of the square to resolve.
-            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
+            x (int): The x-coordinate of the square to resolve.  
+            y (int): The y-coordinate of the square to resolve.  
+            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.  
             check_validity (bool, optional): Whether to perform checks for validity before resolving the square. Defaults to True.
 
-        Returns:
+        Returns:  
             bool: True if the square was resolved successfully, False otherwise.
         """
         if(a_to_play is None):
@@ -921,13 +920,13 @@ class Board():
         If check_validity is enabled, apply_move performs checks to ensure no errors. 
         If check_validity is disabled, the move is assumed to be valid and runs without additional checks.
 
-        Parameters:
-            action (enums.Action): The action representing the direction to move.
-            sacrifice (int, optional): The amount of sacrifice applied to the move. Defaults to None.
-            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.
+        Parameters:  
+            action (enums.Action): The action representing the direction to move.  
+            sacrifice (int, optional): The amount of sacrifice applied to the move. Defaults to None.  
+            a_to_play (bool, optional): The player whose turn it is. If not provided, the current player is used.  
             check_validity (bool, optional): Whether to perform checks for validity before applying the move. Defaults to True.
 
-        Returns:
+        Returns:  
             bool: True if the move was applied successfully, False otherwise.
         """
 
@@ -1066,7 +1065,7 @@ class Board():
         """
         Get a dictionary representation for the renderer.
 
-        Returns:
+        Returns:  
             dict: A dictionary representing the game history.
         """
         return self.history
@@ -1075,7 +1074,7 @@ class Board():
         """
         Gets the map that is played on (including apple spawns).
 
-        Returns:
+        Returns:  
             str: A string representation of the generated map.
         """
         return self.map.get_recorded_map()
@@ -1085,10 +1084,10 @@ class Board():
         """
         Returns a deep copy of the board.
 
-        Parameters:
+        Parameters:  
             build_history (bool, optional): Whether to include the history of the game in the copy. Defaults to False.
 
-        Returns:
+        Returns:  
             Board: A deep copy of the current board object.
         """
 
@@ -1138,11 +1137,11 @@ class Board():
         Non-mutating version of apply_trap. Returns a tuple with the new board copy, then
         whether the trap was deployed successfully.
 
-        Parameters:
+        Parameters:  
             check_validity (bool, optional): Whether to validate the trap. Defaults to True.
 
-        Returns:
-           tuple: A tuple containing:
+        Returns:  
+           tuple: A tuple containing:  
                 - Board: A copy of the board after the move.
                 - bool: True if the trap was successful, False otherwise.
         """
@@ -1162,9 +1161,9 @@ class Board():
             sacrifice (int, optional): The amount of sacrifice to apply. Defaults to None.
             check_validity (bool, optional): Whether to validate the move. Defaults to True.
 
-        Returns:
-            tuple: A tuple containing:
-                - Board: A copy of the board after the move.
+        Returns:  
+            tuple: A tuple containing:  
+                - Board: A copy of the board after the move.  
                 - bool: True if the move was applied successfully, False otherwise.
         """
 
@@ -1178,13 +1177,13 @@ class Board():
         Non-mutating version of apply_turn. Returns a tuple with the new board copy, then
         whether the turn executed properly.
 
-        Parameters:
-            turn (enums.Action or Iterable[enums.Actions] or Iterable[int]): The action(s) the player takes in sequence.
+        Parameters:  
+            turn (enums.Action or Iterable[enums.Actions] or Iterable[int]): The action(s) the player takes in sequence.  
             check_validity (bool, optional): Whether to validate the turn. Defaults to True.
 
-        Returns:
-            tuple: A tuple containing:
-                - Board: A copy of the board after the turn.
+        Returns:  
+            tuple: A tuple containing:  
+                - Board: A copy of the board after the turn.  
                 - bool: True if the turn was applied successfully, False otherwise.
         """
         board_copy = self.get_copy()
@@ -1204,13 +1203,13 @@ class Board():
         - Trap positions (`a ` for traps belonging to snake A, `b ` for traps belonging to snake B)
 
 
-        Returns:
-            tuple: A tuple containing:
-                - player_map (str): String representation of player positions.
-                - apple_map (str): String representation of apple positions.
-                - trap_map (str): String representation of trap positions.
-                - snake_a_length (int): Length of snake A.
-                - snake_b_length (int): Length of snake B.
+        Returns:  
+            tuple: A tuple containing:  
+            - player_map (str): String representation of player positions.  
+            - apple_map (str): String representation of apple positions.  
+            - trap_map (str): String representation of trap positions.  
+            - snake_a_length (int): Length of snake A.  
+            - snake_b_length (int): Length of snake B.  
         """
 
         apple_list = []

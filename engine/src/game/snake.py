@@ -11,8 +11,8 @@ class Snake:
         """
         Initializes the Snake object with the minimum player size and copy flag.
 
-        Parameters:
-            min_player_size (int, optional): The minimum size of the snake. Defaults to 2.
+        Parameters:  
+            min_player_size (int, optional): The minimum size of the snake. Defaults to 2.  
             copy (bool, optional): Whether to initialize the snake as a copy. Defaults to False.
         """
         self.min_player_size = min_player_size
@@ -34,7 +34,7 @@ class Snake:
         """
         Returns the maximum number of traps that can be placed based on the maximum length of the snake.
 
-        Returns:
+        Returns:  
             int: The maximum number of traps that can be placed. This value is determined by dividing 
                 the maximum length achieved by 2.
         """
@@ -45,7 +45,7 @@ class Snake:
         """
         Initializes the snake to the starting position and size.
 
-        Parameters:
+        Parameters:  
             start_loc (numpy.ndarray): A NumPy array representing the starting location of the snake.
             start_size (int): The initial size of the snake.
 
@@ -58,7 +58,7 @@ class Snake:
         """
         Returns the coefficient by which the snake lengthens when it eats an apple.
 
-        Returns:
+        Returns:  
             int: The amount by which the snake lengthens when it eats an apple.
         """
         return self.lengthen
@@ -80,7 +80,7 @@ class Snake:
         """
         Retrieves the location of the head of the snake as a (x, y) coordinate.
 
-        Returns:
+        Returns:  
             numpy.ndarray: A numpy array representing the location of the head of the snake.
         """
         return self.q.peek_tail()
@@ -89,7 +89,7 @@ class Snake:
         """
         Retrieves the location of the tail of the snake as a (x, y) coordinate.
 
-        Returns:
+        Returns:  
             numpy.ndarray: A numpy array representing the location of the tail of the snake.
         """
         return self.q.peek_head()
@@ -98,7 +98,7 @@ class Snake:
         """
         Retrieves the locations of all parts of the snake as an array of (x, y) coordinates.
 
-        Returns:
+        Returns:  
             numpy.ndarray: A numpy array containing the locations of all parts of the snake.
         """
 
@@ -108,7 +108,7 @@ class Snake:
         """
         Retrieves the current direction of the snake.
 
-        Returns:
+        Returns:  
             Action: An Action enum value representing the current direction of the snake (e.g., Action.NORTH, Action.SOUTH).
         """
         return self.direction
@@ -118,7 +118,7 @@ class Snake:
         """
         Retrieves the current physical length of the snake (discounts queued length)
 
-        Returns:
+        Returns:  
             int: The physical length of the snake
         """
 
@@ -128,7 +128,7 @@ class Snake:
         """
         Retrieves the current total length of the snake, including any pending length from apples eaten.
 
-        Returns:
+        Returns:  
             int: The total length of the snake, including any length gained from eating apples.
         """
 
@@ -138,11 +138,11 @@ class Snake:
         """
         Simulates the location of the snake's head if the given action is taken.
 
-        Parameters:
-            action (enums.Action): The action to simulate (e.g., Action.NORTH, Action.SOUTH).
+        Parameters:  
+            action (enums.Action): The action to simulate (e.g., Action.NORTH, Action.SOUTH).  
             head_loc (numpy.ndarray, optional): The current location of the snake's head to simulate the movement from. If not provided, the current head location is used.
 
-        Returns:
+        Returns:  
             - numpy.ndarray: The simulated location of the snake's head after taking the action.
                 
         """
@@ -182,10 +182,10 @@ class Snake:
         """
         Checks if a bid is valid for the snake based on its current length.
 
-        Parameters:
+        Parameters:  
             bid (int): The bid to be validated.
 
-        Returns:
+        Returns:  
             bool: True if the bid is valid (i.e., the snake's length minus the bid is greater than or equal to the minimum player size), otherwise False.
         """
 
@@ -196,11 +196,11 @@ class Snake:
         """
         Checks if the snake can trap based on length and unqueued length.
 
-        Parameters:
-            length (int, optional): The current length of the snake. If not provided, the current length is used.
+        Parameters:  
+            length (int, optional): The current length of the snake. If not provided, the current length is used.  
             unqueued (int, optional): The unqueued length of the snake. If not provided, the current unqueued length is used.
 
-        Returns:
+        Returns:  
             bool: True if the snake can trap (i.e., unqueued length is greater than 1 and total length is greater than the minimum player size), otherwise False.
         """
 
@@ -218,11 +218,11 @@ class Snake:
         """
         Checks if a given action is a valid direction based on the current direction of the snake.
 
-        Parameters:
-            action (enums.Action): The action to be validated (e.g., Action.NORTH, Action.SOUTH).
+        Parameters:  
+            action (enums.Action): The action to be validated (e.g., Action.NORTH, Action.SOUTH).  
             direction (enums.Action, optional): The current direction of the snake. If not provided, the current direction is used.
 
-        Returns:
+        Returns:  
             bool: True if the action is a valid direction to move (i.e., not opposite or invalid relative to the current direction), otherwise False.
         """
 
@@ -236,11 +236,11 @@ class Snake:
         """
         Checks if the snake can perform a sacrifice based on its length and the specified sacrifice value.
 
-        Parameters:
-            sacrifice (int, optional): The value representing the sacrifice. If not provided, it defaults to None.
+        Parameters:  
+            sacrifice (int, optional): The value representing the sacrifice. If not provided, it defaults to None.  
             length (int, optional): The current length of the snake. If not provided, the current length is used.
 
-        Returns:
+        Returns:  
             bool: If the sacrifice is valid.
         """
 
@@ -256,13 +256,13 @@ class Snake:
         """
         Checks if the snake can make a move based on the specified action, sacrifice, and direction.
 
-        Parameters:
-            action (enums.Action): The action representing the move to be made (e.g., Action.NORTH, Action.SOUTH).
-            sacrifice (int, optional): The sacrifice value to check. If not provided, the current sacrifice value is used.
-            direction (enums.Action, optional): The current direction of the snake. If not provided, the current direction is used.
+        Parameters:  
+            action (enums.Action): The action representing the move to be made (e.g., Action.NORTH, Action.SOUTH).  
+            sacrifice (int, optional): The sacrifice value to check. If not provided, the current sacrifice value is used.  
+            direction (enums.Action, optional): The current direction of the snake. If not provided, the current direction is used.  
             length (int, optional): The current length of the snake. If not provided, the current length is used.
 
-        Returns:
+        Returns:  
             bool: True if the move is valid (i.e., the sacrifice is within acceptable limits, and the direction is not invalid), otherwise False.
         """
 
@@ -287,12 +287,12 @@ class Snake:
 
     def get_valid_directions(self, direction: Action = None) -> list:
         """
-        Retrieves the possible directions the snake can move in, without considering the board state.
+        Retrieves the possible directions the snake can move in, without considering the board state.  
 
-        Parameters:
+        Parameters:  
             direction (Action, optional): The current direction of the snake. If not provided, the current direction is used.
 
-        Returns:
+        Returns:  
             list: A list of valid directions (as Action enum values) that the snake can move in.
         """
 
@@ -320,7 +320,7 @@ class Snake:
         """
         Retrieves the total number of apples the snake has eaten.
 
-        Returns:
+        Returns:  
             int: The total number of apples eaten by the snake.
         """
 
@@ -330,7 +330,7 @@ class Snake:
         """
         Decreases the snake's length by the specified bid amount for the first turn.
 
-        Parameters:
+        Parameters:  
             bid (int): The amount by which the snake's length will be decreased.
         """
         self.length_queued -= bid
@@ -339,10 +339,10 @@ class Snake:
         """
         Retrieves the last `num_cells` cells from the tail side of the snake.
 
-        Parameters:
+        Parameters:  
             num_cells (int, optional): The number of tail-side cells to retrieve. Defaults to 1.
 
-        Returns:
+        Returns:  
             numpy.ndarray: a numpy array representing the  last cells of the snake as num_cells (x, y)
         """
         return self.q.peek_many_head(num_cells)
@@ -351,10 +351,10 @@ class Snake:
         """
         Retrieves the first `num_cells` cells from the head side of the snake.
 
-        Parameters:
+        Parameters:  
             num_cells (int, optional): The number of head-side cells to retrieve. Defaults to 1.
 
-        Returns:
+        Returns:  
             numpy.ndarray: a numpy array representing the first cells of a the snake as num_cells (x, y)
         """
         return self.q.peek_many_tail(num_cells)
@@ -364,10 +364,10 @@ class Snake:
         """
         Returns the cells that would be removed from the tail of the snake if a sacrifice is applied.
 
-        Parameters:
+        Parameters:  
             sacrifice (int, optional): The amount of sacrifice. If not provided, the current sacrifice value is used.
 
-        Returns:
+        Returns:  
             numpy.ndarray: An array of cells that would be removed from the tail of the snake if the sacrifice is applied.
         """
 
@@ -385,10 +385,10 @@ class Snake:
         """
         Applies the sacrifice to the snake and returns the cells to be removed from the tail.
 
-        Parameters:
+        Parameters:  
             sacrifice (int, optional): The amount of sacrifice to apply. If not provided, the current sacrifice value is used.
 
-        Returns:
+        Returns:  
             list: A list of cells that are removed from the tail of the snake after the sacrifice is applied.
         """
 
@@ -408,10 +408,10 @@ class Snake:
         """
         Moves the head to the next location according to the action taken and updates the direction.
 
-        Parameters:
+        Parameters:  
             action (enums.Action): The action representing the direction in which the snake's head should move.
 
-        Returns:
+        Returns:  
             numpy.ndarray: The new location of the snake's head after the move.
         """
         head_loc = self.get_head_loc()
@@ -450,7 +450,7 @@ class Snake:
         """
         Returns the cell at the tail of the snake, which would represent the trap.
 
-        Returns:
+        Returns:  
             numpy.ndarray: The cell at the tail of the snake.
         """
         return self.q.peek_head()
@@ -461,12 +461,12 @@ class Snake:
         as well as the new head location.
 
         Parameters:
-            action (enums.Action): The action representing the direction the snake will move.
+            action (enums.Action): The action representing the direction the snake will move.  
             sacrifice (int, optional): The amount of sacrifice. Defaults to the current sacrifice value if not provided.
 
-        Returns:
-            tuple: A tuple containing:
-                - numpy.ndarray: The new location of the snake's head.
+        Returns:  
+            tuple: A tuple containing:  
+                - numpy.ndarray: The new location of the snake's head.  
                 - list: The cells that would be lost from the tail if the move is applied.
         """
 
@@ -483,7 +483,7 @@ class Snake:
         """
         Removes and returns the cell at the tail of the snake, representing the trap created.
 
-        Returns:
+        Returns:  
             numpy.ndarray: The cell at the tail of the snake.
         """
         self.traps_placed += 1
@@ -493,7 +493,7 @@ class Snake:
         """
         Enqueues the snake's new head location into the interanal queue.
 
-        Parameters:
+        Parameters:  
             loc (numpy.ndarray): The head location to enqueue.
 
         """
@@ -507,13 +507,13 @@ class Snake:
         Applies the move and returns the tail cells that would be lost, 
         as well as the new head location. Does not enqueue the new location (could potentially require portal transformation).
 
-        Parameters:
-            action (enums.Action): The action representing the direction the snake will move.
+        Parameters:  
+            action (enums.Action): The action representing the direction the snake will move.  
             sacrifice (int, optional): The amount of sacrifice. Defaults to the current sacrifice value if not provided.
 
-        Returns:
-            tuple: A tuple containing:
-                - numpy.ndarray: The new location of the snake's head.
+        Returns:  
+            tuple: A tuple containing:  
+                - numpy.ndarray: The new location of the snake's head.  
                 - list: The cells that would be lost from the tail if the move is applied.
         """
 
@@ -533,7 +533,7 @@ class Snake:
         """
         Return a deep copy of the snake.
 
-        Returns:
+        Returns:  
             Snake: A deep copy of the current snake object.
         """
 

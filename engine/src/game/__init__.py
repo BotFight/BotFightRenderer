@@ -17,10 +17,13 @@ A couple types of functions to look out for:
 - `is_valid` type functions (i.e. `is_valid_action`, `is_valid_turn`): checks if a given action or turn is valid
 - `try_` type functions (i.e. `try_action`, `try_trap`): returns the outputs of a specific action if it were to occur, without changing the board
 - `apply_` type functions (i.e. `apply_action`, `apply_turn`): applies a bid, action, or turn to the board. Returns if the operation was successful.
-- `forecast_` type functions (i.e. `forecast_bid`, `forecast_turn`): : applies a bid, action, or turn to a copy of the board, then returns the board copy along with if the operation was successful
-:
-Both apply_turn and forecast_turn end a turn and pass to the next player, whereas other apply and forecast functions do not.
-`PlayerBoard.end_turn()` may be used to complete/pass a turn.
+- `forecast_` type functions (i.e. `forecast_bid`, `forecast_turn`): applies a bid, action, or turn to a copy of the board, then returns the board copy along with if the operation was successful.
+
+Both `apply_turn` and `forecast_turn` end a turn and pass to the next player, whereas other apply and forecast functions do not.
+`PlayerBoard.end_turn()` may be used to complete/pass a turn. Also note that `apply_turn` and `forecast_turn` do not automatically
+reverse the perspective of the board - that is, functions will still call as if you are the player and your opponent is the 
+enemy. If you want to call methods for your opponent on the next turn, either use the `enemy` parameter, call 
+`PlayerBoard.reverse_perspective()`, or pass the `reverse` flag into `apply_turn` and `forecast_turn`.
 
 Finally, remember that coordinates are returned in (x, y) form, but any arrays representing
 the board should be indexed in the form of [y, x]
@@ -29,7 +32,7 @@ the board should be indexed in the form of [y, x]
 
 If you're lost about where to get started, we recommend that you take a look at
 the following PlayerBoard functions: `get_possible_directions`, `is_valid_turn`, `is_valid_action`, `apply_turn`, `apply_action`, `forecast_turn`, and `forecast_action`,
-as well as looking at the possible Actions in `game.enums`
+as well as looking at the possible `Action`s in `game.enums`
 
 **Extending the Board**
 
@@ -37,7 +40,7 @@ The `PlayerBoard` class provides basic, low-level ways to interact with the boar
 You can write your own methods that use `PlayerBoard` as a parameter for more complex functionality,
 and you can even wrap the `PlayerBoard` class in a class that you design.
 
-You can use also methods from the underlying classes that `PlayerBoard` wraps,
+You can also use methods from the underlying classes that `PlayerBoard` wraps,
 such as `Board`, `Snake`, and `Queue`. You can do this by accessing the `PlayerBoard.game_board`
 variable, and using its functions/variables.
 

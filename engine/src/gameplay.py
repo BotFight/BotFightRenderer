@@ -69,7 +69,7 @@ def validate_submission(map_string, directory_a, player_a_name, limit_resources=
     
     
 
-
+    import traceback
     import importlib.util
     import sys
 
@@ -94,21 +94,29 @@ def validate_submission(map_string, directory_a, player_a_name, limit_resources=
         
         player_a_process = Process(target = run_player_process, args = (player_a_name, directory_a, player_a_q, main_q, limit_resources, out_queue))
         player_a_process.start()
-        init_timeout = 5
-        bid_timeout = 5
 
-
-        success_a = run_timed_constructor(5, 5, player_a_q, main_q)
+        success_a = main_q.get(block = True, timeout = 10) 
         if(success_a is False):
             return False
-        a_bid, a_bid_time = run_timed_bid(True, game_board, 5, 5, player_a_q, main_q)
+
+
+        init_timeout = 5
+        bid_timeout = 5
+        
+
+
+        success_a = run_timed_constructor(player_a_process, 5, 5, player_a_q, main_q)
+        if(success_a is False):
+            return False
+        a_bid, a_bid_time = run_timed_bid(player_a_process, True, game_board, 5, 5, player_a_q, main_q)
         terminate_validation(player_a_process, queues, out_queue)
 
         if a_bid is None or not game_board.is_valid_bid(int(a_bid)):
-            return True        
+            return False      
         else:
-            return False
+            return True
     except:
+        print(traceback.format_exc())
         terminate_validation(player_a_process, queues, out_queue)
         return False
 
