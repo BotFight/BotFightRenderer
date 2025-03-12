@@ -130,10 +130,10 @@ function LocalRenderer() {
   return (
     <div className="flex-grow flex flex-col items-center justify-center bg-zinc-900 relative gap-2 p-4 w-full">
       <div className='flex flex-col lg:flex-row items-center lg:items-stretch gap-8 w-full justify-center'>
-
-        <LocalSelector map={map} bot1File={bot1File} bot2File={bot2File} setBot1File={setBot1File} setBot2File={setBot2File} setShouldPlayMatch={setShouldPlayMatch} />
-
-
+        <div className='flex flex-col gap-4 items-center'>
+          <LocalSelector map={map} bot1File={bot1File} bot2File={bot2File} setBot1File={setBot1File} setBot2File={setBot2File} setShouldPlayMatch={setShouldPlayMatch} />           
+          <img src="/google_logo_icon.png" alt="robot" width={100} height={100} />
+        </div>
         <div className="flex flex-col items-center gap-4">
           <div className="w-full flex gap-3 items-stretch">
             <div className={`${botCount == 2 ? "border border-green-700" : ""} bg-zinc-800 flex-grow rounded-lg flex items-center justify-center gap-2`}>
