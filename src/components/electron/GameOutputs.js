@@ -9,12 +9,15 @@ export default function GameOutputs({ engineOutput }) {
     }
   }, [engineOutput]);
 
-  return (
+  return engineOutput ? (
     <div
       ref={outputRef}
-      className="bg-black text-green-500 p-4 rounded-lg overflow-y-auto text-sm"
-      style={{ width: '600px', height: '450px' }}
-    >      <pre>{engineOutput}</pre>
+      className="bg-black text-green-500 p-4 rounded-lg overflow-y-auto text-sm h-64 flex-grow w-full"
+    >      <pre className="w-full text-wrap">{engineOutput}</pre>
     </div>
-  );
+  ) : (
+    <div className="p-4 border rounded-lg shadow-md w-full text-zinc-500 h-64 flex-grow bg-black flex justify-center items-center italic text-lg">
+      Play a match to view output
+    </div>
+  )
 }

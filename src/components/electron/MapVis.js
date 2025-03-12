@@ -225,7 +225,7 @@ export default function MapVis({
   ]);
 
   return (
-    <div className="flex justify-center items-center bg-gray-100 min-w-screen">
+    <div className="flex justify-center items-center bg-gray-100 w-fit h-fit">
       <canvas
         ref={canvasRef}
         width={800}
