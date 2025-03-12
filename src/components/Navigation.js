@@ -58,44 +58,61 @@ function Navigation({
     console.log(isRunningInElectron);
   }, [matchStates]);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!matchStates){
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        onBack();
+      } else if (event.key === "ArrowRight") {
+        onForward();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  },  [matchStates]);
 
 
   return (
-      <div className="flex flex-row gap-2 items-center bg-zinc-800 p-4 rounded-xl w-full">
+    <div className="flex flex-row gap-2 items-center bg-zinc-800 p-4 rounded-xl w-full">
 
-        <PlayerButton onClick={onBack} disabled={!matchStates && isRunningInElectron} tooltip="Prev Step">
-          <IconPlayerTrackPrevFilled />
-        </PlayerButton>
+      <PlayerButton onClick={onBack} disabled={!matchStates && isRunningInElectron} tooltip="Prev Step">
+        <IconPlayerTrackPrevFilled />
+      </PlayerButton>
 
-        <PlayerButton onClick={togglePlay} disabled={!matchStates && isRunningInElectron} tooltip={isPlaying ? "Pause" : "Play"}>
-          {isPlaying ? <IconPlayerPauseFilled /> : <IconPlayerPlayFilled />}
-        </PlayerButton>
+      <PlayerButton onClick={togglePlay} disabled={!matchStates && isRunningInElectron} tooltip={isPlaying ? "Pause" : "Play"}>
+        {isPlaying ? <IconPlayerPauseFilled /> : <IconPlayerPlayFilled />}
+      </PlayerButton>
 
-        <PlayerButton onClick={onForward} disabled={!matchStates && isRunningInElectron} tooltip="Next Step">
-          <IconPlayerTrackNextFilled />
-        </PlayerButton>
+      <PlayerButton onClick={onForward} disabled={!matchStates && isRunningInElectron} tooltip="Next Step">
+        <IconPlayerTrackNextFilled />
+      </PlayerButton>
 
-        {stateCount > 0 ? (
-          <Slider min={0} max={stateCount} step={1} className="w-[95%] mx-2" value={[inputValue]} onValueChange={onInputChange} />
-        ) : (
-          <Slider defaultValue={[0]} min={0} max={1} step={1} className="w-[95%] mx-2" disabled={true} />
-        )}
+      {stateCount > 0 ? (
+        <Slider min={0} max={stateCount} step={1} className="w-[95%] mx-2" value={[inputValue]} onValueChange={onInputChange} />
+      ) : (
+        <Slider defaultValue={[0]} min={0} max={1} step={1} className="w-[95%] mx-2" disabled={true} />
+      )}
 
-        <Select onValueChange={(value) => onSpeedChange({ target: { value } })} defaultValue={200} disabled={!matchStates && isRunningInElectron}>
-          <SelectTrigger className="w-16 bg-zinc-700 border-none text-zinc-50 font-bold rounded px-4 py-2 hover:bg-zinc-700 hover:opacity-80 transition-all duration-300">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {speeds.map((speed) => (
-                <SelectItem key={speed.value} value={speed.value}>
-                  {speed.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+      <Select onValueChange={(value) => onSpeedChange({ target: { value } })} defaultValue={200} disabled={!matchStates && isRunningInElectron}>
+        <SelectTrigger className="w-16 bg-zinc-700 border-none text-zinc-50 font-bold rounded px-4 py-2 hover:bg-zinc-700 hover:opacity-80 transition-all duration-300">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {speeds.map((speed) => (
+              <SelectItem key={speed.value} value={speed.value}>
+                {speed.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
 
