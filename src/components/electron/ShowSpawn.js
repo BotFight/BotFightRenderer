@@ -6,7 +6,7 @@ function ShowSpawn ({
 
   return (
     <div>
-      <label className="w-50 px-2 py-0.5 rounded text-black bg-white inline-flex items-center">
+      <label className="w-50 px-2 py-0.5 rounded text-zinc-50 inline-flex items-center gap-1">
         <input
           type="checkbox"
           checked={showSnakeStart} // bind the checkbox to the state

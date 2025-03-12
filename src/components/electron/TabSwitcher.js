@@ -45,20 +45,7 @@ function TabSwitcher() {
         >
           Match Replayer
         </button>
-        <button
-          className={`px-4 py-2 rounded-t-md text-sm font-medium transition-colors duration-300 ${
-            activeTab === 3
-              ? 'bg-yellow-500 text-black border-b-2 border-yellow-500'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
-          onClick={() => handleTabClick(3)}
-        >
-          Deleter
-        </button>
       </div>
-
-
-      
 
         {/* Tab Content */}
         {activeTab === 0 && (
@@ -74,11 +61,6 @@ function TabSwitcher() {
             <Replayer />
 
         )}
-        {activeTab === 3 && (
- 
-            <Deleter />
-        )}
-
       
     </div>
   );

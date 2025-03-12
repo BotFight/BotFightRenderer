@@ -39,7 +39,7 @@ function MapSelector({ onSelectMap }) {
 
   return (
      <Select onValueChange={handleChange}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className={`w-[175px] bg-zinc-800 ${selectedMap ? "border border-green-700" : ""}`}>
           <SelectValue placeholder="Select a Map" />
         </SelectTrigger>
         <SelectContent>
