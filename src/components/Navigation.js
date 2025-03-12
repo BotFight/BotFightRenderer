@@ -59,10 +59,9 @@ function Navigation({
   }, [matchStates]);
 
   useEffect(() => {
+    if (!matchStates) return;
+    
     const handleKeyDown = (event) => {
-      if (!matchStates){
-        return;
-      }
       if (event.key === "ArrowLeft") {
         onBack();
       } else if (event.key === "ArrowRight") {
