@@ -39,9 +39,9 @@ const LocalSelector = ({ map, bot1File, bot2File, setBot1File, setBot2File, setS
 
   const FileUploadBox = ({ botNumber, file, onFileChange, onClear }) => {
 
-    const splitFile = file ? file.split("\\") : null;
+    const splitFile = file ? file.split(/[/\\]/) : null;
     const fileName = splitFile ? splitFile[splitFile.length - 1] : null;
-
+    console.log(fileName, splitFile);
     return (
       <div
         className={`w-64 min-h-32 border-2 rounded-lg p-3 text-center transition-colors flex flex-col justify-center items-center
