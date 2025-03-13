@@ -1,16 +1,14 @@
-import React, { useEffect } from 'react'
-import Game from '../Game'
-import Navigation from '../Navigation';
+import { useEffect } from 'react'
+import Game from './Game'
+import Navigation from './Navigation';
 
 import { useState } from 'react';
-import { processData } from "../../replay/process_replay"
+import { processData } from "../replay/process_replay"
 
 
 import MatchSelector from './MatchSelector'
-import PlayerStats from '../PlayerStats'
+import PlayerStats from './PlayerStats'
 import { Button } from '@/components/ui/button';
-
-const path = require('path');
 
 function Replayer() {
   const [currentMatchStateIndex, setCurrentMatchStateIndex] = useState(0);
@@ -81,8 +79,6 @@ function Replayer() {
 
     const fetchMatch = async () => {
       if (matchId != null && matchId.substring(0, matchId.length - 5) >= 0) {
-        console.log(matchId)
-
         const matchFile = await window.electron.readMatch(matchId);
         const matchLog = JSON.parse(matchFile);
         const m = await processData(matchLog);

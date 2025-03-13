@@ -1,5 +1,3 @@
-import React from 'react'
-import { Input } from './ui/input';
 import {
   Select,
   SelectContent,
@@ -55,7 +53,6 @@ function Navigation({
 
   useEffect(() => {
     console.log("match states", matchStates);
-    console.log(isRunningInElectron);
   }, [matchStates]);
 
   useEffect(() => {

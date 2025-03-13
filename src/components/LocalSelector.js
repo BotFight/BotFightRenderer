@@ -1,26 +1,8 @@
-import React, { useState } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
 
-const LocalSelector = ({ map, bot1File, bot2File, setBot1File, setBot2File, setShouldPlayMatch }) => {
-
-  const handleFileChange = (botNumber) => (event) => {
-    const directory = event.target.files[0];
-
-    const dirInfo = {
-      name: directory.webkitRelativePath.split('/')[0],
-      path: directory
-    };
-
-    if (botNumber === 1) {
-      setBot1File(dirInfo);
-    } else {
-      setBot2File(dirInfo);
-    }
-  };
+const LocalSelector = ({ bot1File, bot2File, setBot1File, setBot2File }) => {
 
   const handleFolderSelect = (botNumber) => async () => {
-    console.log("pressed");
-    console.log(window.electron);
     const folder = await window.electron.selectFolder(); // Invoke the Electron function
     if (botNumber === 1) {
       setBot1File(folder);
@@ -41,7 +23,6 @@ const LocalSelector = ({ map, bot1File, bot2File, setBot1File, setBot2File, setS
 
     const splitFile = file ? file.split(/[/\\]/) : null;
     const fileName = splitFile ? splitFile[splitFile.length - 1] : null;
-    console.log(fileName, splitFile);
     return (
       <div
         className={`w-64 min-h-32 border-2 rounded-lg p-3 text-center transition-colors flex flex-col justify-center items-center
