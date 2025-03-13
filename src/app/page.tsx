@@ -1,6 +1,6 @@
 "use client";
 
-import TabSwitcher from "@/components/electron/TabSwitcher";
+import TabSwitcher from "@/components/TabSwitcher";
 
 export default function Home() {
   return (

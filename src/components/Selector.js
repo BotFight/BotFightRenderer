@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
  Select,
  SelectContent,
@@ -9,31 +9,27 @@ import {
  SelectValue,
 } from "@/components/ui/select"
 
-export default function Selector({setMatchId}) {
+export default function Selector({dict,setValue,message, label}) {
   const [ids, setIds] = useState([]);
+  const [placeholder, setPlaceholder] = useState("Select");
   useEffect(() => {
-  fetch('https://botfightwebserver.onrender.com/api/v1/game-match-log/ids')
-      .then(response => response.json())
-      .then(data => {
-          console.log('Fetched IDs:', data); // Log the response
-          setIds(data);
-        })    }, []);
+    setIds(dict)
+    setPlaceholder(message)
+  }, [dict]);
  
   const handleChange = (value) => {
-      setMatchId(value);
+      setValue(value);
   }
-
-
 
 
 return (
   <Select onValueChange={handleChange}>
     <SelectTrigger className="w-[180px]">
-      <SelectValue placeholder="Select an Match ID" />
+      <SelectValue placeholder={placeholder}/>
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
-        <SelectLabel>Match IDs</SelectLabel>
+        <SelectLabel>{label}</SelectLabel>
         {ids.map((id) => (
           <SelectItem key={id} value={id}>
             {id}

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import LocalRenderer from './LocalRenderer';
 import MapRenderer from './MapRenderer'
 import Replayer from './Replayer'
-import Deleter from './Deleter'
 
 function TabSwitcher() {
   const [activeTab, setActiveTab] = useState(0);  // State to track active tab
