@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function PlayerStats({ currentMatchStateIndex, matchStates }) {
   const currentMatchState = matchStates ? matchStates[currentMatchStateIndex] : null;
@@ -11,78 +11,56 @@ export default function PlayerStats({ currentMatchStateIndex, matchStates }) {
         !!(window.process && window.process.versions && window.process.versions.electron)
       );
     };
-    
+
     setIsRunningInElectron(checkElectron());
   }, []);
 
   if (!currentMatchState) {
     if (isRunningInElectron) {
       return (
-        <div className="player-stats p-4 border rounded shadow-md w-full max-w-md text-white space-y-2">
-          <h2 className="text-lg font-bold mb-4">Player Stats</h2>
-          <div className="flex flex-col gap-2">
-            <div>
-              <strong >Player <span className='text-green-500'>A</span> :</strong> 
-              <span> Apples Eaten: N/A, Length: N/A</span>
-            </div>
-            <div>
-              <strong>Player <span className='text-blue-500'>B</span>:</strong> 
-              <span> Apples Eaten: N/A, Length: N/A</span>
-            </div>
-            <div>
-              <strong>Turn:</strong> N/A
-            </div>
-          </div>
-          <div className="flex flex-row justify-between">
-            <div className="space-x-2"> 
-              <strong>Player <span className='text-green-500'>A</span> Time:</strong>
-              <div>N/A</div>              
-            </div>
-            <div className="space-x-2"> 
-              <strong>Player <span className='text-blue-500'>B</span> Time:</strong>              
-              <div>N/A</div>              
-            </div>
-        </div>
+        <div className="p-4 border border-zinc-700 rounded-lg shadow-md w-full text-zinc-500 h-[16.5rem] flex justify-center items-center italic text-lg bg-zinc-900">
+          Play a match to view stats
         </div>
       );
     }
-    return <div>Loading match states...</div>;
+    return (
+      <div className="p-4 border border-zinc-700 rounded-lg shadow-md w-full text-zinc-500 h-[16.5rem] flex justify-center items-center italic text-lg bg-zinc-900">
+        Loading match states...
+      </div>
+    )
   }
-  
+
   const { a_apples_eaten, b_apples_eaten, a_length, b_length, a_to_play, time_a, time_b } = currentMatchState;
 
   return (
-    <div className="player-stats p-4 border rounded shadow-md w-full max-w-md text-white space-y-2">
-      <h2 className="text-lg font-bold mb-4">Player Stats</h2>
-      <div className="flex flex-col gap-2 pr-4">
-        <div className = "flex flex-row space-x-2">
-          <strong>Player  <span className='text-green-500'>A</span>:</strong>
-          <div className='flex flex-row space-x-2'>
-            <strong> Apples Eaten: {a_apples_eaten}</strong>
-            <strong>Length: {a_length}</strong>
-          </div> 
-        </div>
-        <div className='flex flex-row space-x-2'>
-          <strong>Player <span className='text-blue-500'>B</span>:</strong> 
-          <div className='flex flex-row space-x-2'>
-            <strong>Apples Eaten: {b_apples_eaten}</strong>
-            <strong>Length: {b_length}</strong>
+    <div className="player-stats p-4 border border-zinc-700 rounded-lg shadow-md w-full text-white bg-zinc-900 flex flex-row gap-4 h-[16.5rem]">
+        <div className={`flex flex-col items-center p-4 rounded-lg bg-zinc-900 w-full text-center gap-2 border-2 ${a_to_play ? "border-green-800" : "border-zinc-800"}`}>
+          <h3 className="mb-2">Player <span className="text-green-500 font-bold">A</span></h3>
+          <div className="flex p-2 rounded-md bg-zinc-800 w-full text-sm justify-center items-center text-zinc-300">
+              Apples Eaten:<span className="text-zinc-50 font-bold ml-1">{a_apples_eaten}</span>
           </div>
+          <div className="flex p-2 rounded-md bg-zinc-800 w-full text-sm justify-center items-center text-zinc-300">
+              Length:<span className="text-zinc-50 font-bold ml-1">{a_length}</span>
+          </div>
+          <div className="flex p-2 rounded-md bg-zinc-800 w-full text-sm justify-center items-center text-zinc-300">
+              Time:<span className="text-zinc-50 font-bold ml-1">{time_a.toFixed(2)}</span>
+          </div>
+          <div className="flex p-2 rounded-md bg-green-600 w-full text-sm justify-center items-center text-zinc-300 mt-2"></div>
         </div>
-        <div>
-          <strong>Turn:</strong> {a_to_play ?  <span className='text-green-500'>A</span> : <span className='text-blue-500'>B</span>}
+        
+        <div className={`flex flex-col items-center p-4 rounded-lg bg-zinc-900 w-full text-center gap-2 border-2 ${a_to_play ? "border-zinc-800" : "border-blue-800"}`}>
+          <h3 className="mb-2">Player <span className="text-blue-500 font-bold">B</span></h3>
+          <div className="flex p-2 rounded-md bg-zinc-800 w-full text-sm justify-center items-center text-zinc-300">
+              Apples Eaten:<span className="text-zinc-50 font-bold ml-1">{b_apples_eaten}</span>
+          </div>
+          <div className="flex p-2 rounded-md bg-zinc-800 w-full text-sm justify-center items-center text-zinc-300">
+              Length:<span className="text-zinc-50 font-bold ml-1">{b_length}</span>
+          </div>
+          <div className="flex p-2 rounded-md bg-zinc-800 w-full text-sm justify-center items-center text-zinc-300">
+              Time:<span className="text-zinc-50 font-bold ml-1">{time_b.toFixed(2)}</span>
+          </div>
+          <div className="flex p-2 rounded-md bg-blue-600 w-full text-sm justify-center items-center text-zinc-300 mt-2"></div>
         </div>
       </div>
-      <div className="flex flex-row justify-between space-x-4">
-            <div className="space-x-2 flex flex-col"> 
-              <strong>Player <span className='text-green-500'>A</span> Time:</strong>
-              <span>{time_a.toFixed(2)}</span>
-            </div>
-            <div className="space-x-2 flex flex-col"> 
-              <strong>Player <span className='text-blue-500'>B</span> Time:</strong>
-              <span>{time_b.toFixed(2)}</span>
-            </div>
-        </div>
-    </div>
   );
 }

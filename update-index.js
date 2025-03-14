@@ -18,8 +18,6 @@ function updateIndexHtml() {
         console.error('Error writing updated index.html:', err);
         return;
       }
-
-      console.log('Successfully updated index.html');
     });
   });
 }

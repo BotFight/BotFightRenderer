@@ -1,11 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import dynamic from 'next/dynamic'
-import Renderer from '@/components/Renderer'
-
-import LocalRenderer from "@/components/electron/LocalRenderer";
-import TabSwitcher from "@/components/electron/TabSwitcher";
+import TabSwitcher from "@/components/TabSwitcher";
 
 export default function Home() {
   return (

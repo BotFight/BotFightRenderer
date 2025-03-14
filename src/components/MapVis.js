@@ -1,20 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-
-const GridValues = {
-  EMPTY: 0,
-  WALL: 1,
-  APPLE: 2,
-  SNAKE_A_HEAD: 3,
-  SNAKE_A_BODY: 4,
-  SNAKE_B_HEAD: 5,
-  SNAKE_B_BODY: 6,
-}
+import { Action } from '../replay/game_engine';
 
 
 export default function MapVis({
   showSnakeStart, 
   aSpawn,
   bSpawn,
+  startPortal,
+  endPortal,
   mapHeight, mapWidth, 
   walls, portals,
   cellType,
@@ -23,46 +16,53 @@ export default function MapVis({
 
 
 }) {
-  const cellSize = 30;
   const canvasRef = useRef(null);
   
   const [mouseCellX, setMouseCellX] = useState(-1); 
   const [mouseCellY, setMouseCellY] = useState(-1); 
+  const [cellSize, setCellSize] = useState(30);
 
-  const handleMouseMove = (e) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-
-    // Check if mouse is over the rectangle
-    setMouseCellX(Math.floor(offsetX/cellSize));
-    setMouseCellY(Math.floor(offsetY/cellSize));
-  };
-
-  const handleMouseOut = () => {
-    setMouseCellX(-1);
-    setMouseCellY(-1);
-  };
-
-  const handleClick = (e) => {
-    console.log(cellType);
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-
-    const cellX = Math.floor(offsetX/cellSize);
-    const cellY = Math.floor(offsetY/cellSize);
-
-    setTile(cellX, cellY);
-  };
+  
 
   useEffect(() => {
+    const handleMouseMove = (e) => {
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+  
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+  
+      // Check if mouse is over the rectangle
+      setMouseCellX(Math.floor(offsetX/cellSize));
+      setMouseCellY(Math.floor(offsetY/cellSize));
+    };
+  
+    const handleMouseOut = () => {
+      setMouseCellX(-1);
+      setMouseCellY(-1);
+    };
+  
+    const handleClick = (e) => {
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+  
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+  
+      const cellX = Math.floor(offsetX/cellSize);
+      const cellY = Math.floor(offsetY/cellSize);
+  
+      setTile(cellX, cellY);
+    };
+    
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
+    const maxSize = 640
+    let cellCalc = Math.min(maxSize/mapWidth, maxSize/mapHeight)
+    const minSize = 15
+    cellCalc = Math.max(cellCalc, minSize)
+    setCellSize(cellCalc)
 
     const width = mapWidth * cellSize;
     const height = mapHeight * cellSize;
@@ -92,6 +92,22 @@ export default function MapVis({
         
     }
 
+    const drawPortal = (x, y) => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.beginPath();
+      ctx.arc(
+        x * cellSize + cellSize / 2,
+        y * cellSize + cellSize / 2,
+        cellSize / 2,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+     }
 
     const drawSnakeHead = (x, y, color, direction) => {
         ctx.fillStyle = color;
@@ -109,31 +125,30 @@ export default function MapVis({
         ctx.stroke();
 
         ctx.fillStyle = 'white';
-
-  
-        drawEyes(x + 1/3, y + 1/4, x + 2/3, y + 1/4);
-           
+        
         switch(direction) {
-          case Direction.EAST:
+          case Action.EAST:
             drawEyes(x + 3/4, y + 1/3, x + 3/4, y + 2/3);
             break;
-          case Direction.WEST:
+          case Action.WEST:
             drawEyes(x + 1/4, y + 1/3, x + 1/4, y + 2/3);
             break;
-          
-          case Direction.SOUTH:
+          case Action.NORTH:
+            drawEyes(x + 1/3, y + 1/4, x + 2/3, y + 1/4);
+            break;
+          case Action.SOUTH:
             drawEyes(x + 1/3, y + 3/4, x + 2/3, y + 3/4);
             break;
-          case Direction.NORTHEAST:
+          case Action.NORTHEAST:
             drawEyes(x + 2/3, y + 1/3, x + 3/4, y + 1/4);
             break;
-          case Direction.NORTHWEST:
+          case Action.NORTHWEST:
             drawEyes(x + 1/3, y + 1/3, x + 1/4, y + 1/4);
             break;
-          case Direction.SOUTHEAST:
+          case Action.SOUTHEAST:
             drawEyes(x + 2/3, y + 2/3, x + 3/4, y + 3/4);
             break;
-          case Direction.SOUTHWEST:
+          case Action.SOUTHWEST:
             drawEyes(x + 1/3, y + 2/3, x + 1/4, y + 3/4);
             break;
         }
@@ -166,11 +181,14 @@ export default function MapVis({
             drawPortal(x, y)
 
           }
+          else if((x == startPortal[0] && y == startPortal[1])||(x == endPortal[0] && y == endPortal[1])){
+            drawPortal(x, y)
+          }
           else if(showSnakeStart && x == aSpawn[0] && y == aSpawn[1]){
-            drawSnakeHead(x, y, 'green', Direction.NORTH);
+            drawSnakeHead(x, y, 'green', Action.NORTH);
           }
           else if(showSnakeStart && x == bSpawn[0] && y == bSpawn[1]){
-            drawSnakeHead(x, y, 'blue', Direction.NORTH);
+            drawSnakeHead(x, y, 'blue', Action.NORTH);
           }
       }
 
@@ -194,6 +212,8 @@ export default function MapVis({
   }, [
     aSpawn, 
     bSpawn, 
+    startPortal,
+    endPortal,
     mapHeight, 
     mapWidth, 
     walls, 
@@ -204,7 +224,7 @@ export default function MapVis({
   ]);
 
   return (
-    <div className="flex justify-center items-center bg-gray-100 min-w-screen">
+    <div className="flex justify-center items-center bg-gray-100 w-fit h-fit">
       <canvas
         ref={canvasRef}
         width={800}
