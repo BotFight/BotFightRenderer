@@ -132,9 +132,10 @@ function LocalRenderer() {
       <div className='flex flex-col lg:flex-row items-center lg:items-stretch gap-8 w-full justify-center'>
         <div className='flex flex-col gap-4 items-center'>
           <LocalSelector bot1File={bot1File} bot2File={bot2File} setBot1File={setBot1File} setBot2File={setBot2File} />
-          <div className="flex flex-col justify-center items-center text-center gap-4 mt-4 mb-4 lg:mb-0">
-          <p className="text-zinc-500 italic text-lg">Sponsored By</p>
-          <img src="/google_logo_icon.png" alt="robot" width={100} height={100} />
+          <div className="flex flex-col justify-center items-center text-center w-full gap-4 mt-4 mb-4 lg:mb-0">
+            <div className="flex p-2 rounded-md bg-zinc-800 w-full text-sm justify-center items-center text-zinc-300">
+                Turn #:<span className="text-zinc-50 font-bold ml-1">{currentMatchStateIndex}</span>
+            </div>
           </div>
         </div>
         <div className="flex flex-col items-center gap-4">
