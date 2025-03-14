@@ -6,6 +6,7 @@ from game.game_queue import Queue
 from game.enums import Action, Result, Cell
 from game.snake import Snake
 from collections.abc import Iterable
+from typing import Tuple
 
 
 class Board():
@@ -133,7 +134,7 @@ class Board():
         """
         return self.b_time
 
-    def has_apple_tuple(self, loc: tuple) -> bool:
+    def has_apple_tuple(self, loc: Tuple[int, int]) -> bool:
         """
         Returns whether there is an apple at the provided location. The location should be in the form (x, y).
 
@@ -316,7 +317,7 @@ class Board():
             if(self.decaying or self.decay_count == 0):
                 if(player.get_length() - 1 < player.min_player_size):
                     return False
-                if(player.length_queued > 1):
+                if(player.length_queued > 0):
                     return player.is_valid_trap(length=player.get_length()-1)
                 else:
                     return player.is_valid_trap(length=player.get_length()-1 , unqueued =player.get_unqueued_length()-1 )
@@ -365,10 +366,15 @@ class Board():
         enemy_cells = self.cells_b if a_to_play else self.cells_a
         enemy_traps = self.cells_traps_b if a_to_play else self.cells_traps_a
 
+        
+
         if(not self.turn_start_checked):
             head_loc = player.get_head_loc()
             if(self.cells_apples[head_loc[1], head_loc[0]] != 0):
                 player.eat_apple()
+
+        
+
 
         if(not self.decay_applied and self.decay_index != -1):
             if(self.decaying  or self.decay_count == 0):
@@ -378,12 +384,19 @@ class Board():
                 if(cells_lost is not None):
                     player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1        
         
+
+        
+
         if(not player.can_move(Action(move), sacrifice)):
             return False
         head_loc, cells_lost = player.try_move(Action(move), sacrifice)
 
+        
+
+
         if(cells_lost is not None):
             player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
+        
 
         if not self.is_valid_cell_copy(head_loc, player_cells_copy, enemy_cells):
             return False 
@@ -391,9 +404,11 @@ class Board():
             portal_x, portal_y = self.map.cells_portals[head_loc[1], head_loc[0]] 
             if not self.is_valid_cell_copy((portal_x, portal_y), player_cells_copy, enemy_cells):
                 return False
+        
 
         if(self.cells_apples[head_loc[1], head_loc[0]] != 0):
             player.eat_apple()
+        
 
         if(enemy_traps[head_loc[1], head_loc[0]] != 0):
             if(not player.is_valid_sacrifice(2)):
@@ -543,7 +558,7 @@ class Board():
     
 
     # checks if currently playing snake can move into a cell
-    def is_valid_cell(self, loc: tuple | np.ndarray) -> bool:
+    def is_valid_cell(self, loc: Tuple[int, int] | np.ndarray) -> bool:
         """
         Checks if the cell is in bounds of the board, then if it is available to
         be moved into.
@@ -578,7 +593,7 @@ class Board():
             and not cells_player_copy[loc[1]][loc[0]] != 0 \
             and not cells_enemy[loc[1]][loc[0]] != 0
                     
-    def cell_in_bounds(self, loc: tuple | np.ndarray) -> bool:
+    def cell_in_bounds(self, loc: Tuple[int, int]  | np.ndarray) -> bool:
         """
         Checks if a cell is within map bounds.
 
@@ -1132,7 +1147,7 @@ class Board():
         return new_board
 
 
-    def forecast_trap(self, check_validity: bool = True) -> tuple:
+    def forecast_trap(self, check_validity: bool = True) -> Tuple["Board", bool]:
         """
         Non-mutating version of apply_trap. Returns a tuple with the new board copy, then
         whether the trap was deployed successfully.
@@ -1151,7 +1166,7 @@ class Board():
         return board_copy, ok
 
     
-    def forecast_move(self, move: Action, sacrifice: int = None, check_validity: bool = True) -> tuple:
+    def forecast_move(self, move: Action, sacrifice: int = None, check_validity: bool = True) -> Tuple["Board", bool]:
         """
         Non-mutating version of apply_move. Returns a tuple with the new board copy, then
         whether the move executed properly.
@@ -1172,7 +1187,7 @@ class Board():
 
         return board_copy, ok
     
-    def forecast_turn(self, turn, check_validity: bool = True) -> tuple:
+    def forecast_turn(self, turn, check_validity: bool = True) -> Tuple["Board", bool]:
         """
         Non-mutating version of apply_turn. Returns a tuple with the new board copy, then
         whether the turn executed properly.
@@ -1193,7 +1208,7 @@ class Board():
 
 
     # for terminal visualization
-    def get_board_string(self) -> str:
+    def get_board_string(self) -> Tuple[str, str, str, int, int]:
         """
         Returns a string representation of the current state of the board, including player positions, apples, and traps. Mostly for internal
         use by developers.

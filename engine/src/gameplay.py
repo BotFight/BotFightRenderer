@@ -19,13 +19,13 @@ def init_display(board, player_a_name, player_b_name, a_bid, b_bid):
 
 
 #prints board to terminal, clearing on each round
-def print_board(board, a_time, b_time):
+def print_board(board, a_time, b_time, clear_screen):
     player_map, apple_map, trap_map, a_length, b_length = board.get_board_string()
 
     import os
 
-    # time.sleep(0.5)
-    # os.system("cls||clear")
+    if(clear_screen):
+        os.system("cls||clear")
 
     board_list  = []
 
@@ -145,7 +145,7 @@ def listen_for_output(output_queue, stop_event):
         except:
             continue  # No output yet, continue listening
 
-def play_game(map_string, directory_a, directory_b, player_a_name, player_b_name, display_game = False, record = True, limit_resources=False):
+def play_game(map_string, directory_a, directory_b, player_a_name, player_b_name, display_game = False, clear_screen=True, record = True, limit_resources=False):
     #setup main environment, import player modules
     from multiprocessing import Process, Queue, set_start_method
 
@@ -278,7 +278,7 @@ def play_game(map_string, directory_a, directory_b, player_a_name, player_b_name
                 init_display(game_board, "PLAYER A", "PLAYER B", a_bid, b_bid)
 
         if(display_game):
-            print_board(game_board, game_board.get_a_time(), game_board.get_b_time())
+            print_board(game_board, game_board.get_a_time(), game_board.get_b_time(), clear_screen)
 
         moves = None
         timer = 0
@@ -682,16 +682,21 @@ def run_player_process(player_name, submission_dir, player_queue, return_queue, 
             class QueueWriter:
                 def __init__(self, queue):
                     self.queue = queue
+                    self.turn = ""
+
+                def set_turn(self, t):
+                    self.turn = t
 
                 def write(self, message):
                     # This method is called by print, we send message to out_queue
                     if message != '\n':  # Ignore empty newlines that can be printed
-                        self.queue.put("".join(["[", player_name, "]: ", message]))
+                        self.queue.put("".join(["[", player_name," | ", self.turn, "]: ", message]))
 
                 def flush(self):
                     pass
-
-            sys.stdout = QueueWriter(out_queue)
+            
+            printer = QueueWriter(out_queue)
+            sys.stdout = printer
 
             def get_cur_time():
                 return time.perf_counter()
@@ -725,6 +730,9 @@ def run_player_process(player_name, submission_dir, player_queue, return_queue, 
         if(func == "play"):
             try:
                 temp_board, time_left = player_queue.get()
+                if(not limit_resources):
+                    printer.set_turn(f"turn #{temp_board.get_turn_count()}")
+
                 try:
                     start = get_cur_time()
                     def time_left_func():
@@ -753,6 +761,9 @@ def run_player_process(player_name, submission_dir, player_queue, return_queue, 
         elif(func == "bid"):
             try:
                 temp_board, time_left = player_queue.get()
+                if(not limit_resources):
+                    printer.set_turn("bid")
+
                 try:
                     start = get_cur_time()
                     def time_left_func():
@@ -780,6 +791,8 @@ def run_player_process(player_name, submission_dir, player_queue, return_queue, 
         # called to construct the player class
         elif(func == "construct"):
             try:
+                if(not limit_resources):
+                    printer.set_turn("construct")
                 try:
                     start = get_cur_time()
                     def time_left_func():

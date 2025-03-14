@@ -2,7 +2,7 @@ from game.board import Board
 from game.enums import Cell, Action, Result
 import numpy as np
 from enum import IntEnum, auto
-
+from typing import Tuple
 
 
 class PlayerBoard:
@@ -473,7 +473,7 @@ class PlayerBoard:
             return self.player_snake.get_apples_eaten()
         return self.enemy_snake.get_apples_eaten()
 
-    def cell_in_bounds(self, loc: tuple | np.ndarray) -> bool:
+    def cell_in_bounds(self, loc: Tuple[int, int] | np.ndarray) -> bool:
         """
         Checks if the given location is within the bounds of the board.
 
@@ -498,7 +498,7 @@ class PlayerBoard:
         """
         return self.game_board.cell_in_bounds((x, y))
 
-    def try_move(self, action: Action, sacrifice: int = None, enemy: bool = False) -> bool:
+    def try_move(self, action: Action, sacrifice: int = None, enemy: bool = False) -> Tuple[np.ndarray, list]:
         """
         Returns the tail cells that would be los in the event of a move
         as well as the new head location.
@@ -674,7 +674,7 @@ class PlayerBoard:
         if reverse:
             self.reverse_perspective()
 
-    def forecast_action(self, action:Action, check_validity:bool=True) -> tuple:
+    def forecast_action(self, action:Action, check_validity:bool=True) -> Tuple["PlayerBoard", bool]:
         """
         Simulates the application of an action (move or trap) on a copy
         of the current board and returns the resulting board state.
@@ -697,7 +697,7 @@ class PlayerBoard:
         return player_board_copy, success
 
 
-    def forecast_trap(self, check_validity:bool=True) -> tuple:
+    def forecast_trap(self, check_validity:bool=True) -> Tuple["PlayerBoard", bool]:
         """
         Simulates the application of a trap on a copy of the current board and returns the resulting board state.
 
@@ -715,7 +715,7 @@ class PlayerBoard:
         
         return player_board_copy, success
 
-    def forecast_move(self, move:Action, sacrifice:int=None, check_validity:bool=False) -> tuple:
+    def forecast_move(self, move:Action, sacrifice:int=None, check_validity:bool=False) -> Tuple["PlayerBoard", bool]:
         """
         Simulates the application of a move (with or without sacrifice) on a copy of the current board 
         and returns the resulting board state.
@@ -737,7 +737,7 @@ class PlayerBoard:
 
         return player_board_copy, success
 
-    def forecast_turn(self, turn, check_validity: bool = True, reverse:bool=False) -> tuple:
+    def forecast_turn(self, turn, check_validity: bool = True, reverse:bool=False) -> Tuple["PlayerBoard", bool]:
         """
         Simulates the application of a whole turn (multiple moves) on a copy of the current board and returns the resulting board state.
 
@@ -1012,7 +1012,7 @@ class PlayerBoard:
     def get_portal_dict(self) -> dict:
         """
         Returns a dictionary mapping pairs of portals together (each) pair of portals appears
-        twice in this dict, each one once as the key tuple and once as the value tuple.
+        twice in this dict, one once as the key tuple and once as the value tuple.
 
         Returns:  
             dict: A dictionary where the keys and values are tuples representing the coordinates of the portals
@@ -1165,7 +1165,7 @@ class PlayerBoard:
         return self.game_board.map.decay_timeline[self.game_board.decay_index+1:]
 
     
-    def get_next_decay_interval(self) -> tuple:
+    def get_next_decay_interval(self) -> Tuple[int, int]:
         """
         Returns a the next decay interval after the current one. Returns the current
         one if current is already the last decay interval.

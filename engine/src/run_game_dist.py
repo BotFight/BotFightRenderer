@@ -48,7 +48,7 @@ def main():
             return
 
         sim_time = time.perf_counter()
-        final_board = play_game(map_string, a_sub, b_sub, a_name, b_name, display_game=False, record=True, limit_resources=False)
+        final_board = play_game(map_string, a_sub, b_sub, a_name, b_name, display_game=False, clear_screen=True, record=True, limit_resources=False)
 
 
         if (final_board.get_winner()== Result.PLAYER_A):

@@ -1,6 +1,7 @@
 from game.game_queue import Queue 
 from game.enums import Action
 import numpy as np
+from typing import Tuple
 
 class Snake:
     """
@@ -455,7 +456,7 @@ class Snake:
         """
         return self.q.peek_head()
     
-    def try_move(self, action: Action, sacrifice: int = None) -> tuple:
+    def try_move(self, action: Action, sacrifice: int = None) -> Tuple[np.ndarray, list]:
         """
         Simulates the move and returns the tail cells that would be lost, 
         as well as the new head location.
@@ -502,7 +503,7 @@ class Snake:
 
 
         
-    def push_move(self, action: Action, sacrifice: int = None) -> tuple:
+    def push_move(self, action: Action, sacrifice: int = None) -> Tuple[np.ndarray, list]:
         """
         Applies the move and returns the tail cells that would be lost, 
         as well as the new head location. Does not enqueue the new location (could potentially require portal transformation).
