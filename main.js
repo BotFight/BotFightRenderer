@@ -137,6 +137,7 @@ ipcMain.handle('run-python-script', async (event, scriptArgs) => {
         
         pythonProcess.on('close', (code) => {
             if (code !== 0) {
+                resolve(scriptOutput);
                 reject(new Error(`Python script error: ${scriptError}`));
             } else {
                 resolve(scriptOutput);
