@@ -96,7 +96,7 @@ function createWindow() {
 
     // In your main Electron process (main.js or main.ts)
     if (!app.isPackaged) {
-        win.loadURL('http://localhost:3000/electron')  // URL served by your dev server (like React's dev server)
+        win.loadURL('http://localhost:3000')  // URL served by your dev server (like React's dev server)
     } else {
         console.log(`file://${path.join(__dirname,  'index.html')}`)
         win.loadURL(`file://${path.join(__dirname, 'index.html')}`);
@@ -137,6 +137,7 @@ ipcMain.handle('run-python-script', async (event, scriptArgs) => {
         
         pythonProcess.on('close', (code) => {
             if (code !== 0) {
+                resolve(scriptOutput);
                 reject(new Error(`Python script error: ${scriptError}`));
             } else {
                 resolve(scriptOutput);
