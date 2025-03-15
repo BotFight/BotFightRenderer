@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "next lint",
     "fixindex": "node update-index.js",
+    "package": "next build && npm run fixindex && electron-builder build --publish never && npm run build:dll",
     "electron:serve": "concurrently \"cross-env BROWSER=none npm run dev\" \"npm run electron:start\"",
     "electron:build": "next build && npm run fixindex && electron-builder",
     "electron:start": "wait-on tcp:3000 && electron ."
@@ -46,11 +47,13 @@
     "electron-builder": "^25.1.8",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   },
   "build": {
     "appId": "com.bytefight.bytefightclient2025",
     "productName": "Bytefight Client 2025",
+    "forceCodeSigning": true,
     "files": [
       {
         "from": "out/",
@@ -94,7 +97,21 @@
       "category": "Utility"
     },
     "mac": {
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "default",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}.${ext}",
+      "type": "distribution",
+      "hardenedRuntime": true,
+      "entitlements": "assets/entitlements.mac.plist",
+      "entitlementsInherit": "assets/entitlements.mac.plist",
+      "gatekeeperAssess": false
     },
     "win": {
       "target": "nsis"
