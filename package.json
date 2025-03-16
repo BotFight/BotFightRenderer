@@ -13,6 +13,7 @@
     "lint": "next lint",
     "fixindex": "node update-index.js",
     "package": "next build && npm run fixindex && electron-builder build --publish never && npm run build:dll",
+    "build:dll": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "electron:serve": "concurrently \"cross-env BROWSER=none npm run dev\" \"npm run electron:start\"",
     "electron:build": "next build && npm run fixindex && electron-builder",
     "electron:start": "wait-on tcp:3000 && electron ."
@@ -106,7 +107,8 @@
         {
           "target": "default",
           "arch": [
-            "arm64"
+            "arm64",
+            "x64"
           ]
         }
       ],
