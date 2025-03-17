@@ -198,7 +198,7 @@ export default function Game({ currentMatchStateIndex,  matchStates }) {
     }
 
     const drawPortal = (x, y) => {
-      if(matchStates[currentMatchStateIndex].portals[y][x] > 0){
+      if(matchStates[currentMatchStateIndex].portals[y][x] >= 0){
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         ctx.beginPath();
         ctx.arc(
