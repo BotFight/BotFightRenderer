@@ -18,6 +18,7 @@ function Replayer() {
   const [matchId, setMatchId] = useState(null);
   const [matches, setMatches] = useState([]);
   const [updateOptions, setUpdateOptions] = useState(true);
+  const [matchInfo, setMatchInfo] = useState(null)
 
   const clearAllUseStates = () => {
     setCurrentMatchStateIndex(0);
@@ -83,6 +84,8 @@ function Replayer() {
         const matchLog = JSON.parse(matchFile);
         const m = await processData(matchLog);
         setMatchStates(m.match_states);
+
+        setMatchInfo([m.bid_a, m.bid_b, m.win_reason, m.result])
 
         setIsPlaying(false)
         setCurrentMatchStateIndex(0);
@@ -176,7 +179,7 @@ function Replayer() {
         </div>
 
         <div className="flex-grow w-full max-w-md">
-          <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates} />
+          <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates} matchInfo={matchInfo} />
         </div>
       </div>
     </div>
