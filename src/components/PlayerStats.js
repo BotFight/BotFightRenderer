@@ -31,14 +31,23 @@ export default function PlayerStats({ currentMatchStateIndex, matchStates, match
   }
 
   const { a_apples_eaten, b_apples_eaten, a_length, b_length, a_to_play, time_a, time_b } = currentMatchState;
-  const [bid_a, bid_b, win_reason, result] = matchInfo
+  
+  let showWin = false
+  let aWin = false
+  let bWin = false
+  let win_reason = ""
+  if(matchInfo){
+    const [bid_a, bid_b, reason, result] = matchInfo
+    console.log(currentMatchStateIndex)
+    console.log( matchStates.length)
+    showWin = matchStates.length-1 == currentMatchStateIndex
+    win_reason = reason
+    aWin = result == 0
+    bWin = result == 1
+  } 
+  
 
-
-  console.log(currentMatchStateIndex)
-  console.log( matchStates.length)
-  const showWin = matchStates.length-1 == currentMatchStateIndex
-  const aWin = result == 0
-  const bWin = result == 1
+  
 
 
 

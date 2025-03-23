@@ -1,3 +1,4 @@
+import { MapIcon } from 'lucide-react';
 import {Action, Board, Map} from './game_engine'
 
 class Match{
@@ -55,6 +56,13 @@ class MatchState{
         this.apple_state = b.get_apple_map();
         
     }    
+}
+
+export function getMap(map_string:string): MatchState {
+    let m: Map = new Map(map_string);
+    let b:Board = new Board(m, true, 220, m.start_size, m.start_size)
+
+    return new MatchState(b, m.start_size, m.start_size)
 }
 
 export async function processData(history: BoardHistory): Promise<Match> {
