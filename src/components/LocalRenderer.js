@@ -10,6 +10,7 @@ import GameOutputs from './GameOutputs';
 import PlayerStats from './PlayerStats';
 import { Button } from '@/components/ui/button';
 import { Bot } from 'lucide-react';
+import { match } from 'assert';
 
 
 const path = require('path');
@@ -24,6 +25,7 @@ function LocalRenderer() {
   const [shouldPlayMatch, setShouldPlayMatch] = useState(false);
   const [engineOutput, setEngineOutput] = useState(null);
   const [map, setMap] = useState(null);
+  const [matchInfo, setMatchInfo] = useState(null)
 
   const botCount = (bot1File && bot2File ? 2 : bot1File || bot2File ? 1 : 0);
   const canStart = bot1File && bot2File && map;
@@ -110,6 +112,7 @@ function LocalRenderer() {
 
           const m = await processData(matchLog);
           setMatchStates(m.match_states);
+          setMatchInfo([m.bid_a, m.bid_b, m.win_reason, m.result])
 
           setIsPlaying(false)
           setCurrentMatchStateIndex(0);
@@ -178,7 +181,7 @@ function LocalRenderer() {
 
         <div className="flex flex-col gap-4 items-stretch max-w-lg w-full">
           <GameOutputs engineOutput={engineOutput} />
-          <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates}></PlayerStats>
+          <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates} matchInfo={matchInfo}></PlayerStats>
         </div>
       </div>
     </div>
