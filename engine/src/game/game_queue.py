@@ -178,6 +178,7 @@ class Queue:
     def pop_many(self, num_moves: int) -> np.ndarray:
         """
         Removes and returns multiple values from the head of the queue.
+        Credit to @Rupee for finding this bug
 
         Parameters:  
             num_moves (int): The number of values to remove from the head of the queue.
@@ -188,8 +189,14 @@ class Queue:
 
         if(self.size-num_moves < 0):
             raise IndexError("Popped too many elements from Queue")
-        data = self.q[self.head:self.head+num_moves,:]
-        self.head = (self.head+num_moves) % self.capacity
+
+        end = (self.head+num_moves) % self.capacity
+        if(end < self.head):
+            data = np.concatenate((self.q[self.head:self.capacity, :], self.q[0:end, :]), axis = 0)
+        else:
+            data = self.q[self.head:end,:]
+
+        self.head = end
         self.size -= num_moves
         return np.array(data)
     

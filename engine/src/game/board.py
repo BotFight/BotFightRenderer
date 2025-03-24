@@ -105,13 +105,20 @@ class Board():
                     "traps_lost":[],
                     "a_length":[],
                     "b_length":[],
-                    "game_map" : self.map.get_recorded_map()
+                    "game_map" : self.map.get_recorded_map(),
+                    "errlog_a":"",
+                    "errlog_b":""
                     }
                 self.cells_lost_list = []
                 self.traps_created_list = []
                 self.traps_lost_list = []
                 self.cells_gained_list = []
 
+    def set_errlog(self, errlog, player_a = True):
+        logvar = "errlog_a" if player_a else "errlog_b"
+        self.history[logvar] = errlog
+            
+        
                 
     def is_as_turn(self) -> bool:
         """
@@ -411,7 +418,7 @@ class Board():
         
 
         if(enemy_traps[head_loc[1], head_loc[0]] != 0):
-            if(not player.is_valid_sacrifice(2)):
+            if(not player.is_valid_sacrifice(self.map.trap_sacrifice)):
                 return False
         
         return True
@@ -512,9 +519,9 @@ class Board():
                             cells_apples_copy[portal_y, portal_x]= 0
                             
                     if(enemy_traps_copy[head_loc[1], head_loc[0]] != 0):
-                        if(not player.is_valid_sacrifice(2)):
+                        if(not player.is_valid_sacrifice(self.map.trap_sacrifice)):
                             return False
-                        cells_lost = player.apply_sacrifice(2)
+                        cells_lost = player.apply_sacrifice(self.map.trap_sacrifice)
                         
                         if(cells_lost is not None):
                             player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
@@ -651,7 +658,7 @@ class Board():
         as defined in the decay timeline. It updates the decay interval and index accordingly.
         """
 
-        while(self.decay_index < len(self.map.decay_timeline) and self.turn_count >= self.map.decay_timeline[self.decay_index+1][0] and self.decay_count ==0):
+        while(self.decay_index < len(self.map.decay_timeline)-1 and self.turn_count >= self.map.decay_timeline[self.decay_index+1][0] and self.decay_count ==0):
             self.decay_index+=1
             self.decay_interval = self.map.decay_timeline[self.decay_index][1]
             
@@ -685,6 +692,7 @@ class Board():
             self.history["times"].append(timer)
             self.history["moves"].append(turn)
         self.check_turn_start(a_to_play=a_to_play)
+        
 
         if(check_validity):
             #safe version, always used by game engine
@@ -703,9 +711,12 @@ class Board():
                     return False
                 
                 if(isinstance(turn, Iterable) and not type(turn) is str):
+                    
                     # case for turn being a list
                     if(len(turn) <= 0):
                         return False         
+
+                    
 
                     for action in turn:
                         if(Action(action) is Action.TRAP):
@@ -714,22 +725,27 @@ class Board():
                                 return False
                         else:
                             moved = True
+                            
                         
                             if not self.apply_move(action, a_to_play=self.a_to_play, check_validity=True):
+                               
+                                
                                 return False
+                            
                         #sacrifice to take an extra move increments by 2 every move
                         if(player.get_length() < self.map.min_player_size):
+                            
                             return False
 
                     self.next_turn()
+
+                    
                     
                     return moved                
                 else:
                     
                     # case for turn being a single move
-                    valid = Action(turn) != Action.TRAP and self.apply_move(turn, a_to_play=self.a_to_play, check_validity=True)
-                    
-                    
+                    valid = Action(turn) != Action.TRAP and self.apply_move(turn, a_to_play=self.a_to_play, check_validity=True)                    
                     if(player.get_length()  < self.map.min_player_size):
                         return False
                     
@@ -738,6 +754,8 @@ class Board():
 
                     return valid   
             except:
+                import traceback
+                print(traceback.format_exc())
                 return False
         else:
             self.apply_decay(check_validity=False)
@@ -914,7 +932,7 @@ class Board():
             if(check_validity and player.get_length() - 2 < player.min_player_size):
                 return False
 
-            cells_lost = player.apply_sacrifice(2)
+            cells_lost = player.apply_sacrifice(self.map.trap_sacrifice)
 
             if(cells_lost is not None):
                 player_cells[cells_lost[:, 1], cells_lost[:, 0]] -= 1
@@ -954,8 +972,11 @@ class Board():
 
         self.check_turn_start(a_to_play=a_to_play)        
         if(check_validity):
+
+            
             #apply a single move with checks
             try:
+                
                 if not self.apply_decay(check_validity=True):
                     return False
                 
@@ -968,6 +989,8 @@ class Board():
                     player_cells[cells_lost[:, 1], cells_lost[:, 0]] -= 1
                     if(self.build_history):
                         self.cells_lost_list.append(cells_lost)
+
+                
 
                 if not self.is_valid_cell(head_loc):
                     return False 
@@ -988,7 +1011,7 @@ class Board():
                 if(not self.resolve_square(head_loc[0], head_loc[1], a_to_play, True)):
                     return False
 
-            
+                
                 return True
             except:
                 return False
