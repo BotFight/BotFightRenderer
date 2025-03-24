@@ -5,11 +5,12 @@ import Navigation from './Navigation';
 import LocalSelector from './LocalSelector';
 import MapSelector from './MapSelector';
 import { useState } from 'react';
-import { processData } from "../replay/process_replay"
+import { getMap, processData } from "../replay/process_replay"
 import GameOutputs from './GameOutputs';
 import PlayerStats from './PlayerStats';
 import { Button } from '@/components/ui/button';
 import { Bot } from 'lucide-react';
+import { match } from 'assert';
 
 
 const path = require('path');
@@ -24,6 +25,7 @@ function LocalRenderer() {
   const [shouldPlayMatch, setShouldPlayMatch] = useState(false);
   const [engineOutput, setEngineOutput] = useState(null);
   const [map, setMap] = useState(null);
+  const [matchInfo, setMatchInfo] = useState(null)
 
   const botCount = (bot1File && bot2File ? 2 : bot1File || bot2File ? 1 : 0);
   const canStart = bot1File && bot2File && map;
@@ -43,6 +45,17 @@ function LocalRenderer() {
       setCurrentMatchStateIndex(0);
     }
   };
+
+  const handleSetMap = (value) => {
+    setMap(value)
+
+    let match_states = new Array(1).fill(null);
+    match_states[0] = getMap(value)
+    setMatchStates(match_states);
+    setCurrentMatchStateIndex(0);
+    setMatchInfo(null)
+
+  }
 
   const togglePlay = () => {
     setIsPlaying((prevIsPlaying) => !prevIsPlaying);
@@ -88,8 +101,7 @@ function LocalRenderer() {
       try {
         let num = await window.electron.storeGet("numMatches")
         let outdir = await window.electron.storeGet("matchDir")
-        setMatchStates(null);
-        setCurrentMatchStateIndex(0);
+        handleSetMap(map)
         setIsPlaying(false);
         console.log("Running match with ", bot1File, bot2File, map, 1);
 
@@ -110,6 +122,7 @@ function LocalRenderer() {
 
           const m = await processData(matchLog);
           setMatchStates(m.match_states);
+          setMatchInfo([m.bid_a, m.bid_b, m.win_reason, m.result])
 
           setIsPlaying(false)
           setCurrentMatchStateIndex(0);
@@ -146,7 +159,7 @@ function LocalRenderer() {
                 <span className="font-bold text-white">{botCount}/2</span> Robots Selected
               </p>
             </div>
-            <MapSelector onSelectMap={setMap} />
+            <MapSelector onSelectMap={handleSetMap} />
             <Button
               className={`px-4 py-2 rounded text-sm text-white
             ${(bot1File && bot2File && map != null)
@@ -178,7 +191,7 @@ function LocalRenderer() {
 
         <div className="flex flex-col gap-4 items-stretch max-w-lg w-full">
           <GameOutputs engineOutput={engineOutput} />
-          <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates}></PlayerStats>
+          <PlayerStats currentMatchStateIndex={currentMatchStateIndex} matchStates={matchStates} matchInfo={matchInfo}></PlayerStats>
         </div>
       </div>
     </div>

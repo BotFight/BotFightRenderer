@@ -1,3 +1,4 @@
+import { MapIcon } from 'lucide-react';
 import {Action, Board, Map} from './game_engine'
 
 class Match{
@@ -5,12 +6,16 @@ class Match{
     bid_a: number;
     bid_b: number;
     win_reason: string;
+    result: number;
 
-    constructor(match_states:MatchState[], bid_a: number, bid_b: number, win_reason:string){
+    constructor(match_states:MatchState[], bid_a: number, bid_b: number, win_reason:string, result:number){
         this.match_states = match_states;
         this.bid_a = bid_a;
         this.bid_b = bid_b;
         this.win_reason = win_reason;
+        this.result = result;
+
+        
     }
 
 }
@@ -53,6 +58,13 @@ class MatchState{
     }    
 }
 
+export function getMap(map_string:string): MatchState {
+    let m: Map = new Map(map_string);
+    let b:Board = new Board(m, true, 220, m.start_size, m.start_size)
+
+    return new MatchState(b, m.start_size, m.start_size)
+}
+
 export async function processData(history: BoardHistory): Promise<Match> {
     let match_states: MatchState[] = new Array(history.turn_count+1).fill(null);
 
@@ -71,7 +83,7 @@ export async function processData(history: BoardHistory): Promise<Match> {
         }
     }
 
-    let match:Match = new Match(match_states, history.bidA, history.bidB, history.reason);
+    let match:Match = new Match(match_states, history.bidA, history.bidB, history.reason, history.result);
 
     return match;    
 }
