@@ -1,6 +1,6 @@
 {
   "name": "bytefight-client-2025",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "main": "main.js",
   "homepage": "./",
@@ -58,7 +58,7 @@
   "build": {
     "appId": "com.bytefight.bytefightclient2025",
     "productName": "Bytefight Client 2025",
-    "forceCodeSigning": true,
+    "forceCodeSigning": false,
     "files": [
       {
         "from": "out/",
