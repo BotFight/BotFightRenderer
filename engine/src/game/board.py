@@ -897,7 +897,7 @@ class Board():
             if(self.build_history):
                 self.traps_lost_list.append((x, y))
 
-            if(check_validity and (player.get_length() - self.map.trap_sacrifice < player.min_player_size)):
+            if(check_validity and not player.is_valid_sacrifice(self.map.trap_sacrifice)):
                 return False
 
             cells_lost = player.apply_sacrifice(self.map.trap_sacrifice)
