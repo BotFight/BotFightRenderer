@@ -90,7 +90,8 @@ class Board():
             self.decay_index = -1
             self.decay_applied = False
             self.turn_start_checked = False
-            
+
+            self.last_turn = None
 
             #history building
             self.build_history = build_history
@@ -353,7 +354,7 @@ class Board():
 
     def is_valid_move(self, move:Action, sacrifice: int = None, a_to_play: bool = None) -> bool:
         """
-        Returns whether the given move is valid for the current player. Does not check for decay.
+        Returns whether the given move is valid for the current player.
 
         If a sacrifice is applied, it checks if the move is still valid given the sacrifice. 
 
@@ -373,15 +374,10 @@ class Board():
         enemy_cells = self.cells_b if a_to_play else self.cells_a
         enemy_traps = self.cells_traps_b if a_to_play else self.cells_traps_a
 
-        
-
         if(not self.turn_start_checked):
             head_loc = player.get_head_loc()
             if(self.cells_apples[head_loc[1], head_loc[0]] != 0):
                 player.eat_apple()
-
-        
-
 
         if(not self.decay_applied and self.decay_index != -1):
             if(self.decaying  or self.decay_count == 0):
@@ -389,17 +385,12 @@ class Board():
                     return False
                 cells_lost = player.apply_sacrifice(1)
                 if(cells_lost is not None):
-                    player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1        
-        
-
-        
+                    player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1                
 
         if(not player.can_move(Action(move), sacrifice)):
             return False
-        head_loc, cells_lost = player.try_move(Action(move), sacrifice)
 
-        
-
+        head_loc, cells_lost = player.push_move(Action(move), sacrifice) 
 
         if(cells_lost is not None):
             player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
@@ -411,14 +402,13 @@ class Board():
             portal_x, portal_y = self.map.cells_portals[head_loc[1], head_loc[0]] 
             if not self.is_valid_cell_copy((portal_x, portal_y), player_cells_copy, enemy_cells):
                 return False
-        
 
         if(self.cells_apples[head_loc[1], head_loc[0]] != 0):
             player.eat_apple()
-        
 
         if(enemy_traps[head_loc[1], head_loc[0]] != 0):
-            if(not player.is_valid_sacrifice(self.map.trap_sacrifice)):
+            if(not player.is_valid_sacrifice(self.map.trap_sacrifice-1)):
+                #this is to account for not requeuing the head
                 return False
         
         return True
@@ -437,131 +427,114 @@ class Board():
         Returns:  
             bool: True if the turn is valid, False otherwise.
         """
-        if(a_to_play is None):
-            a_to_play = self.a_to_play
-
-        player = self.snake_a.get_copy() if a_to_play else self.snake_b.get_copy() 
-        cells_apples_copy = np.array(self.cells_apples)
-        player_cells_copy = np.array(self.cells_a) if a_to_play else np.array(self.cells_b)
-        enemy_cells = self.cells_b if a_to_play else self.cells_a
-        enemy_traps_copy = np.array(self.cells_traps_b) if a_to_play else np.array(self.cells_traps_a)
-       
-        head_loc = player.get_head_loc()
-        if(not self.turn_start_checked):
-            if(cells_apples_copy[head_loc[1], head_loc[0]] != 0):
-                player.eat_apple()
-                cells_apples_copy[head_loc[1], head_loc[0]]= 0
-                if(self.map.cells_portals[head_loc[1], head_loc[0], 0] >= 0):
-                    portal_x, portal_y = self.map.cells_portals[head_loc[1], head_loc[0]]
-                    cells_apples_copy[portal_y, portal_x] = 0
-            
-        if(not self.decay_applied and self.decay_index != -1):
-            if(self.decaying or self.decay_count == 0):
-                if(player.get_length() - 1 < player.min_player_size):
-                    return False
-                cells_lost = player.apply_sacrifice(1)
-
-                if(cells_lost is not None):
-                    player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
-
-        moved = False
         
-        # try:
-        if(isinstance(turn, Iterable) and not type(turn) is str):
-            # case for turn being a list
+        try:
+            if(isinstance(turn, Iterable) and not type(turn) is str):
+                if(a_to_play is None):
+                    a_to_play = self.a_to_play
 
-            #metadata to simulate the turn
+                player = self.snake_a.get_copy() if a_to_play else self.snake_b.get_copy() 
+                cells_apples_copy = np.array(self.cells_apples)
+                player_cells_copy = np.array(self.cells_a) if a_to_play else np.array(self.cells_b)
+                enemy_cells = self.cells_b if a_to_play else self.cells_a
+                enemy_traps_copy = np.array(self.cells_traps_b) if a_to_play else np.array(self.cells_traps_a)
             
-            for a in turn:
-                
-                action = Action(a)                    
-
-                #plays one move out of the sequence
-                if(not action is Action.TRAP):
-                    if not player.can_move(action):
-                        
-                        return False
-                    moved = True
-                    head_loc = player.get_head_loc()     
-
-                    if(not player.can_move(action)):
-                        return False       
-
-                    head_loc, cells_lost = player.push_move(action)
-                    
-                    if(cells_lost is not None):
-                        player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
-                    
-
-                    if not self.is_valid_cell_copy(head_loc, player_cells_copy, enemy_cells):
-                        return False 
-
-                    portal_x, portal_y = None, None
-                    if(self.map.cells_portals[head_loc[1], head_loc[0], 0] >= 0):
-                        portal_x, portal_y = self.map.cells_portals[head_loc[1], head_loc[0]] 
-                        if not self.is_valid_cell_copy((portal_x, portal_y), player_cells_copy, enemy_cells):
-                            return False 
-                        player.push_head_cell(np.array([portal_y, portal_x]))
-                        player_cells_copy[portal_y, portal_x] += 1
-                    else:
-                        player.push_head_cell(head_loc)
-                        player_cells_copy[head_loc[1], head_loc[0]] += 1
-
-                    if(not portal_x is None):
-                        if not self.is_valid_cell_copy((portal_x, portal_y), player_cells_copy, enemy_cells):
-                            return False 
-                        player.push_head_cell(np.array([portal_x, portal_y]))
-
+                head_loc = player.get_head_loc()
+                if(not self.turn_start_checked):
                     if(cells_apples_copy[head_loc[1], head_loc[0]] != 0):
                         player.eat_apple()
-
-                        if(not portal_x is None):
-                            cells_apples_copy[portal_y, portal_x]= 0
-                            
-                    if(enemy_traps_copy[head_loc[1], head_loc[0]] != 0):
-                        if(not player.is_valid_sacrifice(self.map.trap_sacrifice)):
+                        cells_apples_copy[head_loc[1], head_loc[0]]= 0
+                        if(self.map.cells_portals[head_loc[1], head_loc[0], 0] >= 0):
+                            portal_x, portal_y = self.map.cells_portals[head_loc[1], head_loc[0]]
+                            cells_apples_copy[portal_y, portal_x] = 0
+                    
+                if(not self.decay_applied and self.decay_index != -1):
+                    if(self.decaying or self.decay_count == 0):
+                        if(player.get_length() - 1 < player.min_player_size):
                             return False
-                        cells_lost = player.apply_sacrifice(self.map.trap_sacrifice)
+                        cells_lost = player.apply_sacrifice(1)
+
+                        if(cells_lost is not None):
+                            player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
+
+                moved = False
+                # case for turn being a list
+
+                #metadata to simulate the turn
+                
+                for a in turn:
+                    
+                    action = Action(a)                    
+
+                    #plays one move out of the sequence
+                    if(not action is Action.TRAP):
+                        if not player.can_move(action):
+                            
+                            return False
+                        moved = True
+                        head_loc = player.get_head_loc()     
+
+                        if(not player.can_move(action)):
+                            return False       
+
+                        head_loc, cells_lost = player.push_move(action)
                         
                         if(cells_lost is not None):
                             player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
-                        enemy_traps_copy[head_loc[1], head_loc[0]] = 0
+                        
 
-                        if(not portal_x is None):
-                            enemy_traps_copy[portal_y, portal_x] = 0
-                    #eating an apple                    
-                else:
-                    if not player.is_valid_trap():
-                        return False
-                    cells_lost = player.apply_sacrifice(1)
-                    
-                    if(cells_lost is not None):
-                        player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
+                        if not self.is_valid_cell_copy(head_loc, player_cells_copy, enemy_cells):
+                            return False 
 
-            
-            return moved           
-        else:
-            #case for single move, no apple calculation necessary
-            if Action(turn)==Action.TRAP or not player.can_move(Action(turn)):
-                return False
+                        portal_x, portal_y = None, None
+                        if(self.map.cells_portals[head_loc[1], head_loc[0], 0] >= 0):
+                            portal_x, portal_y = self.map.cells_portals[head_loc[1], head_loc[0]] 
+                            if not self.is_valid_cell_copy((portal_x, portal_y), player_cells_copy, enemy_cells):
+                                return False 
+                            player.push_head_cell(np.array([portal_x, portal_y]))
+                            player_cells_copy[portal_y, portal_x] += 1
+                        else:
+                            player.push_head_cell(head_loc)
+                            player_cells_copy[head_loc[1], head_loc[0]] += 1
 
-            head_loc, cells_lost = player.push_move(turn)
 
-            if(not cells_lost is None):
-                player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
+                        if(cells_apples_copy[head_loc[1], head_loc[0]] != 0):
+                            player.eat_apple()
 
-            if not self.is_valid_cell_copy(head_loc,player_cells_copy, enemy_cells):
-                return False
-            
-            if(self.map.cells_portals[head_loc[1], head_loc[0], 0] >= 0):
-                portal_x, portal_y =self.map.cells_portals[head_loc[1], head_loc[0]] 
-                if not self.is_valid_cell_copy((portal_x, portal_y), player_cells_copy, enemy_cells):
-                    return False 
+                            if(not portal_x is None):
+                                cells_apples_copy[portal_y, portal_x]= 0
+                                
+                        if(enemy_traps_copy[head_loc[1], head_loc[0]] != 0):
+                            if(not player.is_valid_sacrifice(self.map.trap_sacrifice)):
+                                return False
+                            cells_lost = player.apply_sacrifice(self.map.trap_sacrifice)
+                            
+                            if(cells_lost is not None):
+                                player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
+                            enemy_traps_copy[head_loc[1], head_loc[0]] = 0
 
-            return True
+                            if(not portal_x is None):
+                                enemy_traps_copy[portal_y, portal_x] = 0
+                        #eating an apple                    
+                    else:
+                        if not player.is_valid_trap():
+                            return False
+                        cells_lost = player.push_trap()
+                        
+                        if(cells_lost is not None):
+                            player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
 
-        # except:
-        #     return False
+                
+                return moved           
+            else:
+                #case for single move, no apple calculation necessary
+                if Action(turn)==Action.TRAP:
+                    return False
+
+                return self.is_valid_move(turn, None, a_to_play)
+
+        except:
+            return False
     
 
     # checks if currently playing snake can move into a cell
@@ -590,10 +563,6 @@ class Board():
         be moved into using a copy of the player board (in case player snake needs to be mutated).
         For internal usage by board class.
         """     
-
-        
-        if(not self.cell_in_bounds(loc)):
-            return False
         
         return self.cell_in_bounds(loc) \
             and not self.map.cells_walls[loc[1]][loc[0]] \
@@ -687,6 +656,7 @@ class Board():
             a_to_play = self.a_to_play
 
         player = self.snake_a if self.a_to_play else self.snake_b
+        self.last_turn = turn
 
         if(self.build_history):
             self.history["times"].append(timer)
@@ -721,15 +691,13 @@ class Board():
                     for action in turn:
                         if(Action(action) is Action.TRAP):
                             if not self.apply_trap(a_to_play=self.a_to_play, check_validity = True):
-                                
                                 return False
                         else:
                             moved = True
+
                             
-                        
+                                                    
                             if not self.apply_move(action, a_to_play=self.a_to_play, check_validity=True):
-                               
-                                
                                 return False
                             
                         #sacrifice to take an extra move increments by 2 every move
@@ -929,7 +897,7 @@ class Board():
             if(self.build_history):
                 self.traps_lost_list.append((x, y))
 
-            if(check_validity and player.get_length() - 2 < player.min_player_size):
+            if(check_validity and (player.get_length() - self.map.trap_sacrifice < player.min_player_size)):
                 return False
 
             cells_lost = player.apply_sacrifice(self.map.trap_sacrifice)
@@ -971,9 +939,7 @@ class Board():
         player_cells = self.cells_a if a_to_play else self.cells_b  
 
         self.check_turn_start(a_to_play=a_to_play)        
-        if(check_validity):
-
-            
+        if(check_validity):            
             #apply a single move with checks
             try:
                 

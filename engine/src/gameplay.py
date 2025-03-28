@@ -306,8 +306,7 @@ def play_game(map_string, directory_a, directory_b, player_a_name, player_b_name
 
         moves = None
         timer = 0
-
-        
+      
 
         if(game_board.is_as_turn()):
             # run a's turn

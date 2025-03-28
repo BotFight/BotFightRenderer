@@ -46,6 +46,13 @@ class PlayerBoard:
         self.enemy_trap_cells = game_board.cells_traps_b if is_player_a else game_board.cells_traps_a
 
 
+    def get_last_turn(self):
+        """
+        Returns:
+            (enums.Action or Iterable[enums.Actions] or Iterable[int]): The action(s) last applied to the board.  
+        """
+        return self.game_board.last_turn
+
     def get_dim_x(self) -> int:
         """
         Returns the x dimension of the board.
@@ -125,7 +132,8 @@ class PlayerBoard:
     
     def is_game_over(self) -> bool:
         """
-        Checks if the game is over by determining if there is a winner.
+        Checks if the game is over by determining if there is a winner. For internal use
+        (not by players since winner is set by game runner.)
 
         Returns:  
             bool: True if the game is over, False otherwise.
@@ -715,7 +723,7 @@ class PlayerBoard:
         
         return player_board_copy, success
 
-    def forecast_move(self, move:Action, sacrifice:int=None, check_validity:bool=False) -> Tuple["PlayerBoard", bool]:
+    def forecast_move(self, move:Action, sacrifice:int=None, check_validity:bool=True) -> Tuple["PlayerBoard", bool]:
         """
         Simulates the application of a move (with or without sacrifice) on a copy of the current board 
         and returns the resulting board state.
