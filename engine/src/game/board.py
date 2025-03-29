@@ -40,8 +40,11 @@ class Board():
         """
 
         self.map = game_map
+        
         if(copy is False):
             #map metadata
+            self.last_turn = None
+            
             self.cells_a = np.zeros((self.map.dim_y, self.map.dim_x), dtype = np.uint8)
             self.cells_b = np.zeros((self.map.dim_y, self.map.dim_x), dtype = np.uint8)
             self.cells_apples = np.zeros((self.map.dim_y, self.map.dim_x), dtype = np.uint8)
@@ -91,7 +94,7 @@ class Board():
             self.decay_applied = False
             self.turn_start_checked = False
 
-            self.last_turn = None
+            
 
             #history building
             self.build_history = build_history
@@ -519,10 +522,10 @@ class Board():
                     else:
                         if not player.is_valid_trap():
                             return False
-                        cells_lost = player.push_trap()
+                        trap_created = player.push_trap()
                         
-                        if(cells_lost is not None):
-                            player_cells_copy[cells_lost[:, 1], cells_lost[:, 0]] -= 1
+                        if(trap_created is not None):
+                            player_cells_copy[trap_created[1], trap_created[0]] -= 1
 
                 
                 return moved           
@@ -1106,6 +1109,8 @@ class Board():
 
         new_board.snake_a = self.snake_a.get_copy()
         new_board.snake_b = self.snake_b.get_copy()
+
+        new_board.last_turn = np.array(self.last_turn) if not self.last_turn is None else None
 
         new_board.apple_counter = self.apple_counter
         new_board.turn_count = self.turn_count
